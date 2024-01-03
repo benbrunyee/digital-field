@@ -2,7 +2,7 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Navigation, { navigation } from '$lib/Navigation/Navigation.svelte';
-	import { pageTitle } from '$lib/stores/pageTitle';
+	import { pageTitle } from '$lib/Navigation/stores/pageTitle';
 	import Icon from '@iconify/svelte';
 	import {
 		AppBar,
@@ -47,7 +47,7 @@
 	<Navigation />
 </Drawer>
 
-<AppShell slotSidebarLeft="w-0 lg:w-64">
+<AppShell slotSidebarLeft="w-0 lg:w-64 lg:border-r lg:border-neutral-400">
 	<svelte:fragment slot="header">
 		<AppBar slotTrail="place-content-end" shadow="shadow-xl">
 			<svelte:fragment slot="lead">

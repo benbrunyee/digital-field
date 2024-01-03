@@ -1,3 +1,4 @@
+import forms from '@tailwindcss/forms';
 import { join } from 'path';
 import type { Config } from 'tailwindcss';
 
@@ -19,7 +20,8 @@ const config = {
 		// 4. Append the Skeleton plugin (after other plugins)
 		skeleton({
 			themes: { preset: ['crimson'] }
-		})
+		}),
+		forms
 	]
 } satisfies Config;
 

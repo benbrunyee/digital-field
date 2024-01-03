@@ -1,0 +1,46 @@
+<script>
+	import FormElementSelection from '$lib/FormCreator/FormSelectables/FormElementSelection.svelte';
+	import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
+	import FormSettings from '../../../../../lib/FormCreator/FormSettings.svelte';
+</script>
+
+<AppShell
+	slotSidebarLeft="w-0 lg:w-64 p-4 space-y-2 lg:border-r lg:border-surface-300-600-token"
+	slotSidebarRight="w-0 lg:w-96 p-4 space-y-2 lg:border-l lg:border-surface-300-600-token"
+	class="w-"
+>
+	<svelte:fragment slot="header">
+		<AppBar slotTrail="place-content-end" shadow="shadow-xl">
+			<svelte:fragment slot="lead">
+				<h2 class="h2 ml-4">Form Creator</h2>
+			</svelte:fragment>
+			<svelte:fragment slot="trail">
+				<LightSwitch />
+				<Avatar
+					initials=".."
+					border="border-4 border-surface-300-600-token hover:!border-primary-500"
+					cursor="cursor-pointer"
+					class="w-10 lg:w-14"
+				/>
+			</svelte:fragment>
+		</AppBar>
+	</svelte:fragment>
+	<svelte:fragment slot="sidebarLeft">
+		<h3 class="h3">Form Elements</h3>
+		<hr />
+		<FormElementSelection />
+	</svelte:fragment>
+	<svelte:fragment slot="sidebarRight">
+		<h3 class="h3">Settings</h3>
+		<hr />
+		<FormSettings />
+	</svelte:fragment>
+	<!-- (pageHeader) -->
+	<!-- Router Slot -->
+	<div class="space-y-2 p-4">
+		<slot />
+	</div>
+	<!-- ---- / ---- -->
+	<!-- (pageFooter) -->
+	<!-- (footer) -->
+</AppShell>

@@ -14,7 +14,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
-	import { pageTitle } from '../stores/pageTitle';
+	import { pageTitle } from './stores/pageTitle';
 
 	const drawerStore = getDrawerStore();
 
@@ -27,7 +27,7 @@
 	}
 </script>
 
-<nav class="list-nav h-full border-r border-neutral-400 p-4">
+<nav class="list-nav h-full p-4">
 	<ul>
 		{#each navigation as navItem}
 			<li>
