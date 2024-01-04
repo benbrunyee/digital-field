@@ -13,6 +13,6 @@ export interface Form {
 	fields: FieldI[];
 	outputs: OutputEntity[];
 	owner: string;
-	last_updated: string;
-	created: string;
+	updatedAt: Date | undefined;
+	createdAt: Date | undefined;
 }

@@ -8,7 +8,7 @@
 	export let field: DisplayFieldI<DisplayFieldType>;
 </script>
 
-<FormFieldBase name={formatFieldType(field.type)}>
+<FormFieldBase id={field.id} name={formatFieldType(field.type)}>
 	<!-- TODO: Complete -->
 	<svelte:fragment slot="icon">
 		<Icon icon={fieldTypeIcons[field.type]} class="h-4 w-4" />

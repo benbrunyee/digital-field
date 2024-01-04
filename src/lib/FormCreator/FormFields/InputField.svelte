@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
+	import { createEventDispatcher } from 'svelte';
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
 	import { fieldTypeIcons } from '../FormSelectables/SelectableBase.svelte';
 	import { type InputFieldI, type InputFieldType } from '../types/fieldTypes';
@@ -41,25 +42,43 @@
 		'address',
 		'link'
 	];
+
+	const dispatch = createEventDispatcher();
+
+	function onInputChanged() {
+		dispatch('fieldChanged', true);
+	}
 </script>
 
-<FormFieldBase bind:name={field.name}>
+<FormFieldBase id={field.id} bind:name={field.name}>
 	<!-- Single input field types -->
 	<svelte:fragment slot="icon">
 		<Icon icon={fieldTypeIcons[field.type]} class="h-4 w-4" />
 	</svelte:fragment>
+
+	<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+		<div class="input-group-shim">Description</div>
+		<input type="text" bind:value={field.description} on:input={onInputChanged} />
+	</div>
+
 	{#if singleInputFields.includes(type)}
-		<input
-			{...$$restProps}
-			type={inputType[type]}
-			class="input variant-glass"
-			on:change={(e) => {
-				// We do not use bind:value here because we want to be able to dynamically
-				// change the "type" prop of the input.
-				field.value = e.currentTarget.value;
-			}}
-		/>
+		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+			<div class="input-group-shim">Default value</div>
+			<input
+				type={inputType[type]}
+				placeholder="Placeholder"
+				class={inputType[type] === 'file' ? 'px-2 py-1' : ''}
+				on:input={(e) => {
+					// We do not use bind:value here because we want to be able to dynamically
+					// change the "type" prop of the input.
+					field.placeholder = e.currentTarget.value;
+					onInputChanged();
+				}}
+			/>
+		</div>
 	{:else}
-		<span>Problem with type: {type}</span>
+		<span class="text-error-500-400-token"
+			>There was a problem displaying the options with type: {type}</span
+		>
 	{/if}
 </FormFieldBase>

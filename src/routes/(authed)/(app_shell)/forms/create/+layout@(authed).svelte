@@ -26,12 +26,10 @@
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<h3 class="h3">Form Elements</h3>
-		<hr />
 		<FormElementSelection />
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarRight">
-		<h3 class="h3">Settings</h3>
+		<h3 class="h3 ml-2">Settings</h3>
 		<hr />
 		<FormSettings />
 	</svelte:fragment>
