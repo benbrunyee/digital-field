@@ -34,19 +34,20 @@ export type FieldTypes = InputFieldType | DisplayFieldType;
 
 // Field object Typescript types
 
-export interface InputField<T extends InputFieldType> {
+export interface FieldBaseI<T extends FieldTypes> {
 	id: string;
-	name: string;
 	type: T;
+}
+export interface InputFieldI<T extends InputFieldType> extends FieldBaseI<T> {
+	name: string;
 	required: boolean;
 	options: InputFieldOptions<T>;
 	value: string;
 }
-export interface DisplayField<T extends DisplayFieldType> {
-	type: T;
+export interface DisplayFieldI<T extends DisplayFieldType> extends FieldBaseI<T> {
 	options: DisplayFieldOptions<T>;
 }
-export type Field = InputField<InputFieldType> | DisplayField<DisplayFieldType>;
+export type Field = InputFieldI<InputFieldType> | DisplayFieldI<DisplayFieldType>;
 
 // Field options
 

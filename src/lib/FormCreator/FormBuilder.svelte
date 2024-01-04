@@ -1,5 +1,5 @@
 <script lang="ts">
-	import InputField from './InputFields/InputField.svelte';
+	import FormField from './FormFields/FormField.svelte';
 	import type { Form } from './types/formTypes';
 
 	export let form: Form;
@@ -11,7 +11,7 @@
 	<input bind:value={form.name} placeholder="Form Name" class="input variant-glass text-2xl" />
 	<div class="space-y-2">
 		{#each form.fields as field}
-			<InputField bind:value={field.value} {field} />
+			<FormField bind:field />
 		{/each}
 	</div>
 </div>

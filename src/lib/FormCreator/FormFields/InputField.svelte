@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
-	import { type InputField, type InputFieldType } from '../types/fieldTypes';
+	import { type InputFieldI, type InputFieldType } from '../types/fieldTypes';
+	import FormFieldBase from './FormFieldBase.svelte';
 
-	export let field: InputField<InputFieldType>;
-	export let value: any;
+	export let field: InputFieldI<InputFieldType>;
 
 	const type = field.type;
 
@@ -41,19 +41,19 @@
 	];
 </script>
 
-<h4 class="h4 ml-2">{field.name}</h4>
-
-<!-- Single input field types -->
-{#if singleInputFields.includes(type)}
-	<input
-		type={inputType[type]}
-		class="input variant-glass"
-		on:change={(e) => {
-			// We do not use bind:value here because we want to be able to dynamically
-			// change the "type" prop of the input.
-			value = e.currentTarget.value;
-		}}
-	/>
-{:else}
-	<span>Problem with type: {type}</span>
-{/if}
+<FormFieldBase name={field.name}>
+	<!-- Single input field types -->
+	{#if singleInputFields.includes(type)}
+		<input
+			type={inputType[type]}
+			class="input variant-glass"
+			on:change={(e) => {
+				// We do not use bind:value here because we want to be able to dynamically
+				// change the "type" prop of the input.
+				field.value = e.currentTarget.value;
+			}}
+		/>
+	{:else}
+		<span>Problem with type: {type}</span>
+	{/if}
+</FormFieldBase>

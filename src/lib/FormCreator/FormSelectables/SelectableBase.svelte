@@ -5,6 +5,7 @@
 	import Icon from '@iconify/svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { type FieldTypes } from '../types/fieldTypes';
+	import { formatFieldType } from '../util/formatFieldType';
 
 	export let type: FieldTypes;
 	export let tooltip = true;
@@ -58,10 +59,6 @@
 		target: `popupHover-${type}`,
 		placement: 'right'
 	};
-
-	function formatType(typeName: typeof type) {
-		return typeName.charAt(0).toUpperCase() + typeName.slice(1).replace(/_/g, ' ');
-	}
 </script>
 
 <div
@@ -69,7 +66,7 @@
 >
 	<div class="flex items-center space-x-1">
 		<Icon icon={fieldTypeIcons[type]} class="inline h-4 w-4 group-hover:text-primary-500" />
-		<span class="text-sm group-hover:text-primary-500">{formatType(type)}</span>
+		<span class="text-sm group-hover:text-primary-500">{formatFieldType(type)}</span>
 	</div>
 	{#if tooltip}
 		<div use:popup={popupHover} class="[&>*]:pointer-events-none">
