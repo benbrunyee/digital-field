@@ -1,7 +1,6 @@
 <script>
 	import FormBuilder from '$lib/FormCreator/FormBuilder.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
-	import { formStore } from '../../../../../lib/FormCreator/stores/form';
 
 	let tab = 0;
 </script>
@@ -13,7 +12,7 @@
 	</RadioGroup>
 
 	{#if tab === 0}
-		<FormBuilder bind:form={$formStore} />
+		<FormBuilder />
 	{:else if tab === 1}
 		<!-- TODO: Fill out -->
 	{/if}

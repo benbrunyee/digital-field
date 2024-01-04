@@ -1,5 +1,7 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
+	import { fieldTypeIcons } from '../FormSelectables/SelectableBase.svelte';
 	import { type InputFieldI, type InputFieldType } from '../types/fieldTypes';
 	import FormFieldBase from './FormFieldBase.svelte';
 
@@ -20,7 +22,7 @@
 		audio: 'file',
 		file: 'file',
 		date: 'date',
-		image: 'image',
+		image: 'file',
 		link: 'url',
 		time: 'time',
 		video: 'file'
@@ -41,10 +43,14 @@
 	];
 </script>
 
-<FormFieldBase name={field.name}>
+<FormFieldBase bind:name={field.name}>
 	<!-- Single input field types -->
+	<svelte:fragment slot="icon">
+		<Icon icon={fieldTypeIcons[field.type]} class="h-4 w-4" />
+	</svelte:fragment>
 	{#if singleInputFields.includes(type)}
 		<input
+			{...$$restProps}
 			type={inputType[type]}
 			class="input variant-glass"
 			on:change={(e) => {

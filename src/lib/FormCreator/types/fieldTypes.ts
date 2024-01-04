@@ -41,13 +41,13 @@ export interface FieldBaseI<T extends FieldTypes> {
 export interface InputFieldI<T extends InputFieldType> extends FieldBaseI<T> {
 	name: string;
 	required: boolean;
-	options: InputFieldOptions<T>;
+	options: InputFieldOptions<T> | undefined;
 	value: string;
 }
 export interface DisplayFieldI<T extends DisplayFieldType> extends FieldBaseI<T> {
-	options: DisplayFieldOptions<T>;
+	options: DisplayFieldOptions<T> | undefined;
 }
-export type Field = InputFieldI<InputFieldType> | DisplayFieldI<DisplayFieldType>;
+export type FieldI = InputFieldI<InputFieldType> | DisplayFieldI<DisplayFieldType>;
 
 // Field options
 

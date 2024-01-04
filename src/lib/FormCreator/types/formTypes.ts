@@ -1,4 +1,4 @@
-import type { Field } from './fieldTypes';
+import type { FieldI } from './fieldTypes';
 import type { OutputEntity } from './outputFormTypes';
 
 /**
@@ -10,7 +10,7 @@ import type { OutputEntity } from './outputFormTypes';
 export interface Form {
 	id: string;
 	name: string;
-	fields: Field[];
+	fields: FieldI[];
 	outputs: OutputEntity[];
 	owner: string;
 	last_updated: string;

@@ -1,16 +1,5 @@
 <script lang="ts" context="module">
-</script>
-
-<script lang="ts">
-	import Icon from '@iconify/svelte';
-	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { type FieldTypes } from '../types/fieldTypes';
-	import { formatFieldType } from '../util/formatFieldType';
-
-	export let type: FieldTypes;
-	export let tooltip = true;
-
-	const fieldTypeIcons: {
+	export const fieldTypeIcons: {
 		[k in FieldTypes]: string;
 	} = {
 		multiple_choice: 'material-symbols:checklist-rounded',
@@ -31,6 +20,16 @@
 		subheading: 'material-symbols:format-color-text-rounded',
 		separator: 'material-symbols:space-bar-rounded'
 	};
+</script>
+
+<script lang="ts">
+	import Icon from '@iconify/svelte';
+	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import { type FieldTypes } from '../types/fieldTypes';
+	import { formatFieldType } from '../util/formatFieldType';
+
+	export let type: FieldTypes;
+	export let tooltip = true;
 
 	const fieldTooltipText: {
 		[k in FieldTypes]: string;

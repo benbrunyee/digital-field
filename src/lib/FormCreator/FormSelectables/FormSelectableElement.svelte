@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { spring } from 'svelte/motion';
+	import { draggedComponent } from '../stores/draggedSelectable';
 	import type { FieldTypes } from '../types/fieldTypes';
 
 	import SelectableBase from './SelectableBase.svelte';
 
 	export let type: FieldTypes;
-	export let onMouseUp: (e: MouseEvent) => void = () => {};
-	export let onMouseDown: (e: MouseEvent) => void = () => {};
-	export let onMouseMove: (e: MouseEvent) => void = () => {};
+	export let onMouseUp: (e: MouseEvent) => void = undefined;
+	export let onMouseDown: (e: MouseEvent) => void = undefined;
+	export let onMouseMove: (e: MouseEvent) => void = undefined;
 
 	let mouseDown = false;
 	const coordinates = spring(
@@ -24,11 +25,13 @@
 
 	function onInnerMouseUp(e: MouseEvent) {
 		mouseDown = false;
+		draggedComponent.stopDragging();
 		onMouseUp?.(e);
 	}
 
 	function onInnerMouseDown(e: MouseEvent) {
 		mouseDown = true;
+		draggedComponent.setDraggedNewField(type, e.clientX, e.clientY);
 		coordinates.update(
 			(coords) => {
 				coords.x = e.clientX;
@@ -43,12 +46,15 @@
 	}
 
 	function onInnerMouseMove(e: MouseEvent) {
+		if (!mouseDown) return;
+
 		coordinates.update((coords) => {
 			coords.x = e.clientX;
 			coords.y = e.clientY;
 			return coords;
 		});
 		onMouseMove?.(e);
+		draggedComponent.updateDraggedPosition(e.clientX, e.clientY);
 	}
 </script>
 
