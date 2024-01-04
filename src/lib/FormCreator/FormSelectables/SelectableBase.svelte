@@ -4,15 +4,15 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { displayElementTypes, type fieldTypes } from '../types/fieldTypes';
+	import { type FieldTypes } from '../types/fieldTypes';
 
-	export let type: (typeof fieldTypes)[number] | (typeof displayElementTypes)[number];
+	export let type: FieldTypes;
 	export let tooltip = true;
 
 	const fieldTypeIcons: {
-		[k in (typeof fieldTypes)[number] | (typeof displayElementTypes)[number]]: string;
+		[k in FieldTypes]: string;
 	} = {
-		'multiple-choice': 'material-symbols:checklist-rounded',
+		multiple_choice: 'material-symbols:checklist-rounded',
 		address: 'material-symbols:file-map-outline-rounded',
 		audio: 'material-symbols:music-note-rounded',
 		checkbox: 'material-symbols:check-box-outline-rounded',
@@ -26,15 +26,15 @@
 		text: 'material-symbols:text-fields-rounded',
 		time: 'material-symbols:nest-clock-farsight-analog-outline-rounded',
 		video: 'material-symbols:hangout-video-outline-rounded',
-		h1: 'material-symbols:format-color-text-rounded',
-		h2: 'material-symbols:format-color-text-rounded',
+		heading: 'material-symbols:format-color-text-rounded',
+		subheading: 'material-symbols:format-color-text-rounded',
 		separator: 'material-symbols:space-bar-rounded'
 	};
 
 	const fieldTooltipText: {
-		[k in (typeof fieldTypes)[number] | (typeof displayElementTypes)[number]]: string;
+		[k in FieldTypes]: string;
 	} = {
-		'multiple-choice': 'A question with multiple choices. The user can select one or more options.',
+		multiple_choice: 'A question with multiple choices. The user can select one or more options.',
 		address: 'Allows the user to enter an address.',
 		audio: 'Upload an audio file.',
 		checkbox: 'A question with a yes/no answer.',
@@ -48,8 +48,8 @@
 		text: 'Allows the user to enter text.',
 		time: 'Allows the user to enter a time.',
 		video: 'Upload a video.',
-		h1: 'A heading.',
-		h2: 'A subheading.',
+		heading: 'A heading.',
+		subheading: 'A subheading.',
 		separator: 'A horizontal line.'
 	};
 
@@ -60,7 +60,7 @@
 	};
 
 	function formatType(typeName: typeof type) {
-		return typeName.charAt(0).toUpperCase() + typeName.slice(1).replace(/-/g, ' ');
+		return typeName.charAt(0).toUpperCase() + typeName.slice(1).replace(/_/g, ' ');
 	}
 </script>
 

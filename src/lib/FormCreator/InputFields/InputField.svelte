@@ -1,24 +1,20 @@
 <script lang="ts">
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
-	import { displayElementTypes, type Field, type FieldType } from '../types/fieldTypes';
+	import { type InputField, type InputFieldType } from '../types/fieldTypes';
 
-	export let field: Field<FieldType>;
+	export let field: InputField<InputFieldType>;
 	export let value: any;
 
 	const type = field.type;
 
 	const inputType: {
-		[type in Partial<
-			FieldType[number] | (typeof displayElementTypes)[number]
-		>]: HTMLInputTypeAttribute;
+		[k in InputFieldType]: HTMLInputTypeAttribute;
 	} = {
 		address: 'text',
 		number: 'text',
 		signature: 'text',
 		text: 'text',
-		h1: 'text',
-		h2: 'text',
-		'multiple-choice': 'checkbox',
+		multiple_choice: 'checkbox',
 		checkbox: 'checkbox',
 		choice: 'radio',
 		audio: 'file',
@@ -29,12 +25,26 @@
 		time: 'time',
 		video: 'file'
 	};
+
+	const singleInputFields: InputFieldType[] = [
+		'text',
+		'number',
+		'date',
+		'time',
+		'checkbox',
+		'image',
+		'file',
+		'audio',
+		'video',
+		'address',
+		'link'
+	];
 </script>
 
 <h4 class="h4 ml-2">{field.name}</h4>
 
 <!-- Single input field types -->
-{#if ['text', 'number', 'date', 'time', 'checkbox', 'image', 'file', 'audio', 'video', 'address', 'link', 'h1', 'h2'].includes(type)}
+{#if singleInputFields.includes(type)}
 	<input
 		type={inputType[type]}
 		class="input variant-glass"

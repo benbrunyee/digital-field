@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { spring } from 'svelte/motion';
-	import type { FieldType, displayElementTypes } from '../types/fieldTypes';
+	import type { FieldTypes } from '../types/fieldTypes';
 
 	import SelectableBase from './SelectableBase.svelte';
 
-	export let type: FieldType | (typeof displayElementTypes)[number];
+	export let type: FieldTypes;
 	export let onMouseUp: (e: MouseEvent) => void = () => {};
 	export let onMouseDown: (e: MouseEvent) => void = () => {};
 	export let onMouseMove: (e: MouseEvent) => void = () => {};
@@ -29,11 +29,16 @@
 
 	function onInnerMouseDown(e: MouseEvent) {
 		mouseDown = true;
-		coordinates.update((coords) => {
-			coords.x = e.clientX;
-			coords.y = e.clientY;
-			return coords;
-		});
+		coordinates.update(
+			(coords) => {
+				coords.x = e.clientX;
+				coords.y = e.clientY;
+				return coords;
+			},
+			{
+				hard: true
+			}
+		);
 		onMouseDown?.(e);
 	}
 
@@ -54,8 +59,9 @@
 </div>
 
 {#if mouseDown}
+	<!-- Some reason, translating -1/2 on the y-axis doesn't center the element -->
 	<div
-		class="absolute z-50 -translate-x-1/2 -translate-y-1/2 opacity-75"
+		class="absolute z-50 -translate-x-1/2 -translate-y-2/3 opacity-75"
 		style={`left: ${$coordinates.x}px; top: ${$coordinates.y}px; width: ${selectableElement.offsetWidth}px;`}
 		role="none"
 	>

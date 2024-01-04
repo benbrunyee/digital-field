@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { displayElementTypes, fieldTypes } from '../types/fieldTypes';
+	import { displayFieldTypes, inputFieldTypes } from '../types/fieldTypes';
 	import FormSelectableElement from './FormSelectableElement.svelte';
 </script>
 
-{#each fieldTypes as type}
+{#each inputFieldTypes as type}
 	<FormSelectableElement {type} />
 {/each}
 
 <hr />
 <h3 class="h3">Display Elements</h3>
 
-{#each displayElementTypes as type}
+{#each displayFieldTypes as type}
 	<FormSelectableElement {type} />
 {/each}

@@ -1,22 +1,21 @@
-// TODO: Complete types
+/**
+ * Types of fields:
+ * - Input fields: These are fields that are displayed to the user when they are filling out the form (inputting data) e.g., text, number, date, etc.
+ * - Display fields: These are fields that are used for display purposes, these are read-only when inputting data e.g., h1, h2, separator, etc.
+ * - Output fields: These fields are a version of only the input fields purely for printing purposes (output PDFs).
+ * 	   This is used for determining the output for a given input field e.g., text, number, date, etc.
+ */
 
-export interface Field<T extends MergedFieldTypes> {
-	id: string;
-	name: string;
-	type: T;
-	required: boolean;
-	options: FieldOptions<T>[];
-	value: string;
-}
+// Top-level available field types
 
-export const fieldTypes = [
+export const inputFieldTypes = [
 	'text',
 	'number',
 	'date',
 	'time',
 	'checkbox',
 	'choice',
-	'multiple-choice',
+	'multiple_choice',
 	'image',
 	'video',
 	'audio',
@@ -25,17 +24,38 @@ export const fieldTypes = [
 	'address',
 	'link'
 ] as const;
+export const displayFieldTypes = ['heading', 'subheading', 'separator'] as const;
 
-export const displayElementTypes = ['h1', 'h2', 'separator'] as const;
+// Field Typescript types
 
-export type FieldType = (typeof fieldTypes)[number];
+export type InputFieldType = (typeof inputFieldTypes)[number];
+export type DisplayFieldType = (typeof displayFieldTypes)[number];
+export type FieldTypes = InputFieldType | DisplayFieldType;
 
-export type DisplayElementType = (typeof displayElementTypes)[number];
+// Field object Typescript types
 
-export type MergedFieldTypes = FieldType | DisplayElementType;
+export interface InputField<T extends InputFieldType> {
+	id: string;
+	name: string;
+	type: T;
+	required: boolean;
+	options: InputFieldOptions<T>;
+	value: string;
+}
+export interface DisplayField<T extends DisplayFieldType> {
+	type: T;
+	options: DisplayFieldOptions<T>;
+}
+export type Field = InputField<InputFieldType> | DisplayField<DisplayFieldType>;
 
-export type FieldOptions<T extends MergedFieldTypes> = T extends 'text' ? TextOptions : T;
+// Field options
 
-export type TextOptions = {
+export type InputFieldOptions<T extends InputFieldType> = T extends 'text' ? TextOptions : T;
+export interface TextOptions {
 	placeholder: string;
-};
+}
+
+export type DisplayFieldOptions<T extends DisplayFieldType> = T extends 'h1' ? H1Options : T;
+export interface H1Options {
+	bold: boolean;
+}

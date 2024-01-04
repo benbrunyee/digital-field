@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Field, FieldType } from '../types/fieldTypes';
+import type { Field, FieldTypes } from '../types/fieldTypes';
 import type { Form } from '../types/formTypes';
 
 const formWritable = () => {
@@ -22,7 +22,7 @@ const formWritable = () => {
 		owner: ''
 	});
 
-	function addField(field: Omit<Field<FieldType>, 'id'>) {
+	function addField(field: Omit<Field<FieldTypes>, 'id'>) {
 		store.update((f) => {
 			f.fields.push({ ...field, id: Math.random().toString(36).substring(7) });
 			return f;
