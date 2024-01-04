@@ -26,6 +26,7 @@
 			<slot name="icon" />
 		</div>
 	</svelte:fragment>
+
 	<svelte:fragment slot="summary">
 		<span>{name}</span>
 		{#if isNewField}
@@ -34,6 +35,7 @@
 			<span class="text-warning-600-300-token ml-1 text-xs">Modified</span>
 		{/if}
 	</svelte:fragment>
+
 	<svelte:fragment slot="content">
 		<div class="flex flex-col space-y-2">
 			<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
