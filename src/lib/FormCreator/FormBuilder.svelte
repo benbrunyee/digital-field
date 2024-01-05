@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Accordion } from '@skeletonlabs/skeleton';
-	import { getContext, setContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import {
 		draggedComponentStore,
 		draggedCoordinatesStore,
@@ -10,7 +10,7 @@
 	import type { AllFieldTypes } from '../SelectableElements/types/fieldTypes';
 	import { formatFieldType } from '../SelectableElements/util/formatFieldType';
 	import FormField from './FormFields/FormField.svelte';
-	import { formStore } from './stores/form';
+	import { getFormStore } from './stores/form';
 	import {
 		displayFieldTypes,
 		inputFieldTypes,
@@ -19,8 +19,7 @@
 	} from './types/fieldTypes';
 
 	// Set the form store in the context
-	const form = formStore();
-	setContext('formStore', form);
+	const form = getFormStore();
 
 	// Retrieve relevant stores from context
 	const draggedComponent =

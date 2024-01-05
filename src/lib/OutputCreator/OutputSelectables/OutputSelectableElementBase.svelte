@@ -24,6 +24,7 @@
 	import type { OutputDisplayFieldType, OutputFieldType } from '../types/outputFieldTypes';
 
 	export let tooltip = true;
+	export let name = undefined;
 	export let type: OutputFieldType;
 </script>
 
@@ -39,7 +40,7 @@
 		/>
 	</svelte:fragment>
 
-	{formatFieldType(type)}
+	{name ?? formatFieldType(type)}
 
 	<svelte:fragment slot="tooltip">
 		{outputFieldTooltipText[type]}

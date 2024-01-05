@@ -3,14 +3,14 @@
 	import { AccordionItem } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import type { formStore } from '../stores/form';
+	import { getFormStore } from '../stores/form';
 
 	export let name: string;
 	export let id: string;
 
 	const hasChanged = getContext<Writable<boolean>>('hasChanged');
 	const isNewField = getContext<boolean>('isNewField');
-	const formContext = getContext<ReturnType<typeof formStore>>('formStore');
+	const formContext = getFormStore();
 
 	const dispatch = createEventDispatcher();
 

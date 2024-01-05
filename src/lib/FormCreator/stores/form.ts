@@ -1,6 +1,27 @@
+import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { type FieldI } from '../types/fieldTypes';
 import type { Form } from '../types/formTypes';
+
+let DEFAULT_STORE_NAME = 'formStore';
+
+export const getFormStore = (storeName?: string) =>
+	getContext<ReturnType<typeof formStore>>(storeName ?? DEFAULT_STORE_NAME);
+
+export const initializeFormStore = (storeName?: string) => {
+	const store = formStore();
+	setContext(storeName ?? DEFAULT_STORE_NAME, store);
+	return store;
+};
+
+function createFieldId(prefix: string) {
+	// If prefix doesn't start with a letter, add a letter
+	if (!/^[a-z]/i.test(prefix)) {
+		prefix = 'a' + prefix;
+	}
+
+	return `${prefix}-${Math.random().toString(36).substring(7)}`;
+}
 
 export const formStore = () => {
 	const store = writable<Form>({
@@ -9,7 +30,7 @@ export const formStore = () => {
 		createdAt: new Date(),
 		fields: [
 			{
-				id: Math.random().toString(36).substring(7),
+				id: createFieldId('date'),
 				name: 'Date of Survey',
 				type: 'date',
 				options: undefined,
@@ -21,7 +42,7 @@ export const formStore = () => {
 				updatedAt: new Date()
 			},
 			{
-				id: Math.random().toString(36).substring(7),
+				id: createFieldId('text'),
 				name: 'Surveyor Name',
 				type: 'text',
 				options: undefined,
@@ -39,7 +60,10 @@ export const formStore = () => {
 	});
 
 	function addField(field: Omit<FieldI, 'id'>, atIndex?: number) {
-		const newField: FieldI = { ...field, id: Math.random().toString(36).substring(7) } as FieldI;
+		const newField: FieldI = {
+			...field,
+			id: createFieldId(field.type)
+		} as FieldI;
 
 		if (atIndex && atIndex < 0) {
 			atIndex = 0;

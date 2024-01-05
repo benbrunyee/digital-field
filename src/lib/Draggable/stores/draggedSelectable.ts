@@ -1,4 +1,4 @@
-import { setContext } from 'svelte';
+import { getContext, setContext } from 'svelte';
 import { derived, writable } from 'svelte/store';
 import type { AllFieldTypes, AllFieldsI } from '../../SelectableElements/types/fieldTypes';
 
@@ -18,6 +18,9 @@ type DraggedNewElement<T extends AllFieldTypes> = {
 	dragging: boolean;
 	fieldType: T;
 } & DraggedElementBase;
+
+export const getDraggedComponentStore = () =>
+	getContext<ReturnType<typeof draggedComponentStore>>('draggedComponentStore');
 
 export const initializeDraggedComponentStore = <
 	T extends AllFieldsI,

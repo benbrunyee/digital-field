@@ -4,9 +4,11 @@
 	import FormSettings from '$lib/FormCreator/FormSettings.svelte';
 	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
 	import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
+	import { initializeFormStore } from '../../../../../lib/FormCreator/stores/form';
 	import { tab } from './+page.svelte';
 
 	initializeDraggedComponentStore();
+	initializeFormStore();
 </script>
 
 <AppShell
