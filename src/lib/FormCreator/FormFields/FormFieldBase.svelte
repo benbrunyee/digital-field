@@ -10,7 +10,7 @@
 
 	const hasChanged = getContext<Writable<boolean>>('hasChanged');
 	const isNewField = getContext<boolean>('isNewField');
-	const formContext = getContext<typeof formStore>('formStore');
+	const formContext = getContext<ReturnType<typeof formStore>>('formStore');
 
 	const dispatch = createEventDispatcher();
 

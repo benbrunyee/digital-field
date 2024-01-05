@@ -1,14 +1,16 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { spring } from 'svelte/motion';
-	import { draggedComponent } from '../stores/draggedSelectable';
-	import type { FieldTypes } from '../types/fieldTypes';
+	import type { AllFieldTypes } from '../SelectableElements/types/fieldTypes';
+	import type { draggedComponentStore } from './stores/draggedSelectable';
 
-	import SelectableBase from './SelectableBase.svelte';
-
-	export let type: FieldTypes;
+	export let type: AllFieldTypes;
 	export let onMouseUp: (e: MouseEvent) => void = undefined;
 	export let onMouseDown: (e: MouseEvent) => void = undefined;
 	export let onMouseMove: (e: MouseEvent) => void = undefined;
+
+	const draggedComponent =
+		getContext<ReturnType<typeof draggedComponentStore>>('draggedComponentStore');
 
 	let mouseDown = false;
 	const coordinates = spring(
@@ -61,7 +63,7 @@
 <svelte:window on:mousemove={onInnerMouseMove} on:mouseup={onInnerMouseUp} />
 
 <div bind:this={selectableElement} role="none" on:mousedown={onInnerMouseDown}>
-	<SelectableBase class="hover:!border-primary-500" {type} />
+	<slot />
 </div>
 
 {#if mouseDown}
@@ -71,10 +73,6 @@
 		style={`left: ${$coordinates.x}px; top: ${$coordinates.y}px; width: ${selectableElement.offsetWidth}px;`}
 		role="none"
 	>
-		<SelectableBase
-			class="border-dashed !border-primary-500 !text-primary-500"
-			tooltip={false}
-			{type}
-		/>
+		<slot name="ghost" />
 	</div>
 {/if}

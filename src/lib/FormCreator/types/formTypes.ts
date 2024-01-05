@@ -1,5 +1,5 @@
+import type { OutputEntityI } from '../../OutputCreator/types/outputEntityTypes';
 import type { FieldI } from './fieldTypes';
-import type { OutputEntity } from './outputFormTypes';
 
 /**
  * A form is what you would expect, a entity that contains fields specifically for inputting data.
@@ -11,7 +11,7 @@ export interface Form {
 	id: string;
 	name: string;
 	fields: FieldI[];
-	outputs: OutputEntity[];
+	outputs: OutputEntityI[];
 	owner: string;
 	updatedAt: Date | undefined;
 	createdAt: Date | undefined;

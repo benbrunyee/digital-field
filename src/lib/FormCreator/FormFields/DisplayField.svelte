@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
-	import { fieldTypeIcons } from '../FormSelectables/SelectableBase.svelte';
+	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
+	import { fieldTypeIcons } from '../FormSelectables/FormSelectableElementBase.svelte';
 	import type { DisplayFieldI, DisplayFieldType } from '../types/fieldTypes';
-	import { formatFieldType } from '../util/formatFieldType';
 	import FormFieldBase from './FormFieldBase.svelte';
 
 	export let field: DisplayFieldI<DisplayFieldType>;

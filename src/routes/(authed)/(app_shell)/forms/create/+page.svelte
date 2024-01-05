@@ -1,19 +1,26 @@
-<script>
-	import FormBuilder from '$lib/FormCreator/FormBuilder.svelte';
-	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+<script lang="ts" context="module">
+	import { writable } from 'svelte/store';
 
-	let tab = 0;
+	export const tabs = ['input', 'output'] as const;
+	export const tab = writable<(typeof tabs)[number]>('input');
 </script>
 
-<div class="flex flex-col items-center justify-center space-y-4">
+<script>
+	import FormBuilder from '$lib/FormCreator/FormBuilder.svelte';
+	import OutputEntityEditor from '$lib/OutputCreator/OutputEntityEditor/OutputEntityEditor.svelte';
+	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
+</script>
+
+<div class="flex flex-auto flex-col items-center space-y-4">
 	<RadioGroup>
-		<RadioItem bind:group={tab} name="justify" value={0}>Input</RadioItem>
-		<RadioItem bind:group={tab} name="justify" value={1}>Output</RadioItem>
+		<RadioItem bind:group={$tab} name="justify" value="input">Input</RadioItem>
+		<RadioItem bind:group={$tab} name="justify" value="output">Output</RadioItem>
 	</RadioGroup>
 
-	{#if tab === 0}
+	{#if $tab === 'input'}
 		<FormBuilder />
-	{:else if tab === 1}
+	{:else if $tab === 'output'}
 		<!-- TODO: Fill out -->
+		<OutputEntityEditor />
 	{/if}
 </div>

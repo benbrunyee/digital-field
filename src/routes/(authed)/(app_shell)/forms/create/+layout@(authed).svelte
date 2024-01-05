@@ -1,13 +1,17 @@
-<script>
+<script lang="ts">
+	import { initializeDraggedComponentStore } from '$lib/Draggable/stores/draggedSelectable';
 	import FormElementSelection from '$lib/FormCreator/FormSelectables/FormElementSelection.svelte';
+	import FormSettings from '$lib/FormCreator/FormSettings.svelte';
+	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
 	import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
-	import FormSettings from '../../../../../lib/FormCreator/FormSettings.svelte';
+	import { tab } from './+page.svelte';
+
+	initializeDraggedComponentStore();
 </script>
 
 <AppShell
 	slotSidebarLeft="w-0 lg:w-64 p-4 space-y-2 lg:border-r lg:border-surface-300-600-token"
 	slotSidebarRight="w-0 lg:w-96 p-4 space-y-2 lg:border-l lg:border-surface-300-600-token"
-	class="w-"
 >
 	<svelte:fragment slot="header">
 		<AppBar slotTrail="place-content-end" shadow="shadow-xl">
@@ -26,7 +30,11 @@
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarLeft">
-		<FormElementSelection />
+		{#if $tab === 'input'}
+			<FormElementSelection />
+		{:else if $tab === 'output'}
+			<OutputElementSelection />
+		{/if}
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarRight">
 		<h3 class="h3 ml-2">Settings</h3>
@@ -35,7 +43,7 @@
 	</svelte:fragment>
 	<!-- (pageHeader) -->
 	<!-- Router Slot -->
-	<div class="space-y-2 p-4">
+	<div class="flex h-full p-4">
 		<slot />
 	</div>
 	<!-- ---- / ---- -->

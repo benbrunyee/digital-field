@@ -2,7 +2,7 @@ import { derived, get, writable } from 'svelte/store';
 import { type FieldI } from '../types/fieldTypes';
 import type { Form } from '../types/formTypes';
 
-const formWritable = () => {
+export const formStore = () => {
 	const store = writable<Form>({
 		id: '',
 		name: 'Form Name',
@@ -78,5 +78,5 @@ const formWritable = () => {
 	};
 };
 
-export const formStore = formWritable();
-export const fieldsStore = derived(formStore, ($form) => $form.fields);
+export const fieldsStore = (store: ReturnType<typeof formStore>) =>
+	derived(store, ($form) => $form.fields);

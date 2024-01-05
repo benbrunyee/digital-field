@@ -2,8 +2,6 @@
  * Types of fields:
  * - Input fields: These are fields that are displayed to the user when they are filling out the form (inputting data) e.g., text, number, date, etc.
  * - Display fields: These are fields that are used for display purposes, these are read-only when inputting data e.g., h1, h2, separator, etc.
- * - Output fields: These fields are a version of only the input fields purely for printing purposes (output PDFs).
- * 	   This is used for determining the output for a given input field e.g., text, number, date, etc.
  */
 
 // Top-level available field types
@@ -30,11 +28,11 @@ export const displayFieldTypes = ['heading', 'subheading', 'separator'] as const
 
 export type InputFieldType = (typeof inputFieldTypes)[number];
 export type DisplayFieldType = (typeof displayFieldTypes)[number];
-export type FieldTypes = InputFieldType | DisplayFieldType;
+export type FieldType = InputFieldType | DisplayFieldType;
 
 // Field object Typescript types
 
-export interface FieldBaseI<T extends FieldTypes> {
+interface FieldBaseI<T extends FieldType> {
 	id: string;
 	type: T;
 	createdAt: Date | undefined;
@@ -56,11 +54,11 @@ export type FieldI = InputFieldI<InputFieldType> | DisplayFieldI<DisplayFieldTyp
 // Field options
 
 export type InputFieldOptions<T extends InputFieldType> = T extends 'text' ? TextOptions : T;
-export interface TextOptions {
+export type TextOptions = {
 	placeholder: string;
-}
+};
 
 export type DisplayFieldOptions<T extends DisplayFieldType> = T extends 'h1' ? H1Options : T;
-export interface H1Options {
+export type H1Options = {
 	bold: boolean;
-}
+};

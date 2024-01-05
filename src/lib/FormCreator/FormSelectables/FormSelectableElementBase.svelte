@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	export const fieldTypeIcons: {
-		[k in FieldTypes]: string;
+		[k in FieldType]: string;
 	} = {
 		multiple_choice: 'material-symbols:checklist-rounded',
 		address: 'material-symbols:file-map-outline-rounded',
@@ -20,19 +20,9 @@
 		subheading: 'material-symbols:format-color-text-rounded',
 		separator: 'material-symbols:space-bar-rounded'
 	};
-</script>
 
-<script lang="ts">
-	import Icon from '@iconify/svelte';
-	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import { type FieldTypes } from '../types/fieldTypes';
-	import { formatFieldType } from '../util/formatFieldType';
-
-	export let type: FieldTypes;
-	export let tooltip = true;
-
-	const fieldTooltipText: {
-		[k in FieldTypes]: string;
+	export const fieldTooltipText: {
+		[k in FieldType]: string;
 	} = {
 		multiple_choice: 'A question with multiple choices. The user can select one or more options.',
 		address: 'Allows the user to enter an address.',
@@ -52,27 +42,26 @@
 		subheading: 'A subheading.',
 		separator: 'A horizontal line.'
 	};
-
-	const popupHover: PopupSettings = {
-		event: 'hover',
-		target: `popupHover-${type}`,
-		placement: 'right'
-	};
 </script>
 
-<div
-	class="group bg-surface-50-900-token border-surface-300-600-token flex cursor-pointer select-none flex-nowrap items-center justify-between p-2 px-4 border-token rounded-token {$$props.class}"
->
-	<div class="flex items-center space-x-1">
+<script lang="ts">
+	import Icon from '@iconify/svelte';
+	import SelectableBase from '../../SelectableElements/SelectableBase.svelte';
+	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
+	import { type FieldType } from '../types/fieldTypes';
+
+	export let type: FieldType;
+	export let tooltip = true;
+</script>
+
+<SelectableBase {tooltip} class={$$props.class ?? ''}>
+	<svelte:fragment slot="icon">
 		<Icon icon={fieldTypeIcons[type]} class="inline h-4 w-4 group-hover:text-primary-500" />
-		<span class="text-sm group-hover:text-primary-500">{formatFieldType(type)}</span>
-	</div>
-	{#if tooltip}
-		<div use:popup={popupHover} class="[&>*]:pointer-events-none">
-			<Icon icon="material-symbols:info-outline-rounded" class="ml-auto h-4 w-4" />
-		</div>
-		<div data-popup="popupHover-{type}" class="card bg-surface-800-100-token p-2">
-			<p class="text-surface-100-800-token text-xs">{fieldTooltipText[type]}</p>
-		</div>
-	{/if}
-</div>
+	</svelte:fragment>
+
+	{formatFieldType(type)}
+
+	<svelte:fragment slot="tooltip">
+		{fieldTooltipText[type]}
+	</svelte:fragment>
+</SelectableBase>

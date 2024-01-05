@@ -2,7 +2,7 @@
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
-	import { fieldTypeIcons } from '../FormSelectables/SelectableBase.svelte';
+	import { fieldTypeIcons } from '../FormSelectables/FormSelectableElementBase.svelte';
 	import { type InputFieldI, type InputFieldType } from '../types/fieldTypes';
 	import FormFieldBase from './FormFieldBase.svelte';
 
