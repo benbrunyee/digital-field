@@ -7,7 +7,7 @@
 
 <script>
 	import FormBuilder from '$lib/FormCreator/FormBuilder.svelte';
-	import OutputEntityEditor from '$lib/OutputCreator/OutputEntityEditor/OutputEntityEditor.svelte';
+	import OutputEntityEditor from '$lib/OutputCreator/OutputEntityEditor.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
 </script>
 

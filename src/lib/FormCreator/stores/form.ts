@@ -1,9 +1,11 @@
 import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { createId } from '../../util/createId';
-import { type FieldI } from '../types/fieldTypes';
+import { type FieldI, type FieldType } from '../types/fieldTypes';
 import type { Form } from '../types/formTypes';
+import { createDisplayField, createInputField } from '../util/createFields';
 import { filterForInputField } from '../util/filterForFieldType';
+import { isDisplayFieldType, isInputFieldType } from '../util/isFieldType';
 
 let DEFAULT_STORE_NAME = 'formStore';
 
@@ -52,25 +54,33 @@ export const formStore = () => {
 		owner: ''
 	});
 
-	function addField(field: Omit<FieldI, 'id'>, atIndex?: number) {
-		const newField: FieldI = {
-			...field,
-			id: createId(field.type)
-		} as FieldI;
+	const addField = (type: FieldType, insertAfter?: number) => {
+		// TODO: Create a new field
+		let newField: FieldI | undefined;
 
-		if (atIndex && atIndex < 0) {
-			atIndex = 0;
+		if (isInputFieldType(type)) {
+			newField = createInputField(type);
+		} else if (isDisplayFieldType(type)) {
+			newField = createDisplayField(type);
+		}
+
+		if (insertAfter && insertAfter < 0) {
+			insertAfter = 0;
 		}
 
 		const fieldLength = get(store).fields.length;
 
-		if (atIndex && atIndex > fieldLength) {
-			atIndex = fieldLength;
+		if (insertAfter && insertAfter > fieldLength) {
+			insertAfter = fieldLength;
 		}
 
 		store.update((f) => {
-			if (atIndex !== undefined) {
-				f.fields.splice(atIndex, 0, newField);
+			if (!newField) {
+				throw new Error('Invalid field type');
+			}
+
+			if (insertAfter !== undefined) {
+				f.fields.splice(insertAfter + 1, 0, newField);
 			} else {
 				f.fields.push(newField);
 			}
@@ -79,14 +89,14 @@ export const formStore = () => {
 		});
 
 		return newField;
-	}
+	};
 
-	function removeField(id: string) {
+	const removeField = (id: string) => {
 		store.update((f) => {
 			f.fields = f.fields.filter((field) => field.id !== id);
 			return f;
 		});
-	}
+	};
 
 	return {
 		...store,

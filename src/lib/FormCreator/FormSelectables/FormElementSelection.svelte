@@ -32,22 +32,20 @@
 
 	<FixedList
 		items={displayFieldTypes.map((x) => ({
-			payload: {
-				type: x,
-				newField: true
-			}
+			type: x,
+			newField: true
 		}))}
 	>
 		<svelte:fragment slot="draggedGhost" let:item>
 			<FormSelectableElementBase
 				class="border-dashed !border-primary-500 !text-primary-500"
 				tooltip={false}
-				type={item.payload.type}
+				type={item.type}
 			/>
 		</svelte:fragment>
 
 		<svelte:fragment slot="content" let:item>
-			<FormSelectableElementBase class="hover:!border-primary-500" type={item.payload.type} />
+			<FormSelectableElementBase class="hover:!border-primary-500" type={item.type} />
 		</svelte:fragment>
 	</FixedList>
 </div>

@@ -7,8 +7,17 @@
 	import FormField from './FormFields/FormField.svelte';
 	import { fieldTypeIcons } from './FormSelectables/FormSelectableElementBase.svelte';
 	import { getFormStore } from './stores/form';
+	import { isDisplayField, isField, isInputField, isNewField } from './util/isFieldType';
 
 	const form = getFormStore();
+
+	$: displayText = isInputField($draggedComponentPayload)
+		? $draggedComponentPayload.name || formatFieldType($draggedComponentPayload.type)
+		: isNewField($draggedComponentPayload)
+			? formatFieldType($draggedComponentPayload.type)
+			: isDisplayField($draggedComponentPayload)
+				? formatFieldType($draggedComponentPayload.type)
+				: '';
 </script>
 
 <div
@@ -19,35 +28,32 @@
 			items={$form.fields}
 			idField="id"
 			addItem={(item, insertAfter) => {
-				// TODO: Check types
-				console.log(item);
+				if (isNewField(item)) {
+					form.addField(item.type, insertAfter);
+				}
 			}}
-			removeItem={(item) => {
-				console.log(item);
-			}}
+			removeItem={(item) => {}}
 		>
 			<svelte:fragment slot="placeholderGhost">
-				{#if $draggedComponentPayload.newField && $draggedComponentPayload.type === 'text'}
+				{#if isNewField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
-						{formatFieldType($draggedComponentPayload.type)}
+						{displayText}
 					</FieldGhost>
-				{:else}
+				{:else if isField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
-						{$draggedComponentPayload.name ?? $draggedComponentPayload.type}
+						{displayText}
 					</FieldGhost>
 				{/if}
 			</svelte:fragment>
 
 			<svelte:fragment slot="draggedGhost">
-				{#if $draggedComponentPayload.newField && $draggedComponentPayload.type === 'text'}
+				{#if isNewField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
-						{$draggedComponentPayload.name
-							? $draggedComponentPayload.name
-							: formatFieldType($draggedComponentPayload.type)}
+						{displayText}
 					</FieldGhost>
-				{:else}
+				{:else if isField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
-						{$draggedComponentPayload.name ?? $draggedComponentPayload.type}
+						{displayText}
 					</FieldGhost>
 				{/if}
 			</svelte:fragment>

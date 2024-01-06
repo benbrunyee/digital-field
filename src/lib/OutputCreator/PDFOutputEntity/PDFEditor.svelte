@@ -1,42 +1,54 @@
 <script lang="ts">
 	import { Accordion } from '@skeletonlabs/skeleton';
-	import { getContext } from 'svelte';
 	import OrderableList from '../../Draggable/OrderableList.svelte';
 	import { draggedComponentPayload } from '../../Draggable/stores/draggedSelectable';
 	import { fieldTypeIcons } from '../../FormCreator/FormSelectables/FormSelectableElementBase.svelte';
+	import {
+		isDisplayField,
+		isField,
+		isInputField,
+		isNewField
+	} from '../../FormCreator/util/isFieldType';
 	import FieldGhost from '../../SelectableElements/FieldGhost.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
+	import OutputField from '../OutputFields/OutputField.svelte';
 	import { outputFieldIcons } from '../OutputSelectables/OutputSelectableElementBase.svelte';
-	import { outputEntityStore } from '../stores/outputEntity';
+	import { getOutputEntityStore, outputEntityFieldsStore } from '../stores/outputEntity';
+	import { isOutputField } from '../util/isOutputFieldType';
 
-	const outputEntity = getContext<ReturnType<typeof outputEntityStore>>('outputEntityStore');
+	const outputEntity = getOutputEntityStore();
+	const outputEntityFields = outputEntityFieldsStore(outputEntity);
 
-	$: displayText = $draggedComponentPayload.name ?? formatFieldType($draggedComponentPayload.type);
+	$: displayText = isInputField($draggedComponentPayload)
+		? $draggedComponentPayload.name
+		: isDisplayField($draggedComponentPayload) || isNewField($draggedComponentPayload)
+			? formatFieldType($draggedComponentPayload.type)
+			: '';
 </script>
 
-<!-- TODO: Complete this -->
 <div
 	class="border-surface-800-100-token h-min min-h-14 flex-1 border border-dashed p-2 rounded-token"
 >
 	<Accordion>
 		<OrderableList
-			items={$outputEntity.fields}
+			items={$outputEntityFields}
 			idField="id"
 			addItem={(item) => {
-				console.log(item);
-				$outputEntity.fields.push(item.payload);
+				if (isOutputField(item)) {
+					outputEntity.addField(item.type);
+				}
 			}}
 			removeItem={() => {}}
 		>
 			<svelte:fragment slot="placeholderGhost">
-				{#if $draggedComponentPayload.newField && $draggedComponentPayload.type === 'text'}
+				{#if isNewField($draggedComponentPayload)}
 					<FieldGhost
 						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
 							fieldTypeIcons[$draggedComponentPayload.type]}
 					>
 						{displayText}
 					</FieldGhost>
-				{:else}
+				{:else if isField($draggedComponentPayload)}
 					<FieldGhost
 						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
 							fieldTypeIcons[$draggedComponentPayload.type]}
@@ -47,14 +59,14 @@
 			</svelte:fragment>
 
 			<svelte:fragment slot="draggedGhost">
-				{#if $draggedComponentPayload.newField && $draggedComponentPayload.type === 'text'}
+				{#if isNewField($draggedComponentPayload)}
 					<FieldGhost
 						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
 							fieldTypeIcons[$draggedComponentPayload.type]}
 					>
 						{displayText}
 					</FieldGhost>
-				{:else}
+				{:else if isField($draggedComponentPayload)}
 					<FieldGhost
 						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
 							fieldTypeIcons[$draggedComponentPayload.type]}
@@ -64,7 +76,9 @@
 				{/if}
 			</svelte:fragment>
 
-			<svelte:fragment slot="content" let:item></svelte:fragment>
+			<svelte:fragment slot="content" let:item>
+				<OutputField bind:field={$outputEntity.fields[item.i]} />
+			</svelte:fragment>
 		</OrderableList>
 	</Accordion>
 </div>

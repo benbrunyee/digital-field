@@ -1,6 +1,4 @@
 <script lang="ts" generics="T extends object | number | boolean | string">
-	import { createId } from '../util/createId';
-
 	import { writable } from 'svelte/store';
 	import Draggable from './Draggable.svelte';
 	import Dropzone, {
@@ -18,19 +16,16 @@
 	 */
 
 	export let items: T[];
-	export let idField: T extends object ? keyof T : undefined = undefined;
-	export let addItem: (item: any, insertAfter: number) => void;
-	export let removeItem: (item?: any) => void;
+	export let idField: keyof T | undefined = undefined;
+	export let addItem: (item: unknown, insertAfter: number) => void;
+	export let removeItem: (item?: unknown) => void;
 
-	$: selectedIdField = idField ?? 'id';
+	let hideElementIndex: number | undefined = undefined;
 
-	$: items.forEach((item) => {
-		if (typeof item === 'object' && !item[selectedIdField]) {
-			item[selectedIdField] = createId('orderable-list-item');
-		}
-	});
-
-	let ghostElement = {
+	let ghostElement: {
+		show: boolean;
+		showAfterIndex: number | undefined;
+	} = {
 		show: false,
 		showAfterIndex: undefined
 	};
@@ -63,41 +58,36 @@
 			}
 		});
 
+		const firstElement = $measuredElements.get(0);
+
 		if (
+			firstElement &&
 			nearestIndex === -1 &&
-			nearestDistance <= ($measuredElements.get(0)[1] - $measuredElements.get(0)[0]) / 2
+			nearestDistance <= (firstElement[1] - firstElement[0]) / 2
 		)
 			return -1;
 
 		return nearestIndex;
 	}
 
-	function onDraggedOverZone(event: CustomEvent<DraggedOverZoneEventDetail>) {
+	function onDraggedOverZone(event: CustomEvent<DraggedOverZoneEventDetail<T>>) {
 		ghostElement = {
 			show: true,
 			showAfterIndex: findNextElementIndex(event.detail.position.y)
 		};
 	}
 
-	function onDraggedLeftZone(event: CustomEvent<DraggedLeftZoneEventDetail>) {
+	function onDraggedLeftZone(event: CustomEvent<DraggedLeftZoneEventDetail<T>>) {
 		ghostElement = {
 			show: false,
 			showAfterIndex: undefined
 		};
 
-		if ('payload' in event.detail && event.detail.payload?.id) {
-			removeItem(event.detail.payload);
-		}
+		removeItem(event.detail.payload);
 	}
 
-	function onDropInsideZone(event: CustomEvent<DroppedInsideZoneEventDetail>) {
-		addItem(
-			{
-				id: createId('orderable-list-item'),
-				payload: event.detail.payload
-			},
-			ghostElement.showAfterIndex
-		);
+	function onDropInsideZone(event: CustomEvent<DroppedInsideZoneEventDetail<T>>) {
+		addItem(event.detail.payload, ghostElement.showAfterIndex ?? 0);
 
 		ghostElement = {
 			show: false,
@@ -112,19 +102,29 @@
 	on:draggedLeftZone={onDraggedLeftZone}
 >
 	<div class="space-y-1 {$$props.class ?? ''}">
-		{#each items as item, i (typeof item === 'object' && idField && item[selectedIdField] ? item[selectedIdField] : item)}
+		{#each items as item, i (typeof item === 'object' && idField && item[idField] ? item[idField] : item)}
 			{#if ghostElement.show && ghostElement.showAfterIndex === -1 && i === 0}
 				<slot name="placeholderGhost" />
 			{/if}
 
-			<Draggable payload={item}>
+			<Draggable
+				payload={item}
+				on:pickup={() => {
+					hideElementIndex = i;
+				}}
+				on:drop={() => {
+					hideElementIndex = undefined;
+				}}
+			>
 				<MeasuredElement
 					on:measure={(event) => {
 						const detail = event.detail;
 						$measuredElements.set(i, [detail.top, detail.bottom]);
 					}}
 				>
-					<slot name="content" item={{ item, i }} />
+					{#if hideElementIndex !== i}
+						<slot name="content" item={{ item, i }} />
+					{/if}
 				</MeasuredElement>
 
 				<svelte:fragment slot="ghost">

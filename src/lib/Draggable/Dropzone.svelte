@@ -1,19 +1,19 @@
 <script lang="ts" context="module">
-	type Payload = {
-		payload: any;
+	type Payload<T extends any> = {
+		payload: T;
 	};
 	type Position = {
 		position: { x: number; y: number };
 	};
 
-	export type DraggedLeftZoneEventDetail = Payload;
-	export type DraggedEnteredZoneEventDetail = Payload & Position;
-	export type DraggedOverZoneEventDetail = Payload & Position;
-	export type DroppedInsideZoneEventDetail = Payload & Position;
-	export type DroppedOutsideZoneEventDetail = Payload & Position;
+	export type DraggedLeftZoneEventDetail<T extends any> = Payload<T>;
+	export type DraggedEnteredZoneEventDetail<T extends any> = Payload<T> & Position;
+	export type DraggedOverZoneEventDetail<T extends any> = Payload<T> & Position;
+	export type DroppedInsideZoneEventDetail<T extends any> = Payload<T> & Position;
+	export type DroppedOutsideZoneEventDetail<T extends any> = Payload<T> & Position;
 </script>
 
-<script lang="ts">
+<script lang="ts" generics="T extends any">
 	import { createEventDispatcher } from 'svelte';
 	import { get } from 'svelte/store';
 	import {
@@ -61,16 +61,16 @@
 
 			if (!isInBounds(position.x, position.y)) {
 				draggedOverZone = false;
-				dispatch('draggedLeftZone', <DraggedLeftZoneEventDetail>detail);
+				dispatch('draggedLeftZone', <DraggedLeftZoneEventDetail<T>>detail);
 				return;
 			}
 
 			if (!draggedOverZone) {
 				draggedOverZone = true;
-				dispatch('draggedEnteredZone', <DraggedEnteredZoneEventDetail>{ ...detail, position });
+				dispatch('draggedEnteredZone', <DraggedEnteredZoneEventDetail<T>>{ ...detail, position });
 			}
 
-			dispatch('draggedOverZone', <DraggedOverZoneEventDetail>{ ...detail, position });
+			dispatch('draggedOverZone', <DraggedOverZoneEventDetail<T>>{ ...detail, position });
 		});
 
 		const droppedSubscriber = isDragging.subscribe((dragging) => {
@@ -82,10 +82,10 @@
 					position
 				};
 
-				if (isInBounds(position.x, position.y)) {
-					dispatch('droppedInsideZone', <DroppedInsideZoneEventDetail>detail);
+				if (position && isInBounds(position.x, position.y)) {
+					dispatch('droppedInsideZone', <DroppedInsideZoneEventDetail<T>>detail);
 				} else {
-					dispatch('droppedOutsideZone', <DroppedOutsideZoneEventDetail>detail);
+					dispatch('droppedOutsideZone', <DroppedOutsideZoneEventDetail<T>>detail);
 				}
 			}
 		});

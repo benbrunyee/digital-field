@@ -2,9 +2,9 @@
 	import Icon from '@iconify/svelte';
 	import { createEventDispatcher } from 'svelte';
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
+	import FieldBase from '../../Fields/FieldBase.svelte';
 	import { fieldTypeIcons } from '../FormSelectables/FormSelectableElementBase.svelte';
 	import { type InputFieldI, type InputFieldType } from '../types/fieldTypes';
-	import FormFieldBase from './FormFieldBase.svelte';
 
 	export let field: InputFieldI<InputFieldType>;
 
@@ -50,7 +50,7 @@
 	}
 </script>
 
-<FormFieldBase id={field.id} bind:name={field.name}>
+<FieldBase id={field.id} bind:name={field.name}>
 	<!-- Single input field types -->
 	<svelte:fragment slot="icon">
 		<Icon icon={fieldTypeIcons[field.type]} class="h-4 w-4" />
@@ -81,4 +81,4 @@
 			>There was a problem displaying the options with type: {type}</span
 		>
 	{/if}
-</FormFieldBase>
+</FieldBase>

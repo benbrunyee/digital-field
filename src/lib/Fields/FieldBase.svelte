@@ -3,7 +3,7 @@
 	import { AccordionItem } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import { getFormStore } from '../stores/form';
+	import { getFormStore } from '../FormCreator/stores/form';
 
 	export let name: string;
 	export let id: string;
@@ -12,6 +12,10 @@
 	const isNewField = getContext<boolean>('isNewField');
 	const formContext = getFormStore();
 
+	/**
+	 * Events:
+	 * - fieldChanged: Set to true when the field has been modified
+	 */
 	const dispatch = createEventDispatcher();
 
 	function onInputChanged() {

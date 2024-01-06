@@ -1,3 +1,6 @@
+import { z } from 'zod';
+import { implement } from '../../util/typeToZod';
+
 /**
  * Types of fields:
  * - Input fields: These are fields that are displayed to the user when they are filling out the form (inputting data) e.g., text, number, date, etc.
@@ -23,6 +26,7 @@ export const inputFieldTypes = [
 	'link'
 ] as const;
 export const displayFieldTypes = ['heading', 'subheading', 'separator'] as const;
+export const fieldTypes = [...inputFieldTypes, ...displayFieldTypes] as const;
 
 // Field Typescript types
 
@@ -38,6 +42,7 @@ interface FieldBaseI<T extends FieldType> {
 	createdAt: Date | undefined;
 	updatedAt: Date | undefined;
 }
+
 export interface InputFieldI<T extends InputFieldType> extends FieldBaseI<T> {
 	name: string;
 	required: boolean;
@@ -50,6 +55,29 @@ export interface DisplayFieldI<T extends DisplayFieldType> extends FieldBaseI<T>
 	options: DisplayFieldOptions<T> | undefined;
 }
 export type FieldI = InputFieldI<InputFieldType> | DisplayFieldI<DisplayFieldType>;
+
+export const InputFieldISchema = implement<InputFieldI<InputFieldType>>().with({
+	id: z.string(),
+	type: z.enum(inputFieldTypes),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+	name: z.string(),
+	required: z.boolean(),
+	options: z.any().optional(),
+	value: z.string(),
+	placeholder: z.string(),
+	description: z.string()
+});
+
+export const DisplayFieldISchema = implement<DisplayFieldI<DisplayFieldType>>().with({
+	id: z.string(),
+	type: z.enum(displayFieldTypes),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+	options: z.any().optional()
+});
+
+export const FieldISchema = z.union([InputFieldISchema, DisplayFieldISchema]);
 
 // TODO: Field options
 

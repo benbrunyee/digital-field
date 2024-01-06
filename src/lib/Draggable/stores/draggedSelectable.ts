@@ -1,15 +1,15 @@
 import { derived, writable } from 'svelte/store';
 
-export interface DraggableStore<T extends any> {
+export interface DraggableStore<T extends unknown> {
 	position: {
 		x: number;
 		y: number;
 	};
 	dragging: boolean;
-	payload: T;
+	payload: T | undefined;
 }
 
-const draggedComponentStore = <T extends any>() => {
+const draggedComponentStore = <T extends unknown>() => {
 	const store = writable<DraggableStore<T>>({
 		dragging: false,
 		payload: undefined,
@@ -56,7 +56,7 @@ const draggedComponentStore = <T extends any>() => {
 	};
 };
 
-export const draggedComponent = draggedComponentStore<any>();
+export const draggedComponent = draggedComponentStore<unknown>();
 
 export const isDragging = derived(draggedComponent, ($draggedComponent) => {
 	if ($draggedComponent) {
