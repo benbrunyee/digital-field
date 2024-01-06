@@ -1,16 +1,8 @@
-<script lang="ts">
-	import { getContext } from 'svelte';
+<script lang="ts" generics="T extends object | number | boolean | string">
 	import { spring } from 'svelte/motion';
-	import type { AllFieldTypes } from '../SelectableElements/types/fieldTypes';
-	import type { draggedComponentStore } from './stores/draggedSelectable';
+	import { draggedComponent } from './stores/draggedSelectable';
 
-	export let type: AllFieldTypes;
-	export let onMouseUp: (e: MouseEvent) => void = undefined;
-	export let onMouseDown: (e: MouseEvent) => void = undefined;
-	export let onMouseMove: (e: MouseEvent) => void = undefined;
-
-	const draggedComponent =
-		getContext<ReturnType<typeof draggedComponentStore>>('draggedComponentStore');
+	export let payload: T;
 
 	let mouseDown = false;
 	const coordinates = spring(
@@ -28,12 +20,12 @@
 	function onInnerMouseUp(e: MouseEvent) {
 		mouseDown = false;
 		draggedComponent.stopDragging();
-		onMouseUp?.(e);
 	}
 
 	function onInnerMouseDown(e: MouseEvent) {
 		mouseDown = true;
-		draggedComponent.setDraggedNewField(type, e.clientX, e.clientY);
+		draggedComponent.setPayload(payload);
+		draggedComponent.updateDraggedPosition(e.clientX, e.clientY);
 		coordinates.update(
 			(coords) => {
 				coords.x = e.clientX;
@@ -44,7 +36,6 @@
 				hard: true
 			}
 		);
-		onMouseDown?.(e);
 	}
 
 	function onInnerMouseMove(e: MouseEvent) {
@@ -55,7 +46,6 @@
 			coords.y = e.clientY;
 			return coords;
 		});
-		onMouseMove?.(e);
 		draggedComponent.updateDraggedPosition(e.clientX, e.clientY);
 	}
 </script>

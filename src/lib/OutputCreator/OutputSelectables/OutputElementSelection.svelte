@@ -1,40 +1,65 @@
 <script lang="ts">
-	import Draggable from '../../Draggable/Draggable.svelte';
-	import { getFormStore } from '../../FormCreator/stores/form';
-	import { filterForInputField } from '../../FormCreator/util/filterForFieldType';
+	import FixedList from '../../Draggable/FixedList.svelte';
+	import { getFormStore, inputFieldsStore } from '../../FormCreator/stores/form';
 	import { outputDisplayFieldTypes } from '../types/outputFieldTypes';
 	import OutputSelectableElementBase from './OutputSelectableElementBase.svelte';
 
+	// We don't want to allow the user to select form display elements for the output structure
 	const formStore = getFormStore();
 
-	console.log($formStore);
-
-	// We don't want to allow the user to select form display elements for the output structure
-	$: inputFields = $formStore.fields.filter(filterForInputField);
-
-	$: console.log(inputFields);
+	const inputFields = inputFieldsStore(formStore);
 </script>
 
-<h3 class="h3 ml-2">Form Elements</h3>
-<hr />
+<div class="space-y-2">
+	<h3 class="h3 ml-2">Form Elements</h3>
+	<hr />
 
-{#each inputFields as field}
-	<OutputSelectableElementBase type={field.type} name={field.name} />
-{/each}
+	<FixedList
+		items={$inputFields.map((x) => ({
+			...x,
+			newField: true
+		}))}
+	>
+		<svelte:fragment slot="draggedGhost" let:item>
+			<OutputSelectableElementBase
+				class="border-dashed !border-primary-500 !text-primary-500"
+				type={item.type}
+				name={item.name}
+				tooltip={Boolean(item.description)}
+				tooltipText={item.description}
+			/>
+		</svelte:fragment>
 
-<h3 class="h3 ml-2">Display Elements</h3>
-<hr />
+		<svelte:fragment slot="content" let:item>
+			<OutputSelectableElementBase
+				class="hover:!border-primary-500"
+				type={item.type}
+				name={item.name}
+				tooltip={Boolean(item.description)}
+				tooltipText={item.description}
+			/>
+		</svelte:fragment>
+	</FixedList>
 
-{#each outputDisplayFieldTypes as type}
-	<Draggable {type}>
-		<OutputSelectableElementBase class="hover:!border-primary-500" {type} />
+	<h3 class="h3 ml-2">Display Elements</h3>
+	<hr />
 
-		<svelte:fragment slot="ghost">
+	<FixedList
+		items={outputDisplayFieldTypes.map((x) => ({
+			type: x,
+			newField: true
+		}))}
+	>
+		<svelte:fragment slot="draggedGhost" let:item>
 			<OutputSelectableElementBase
 				class="border-dashed !border-primary-500 !text-primary-500"
 				tooltip={false}
-				{type}
+				type={item.type}
 			/>
 		</svelte:fragment>
-	</Draggable>
-{/each}
+
+		<svelte:fragment slot="content" let:item>
+			<OutputSelectableElementBase class="hover:!border-primary-500" type={item.type} />
+		</svelte:fragment>
+	</FixedList>
+</div>

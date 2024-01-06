@@ -1,7 +1,9 @@
 import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
+import { createId } from '../../util/createId';
 import { type FieldI } from '../types/fieldTypes';
 import type { Form } from '../types/formTypes';
+import { filterForInputField } from '../util/filterForFieldType';
 
 let DEFAULT_STORE_NAME = 'formStore';
 
@@ -14,15 +16,6 @@ export const initializeFormStore = (storeName?: string) => {
 	return store;
 };
 
-function createFieldId(prefix: string) {
-	// If prefix doesn't start with a letter, add a letter
-	if (!/^[a-z]/i.test(prefix)) {
-		prefix = 'a' + prefix;
-	}
-
-	return `${prefix}-${Math.random().toString(36).substring(7)}`;
-}
-
 export const formStore = () => {
 	const store = writable<Form>({
 		id: '',
@@ -30,7 +23,7 @@ export const formStore = () => {
 		createdAt: new Date(),
 		fields: [
 			{
-				id: createFieldId('date'),
+				id: createId('date'),
 				name: 'Date of Survey',
 				type: 'date',
 				options: undefined,
@@ -42,7 +35,7 @@ export const formStore = () => {
 				updatedAt: new Date()
 			},
 			{
-				id: createFieldId('text'),
+				id: createId('text'),
 				name: 'Surveyor Name',
 				type: 'text',
 				options: undefined,
@@ -62,7 +55,7 @@ export const formStore = () => {
 	function addField(field: Omit<FieldI, 'id'>, atIndex?: number) {
 		const newField: FieldI = {
 			...field,
-			id: createFieldId(field.type)
+			id: createId(field.type)
 		} as FieldI;
 
 		if (atIndex && atIndex < 0) {
@@ -104,3 +97,6 @@ export const formStore = () => {
 
 export const fieldsStore = (store: ReturnType<typeof formStore>) =>
 	derived(store, ($form) => $form.fields);
+
+export const inputFieldsStore = (store: ReturnType<typeof formStore>) =>
+	derived(store, ($form) => $form.fields.filter(filterForInputField));

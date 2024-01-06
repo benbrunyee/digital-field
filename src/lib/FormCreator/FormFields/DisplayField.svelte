@@ -9,7 +9,6 @@
 </script>
 
 <FormFieldBase id={field.id} name={formatFieldType(field.type)}>
-	<!-- TODO: Complete -->
 	<svelte:fragment slot="icon">
 		<Icon icon={fieldTypeIcons[field.type]} class="h-4 w-4" />
 	</svelte:fragment>

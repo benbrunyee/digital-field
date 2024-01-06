@@ -4,7 +4,8 @@
 	} = {
 		heading: 'material-symbols:format-color-text-rounded',
 		subheading: 'material-symbols:format-color-text-rounded',
-		divider: 'material-symbols:align-space-even-rounded'
+		divider: 'material-symbols:align-space-even-rounded',
+		html: 'material-symbols:code-rounded'
 	};
 
 	export const outputFieldTooltipText: {
@@ -12,7 +13,8 @@
 	} = {
 		heading: 'A heading.',
 		subheading: 'A subheading.',
-		divider: 'A horizontal line.'
+		divider: 'A horizontal line.',
+		html: "Custom HTML. You can use the form's data in your HTML by using the following syntax: <code>{data:fieldName}</code>."
 	};
 </script>
 
@@ -24,7 +26,8 @@
 	import type { OutputDisplayFieldType, OutputFieldType } from '../types/outputFieldTypes';
 
 	export let tooltip = true;
-	export let name = undefined;
+	export let tooltipText: string = undefined;
+	export let name: string = undefined;
 	export let type: OutputFieldType;
 </script>
 
@@ -43,6 +46,6 @@
 	{name ?? formatFieldType(type)}
 
 	<svelte:fragment slot="tooltip">
-		{outputFieldTooltipText[type]}
+		{tooltipText ?? outputFieldTooltipText[type]}
 	</svelte:fragment>
 </SelectableBase>

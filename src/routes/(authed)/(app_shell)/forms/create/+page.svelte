@@ -20,7 +20,6 @@
 	{#if $tab === 'input'}
 		<FormBuilder />
 	{:else if $tab === 'output'}
-		<!-- TODO: Fill out -->
 		<OutputEntityEditor />
 	{/if}
 </div>

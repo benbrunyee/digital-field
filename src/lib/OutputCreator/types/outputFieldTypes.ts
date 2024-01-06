@@ -8,7 +8,7 @@ import type { InputFieldType } from '../../FormCreator/types/fieldTypes';
 
 // Top-level available field types
 
-export const outputDisplayFieldTypes = ['heading', 'subheading', 'divider'] as const;
+export const outputDisplayFieldTypes = ['heading', 'subheading', 'divider', 'html'] as const;
 
 // Field Typescript types
 
@@ -34,7 +34,7 @@ export type OutputFieldI =
 	| OutputDisplayFieldI<OutputDisplayFieldType>
 	| OutputInputFieldI<OutputInputFieldType>;
 
-// Field options
+// TODO: Field options
 
 export type OutputInputFieldOptions<T extends InputFieldType> = T extends 'text'
 	? TextOutputOptions

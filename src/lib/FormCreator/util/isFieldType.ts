@@ -8,6 +8,10 @@ import {
 	type InputFieldType
 } from '../types/fieldTypes';
 
+export function isField(field: FieldI): field is FieldI {
+	return isInputField(field) || isDisplayField(field);
+}
+
 export function isInputField(field: FieldI): field is InputFieldI<InputFieldType> {
 	return inputFieldTypes.includes((field as InputFieldI<InputFieldType>).type);
 }

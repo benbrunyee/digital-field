@@ -10,11 +10,8 @@
 		Avatar,
 		Drawer,
 		LightSwitch,
-		getDrawerStore,
-		initializeStores
+		getDrawerStore
 	} from '@skeletonlabs/skeleton';
-
-	initializeStores();
 
 	afterNavigate(({ from }) => {
 		previousPage = from?.url.pathname || previousPage;

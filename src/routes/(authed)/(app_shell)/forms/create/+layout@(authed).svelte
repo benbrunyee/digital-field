@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { initializeDraggedComponentStore } from '$lib/Draggable/stores/draggedSelectable';
 	import FormElementSelection from '$lib/FormCreator/FormSelectables/FormElementSelection.svelte';
 	import FormSettings from '$lib/FormCreator/FormSettings.svelte';
 	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
@@ -7,13 +6,12 @@
 	import { initializeFormStore } from '../../../../../lib/FormCreator/stores/form';
 	import { tab } from './+page.svelte';
 
-	initializeDraggedComponentStore();
 	initializeFormStore();
 </script>
 
 <AppShell
-	slotSidebarLeft="w-0 lg:w-64 p-4 space-y-2 lg:border-r lg:border-surface-300-600-token"
-	slotSidebarRight="w-0 lg:w-96 p-4 space-y-2 lg:border-l lg:border-surface-300-600-token"
+	slotSidebarLeft="w-0 lg:w-64 p-4 lg:border-r lg:border-surface-300-600-token"
+	slotSidebarRight="w-0 lg:w-96 p-4 lg:border-l lg:border-surface-300-600-token"
 >
 	<svelte:fragment slot="header">
 		<AppBar slotTrail="place-content-end" shadow="shadow-xl">

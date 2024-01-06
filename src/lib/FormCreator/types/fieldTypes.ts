@@ -51,7 +51,7 @@ export interface DisplayFieldI<T extends DisplayFieldType> extends FieldBaseI<T>
 }
 export type FieldI = InputFieldI<InputFieldType> | DisplayFieldI<DisplayFieldType>;
 
-// Field options
+// TODO: Field options
 
 export type InputFieldOptions<T extends InputFieldType> = T extends 'text' ? TextOptions : T;
 export type TextOptions = {
