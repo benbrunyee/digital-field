@@ -1,5 +1,10 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import Handlebars from 'handlebars';
 	import PDFObject from 'pdfobject';
+	import { onMount } from 'svelte';
+
+	let html = '';
 
 	function pdfDisplay(node: HTMLDivElement) {
 		// Random unique ID that starts with a letter
@@ -9,8 +14,23 @@
 			supportRedirect: true
 		});
 	}
+
+	onMount(() => {
+		const source = $page.data.html;
+
+		const template = Handlebars.compile(source);
+		html = new Handlebars.SafeString(
+			template({
+				title: Handlebars.Utils.escapeExpression('My New Post'),
+				body: Handlebars.Utils.escapeExpression('This is my first post!')
+			})
+		).toHTML();
+
+		console.log(html);
+	});
 </script>
 
 <div class="flex flex-1 lg:w-2/3">
+	{@html html}
 	<div use:pdfDisplay class="flex-auto"></div>
 </div>

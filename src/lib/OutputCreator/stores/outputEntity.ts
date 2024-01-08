@@ -9,7 +9,7 @@ let DEFAULT_STORE_NAME = 'outputEntityStore';
 export const getOutputEntityStore = (storeName?: string) =>
 	getContext<ReturnType<typeof outputEntityStore>>(storeName ?? DEFAULT_STORE_NAME);
 
-export const initializeOutputEntityStores = (storeName: string, initialValue?: OutputEntityI) => {
+export const initializeOutputEntityStores = (storeName?: string, initialValue?: OutputEntityI) => {
 	const store = outputEntityStore(initialValue);
 	setContext(storeName ?? DEFAULT_STORE_NAME, store);
 	return store;

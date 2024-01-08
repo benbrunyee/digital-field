@@ -4,7 +4,8 @@
 	import Dropzone, {
 		type DraggedLeftZoneEventDetail,
 		type DraggedOverZoneEventDetail,
-		type DroppedInsideZoneEventDetail
+		type DroppedInsideZoneEventDetail,
+		type DroppedOutsideZoneEventDetail
 	} from './Dropzone.svelte';
 	import MeasuredElement from './MeasuredElement.svelte';
 
@@ -82,7 +83,9 @@
 			show: false,
 			showAfterIndex: undefined
 		};
+	}
 
+	function onDropOutsideZone(event: CustomEvent<DroppedOutsideZoneEventDetail<T>>) {
 		removeItem(event.detail.payload);
 	}
 
@@ -100,6 +103,7 @@
 	on:droppedInsideZone={onDropInsideZone}
 	on:draggedOverZone={onDraggedOverZone}
 	on:draggedLeftZone={onDraggedLeftZone}
+	on:droppedOutsideZone={onDropOutsideZone}
 >
 	<div class="space-y-1 {$$props.class ?? ''}">
 		{#each items as item, i (typeof item === 'object' && idField && item[idField] ? item[idField] : item)}
@@ -108,6 +112,7 @@
 			{/if}
 
 			<Draggable
+				threshold={20}
 				payload={item}
 				on:pickup={() => {
 					hideElementIndex = i;
@@ -116,16 +121,16 @@
 					hideElementIndex = undefined;
 				}}
 			>
-				<MeasuredElement
-					on:measure={(event) => {
-						const detail = event.detail;
-						$measuredElements.set(i, [detail.top, detail.bottom]);
-					}}
-				>
-					{#if hideElementIndex !== i}
+				{#if hideElementIndex !== i}
+					<MeasuredElement
+						on:measure={(event) => {
+							const detail = event.detail;
+							$measuredElements.set(i, [detail.top, detail.bottom]);
+						}}
+					>
 						<slot name="content" item={{ item, i }} />
-					{/if}
-				</MeasuredElement>
+					</MeasuredElement>
+				{/if}
 
 				<svelte:fragment slot="ghost">
 					<slot name="draggedGhost" {item} />

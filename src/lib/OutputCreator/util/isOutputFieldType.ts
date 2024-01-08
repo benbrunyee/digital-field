@@ -1,6 +1,7 @@
 import {
 	OutputFieldISchema,
 	OutputInputFieldISchema,
+	outputDisplayFieldTypes,
 	outputFieldTypes,
 	type OutputDisplayFieldI,
 	type OutputDisplayFieldType,
@@ -35,4 +36,16 @@ export function isNewOutputField(item: unknown): item is OutputFieldI {
 		typeof item.type === 'string' &&
 		outputFieldTypes.includes(item.type as (typeof outputFieldTypes)[number])
 	);
+}
+
+export function isTypeOfOutputDisplayFieldType(
+	type: unknown
+): type is OutputDisplayFieldType {
+	return outputDisplayFieldTypes.includes(type as OutputDisplayFieldType);
+}
+
+export function isTypeOfOutputInputFieldType(
+	type: unknown
+): type is OutputInputFieldType {
+	return outputFieldTypes.includes(type as OutputInputFieldType);
 }

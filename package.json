@@ -2,10 +2,15 @@
 	"name": "digital-field",
 	"version": "0.0.1",
 	"private": true,
+	"engines": {
+		"node": ">=20.2.0"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check .",
 		"format": "prettier --write ."
 	},
@@ -19,7 +24,10 @@
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@tailwindcss/forms": "^0.5.7",
 		"@types/node": "^20.10.6",
+		"@types/pdfobject": "^2.2.5",
 		"autoprefixer": "^10.4.16",
+		"handlebars": "^4.7.8",
+		"jackspeak": "^2.3.6",
 		"pdfobject": "^2.2.12",
 		"postcss": "^8.4.32",
 		"postcss-load-config": "^5.0.2",
@@ -27,9 +35,16 @@
 		"prettier-plugin-svelte": "^3.1.2",
 		"prettier-plugin-tailwindcss": "^0.5.10",
 		"svelte": "^4.2.7",
-		"tailwindcss": "^3.3.6",
+		"svelte-check": "^3.6.0",
+		"tailwindcss": "^3.4.1",
+		"tslib": "^2.4.1",
+		"typescript": "^5.0.0",
 		"vite": "^5.0.3",
 		"zod": "^3.22.4"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"remove": "^0.1.5"
+	},
+	"packageManager": "yarn@4.0.2"
 }

@@ -1,8 +1,7 @@
 <script lang="ts" context="module">
-	export const fieldTypeIcons: {
-		[k in FieldType]: string;
+	export const fieldInputTypeIcons: {
+		[k in InputFieldType]: string;
 	} = {
-		multiple_choice: 'material-symbols:checklist-rounded',
 		address: 'material-symbols:file-map-outline-rounded',
 		audio: 'material-symbols:music-note-rounded',
 		checkbox: 'material-symbols:check-box-outline-rounded',
@@ -15,10 +14,23 @@
 		signature: 'material-symbols:ink-pen-outline-rounded',
 		text: 'material-symbols:text-fields-rounded',
 		time: 'material-symbols:nest-clock-farsight-analog-outline-rounded',
-		video: 'material-symbols:hangout-video-outline-rounded',
+		multiple_choice: 'material-symbols:checklist-rounded',
+		video: 'material-symbols:hangout-video-outline-rounded'
+	};
+
+	export const fieldDisplayTypeIcons: {
+		[k in DisplayFieldType]: string;
+	} = {
 		heading: 'material-symbols:format-color-text-rounded',
 		subheading: 'material-symbols:format-color-text-rounded',
 		separator: 'material-symbols:space-bar-rounded'
+	};
+
+	export const fieldTypeIcons: {
+		[k in FieldType]: string;
+	} = {
+		...fieldInputTypeIcons,
+		...fieldDisplayTypeIcons
 	};
 
 	export const fieldTooltipText: {
@@ -48,7 +60,7 @@
 	import Icon from '@iconify/svelte';
 	import SelectableBase from '../../SelectableElements/SelectableBase.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
-	import { type FieldType } from '../types/fieldTypes';
+	import { type DisplayFieldType, type FieldType, type InputFieldType } from '../types/fieldTypes';
 
 	export let type: FieldType;
 	export let tooltip = true;

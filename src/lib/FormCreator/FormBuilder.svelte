@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion } from '@skeletonlabs/skeleton';
+	import { Accordion, getToastStore } from '@skeletonlabs/skeleton';
 	import OrderableList from '../Draggable/OrderableList.svelte';
 	import { draggedComponentPayload } from '../Draggable/stores/draggedSelectable';
 	import FieldGhost from '../SelectableElements/FieldGhost.svelte';
@@ -10,6 +10,8 @@
 	import { isDisplayField, isField, isInputField, isNewField } from './util/isFieldType';
 
 	const form = getFormStore();
+
+	const toastStore = getToastStore();
 
 	$: displayText = isInputField($draggedComponentPayload)
 		? $draggedComponentPayload.name || formatFieldType($draggedComponentPayload.type)
@@ -30,9 +32,30 @@
 			addItem={(item, insertAfter) => {
 				if (isNewField(item)) {
 					form.addField(item.type, insertAfter);
+				} else if (isField(item)) {
+					// Reorder the item in the list
+					const newFields = [...$form.fields.filter((f) => f.id !== item.id)];
+					newFields.splice(insertAfter + 1, 0, item);
+					$form.fields = newFields;
+				} else {
+					console.error('Item is not a new or existing field', item);
+					toastStore.trigger({
+						message: 'Something went wrong!',
+						background: 'bg-error-500'
+					});
 				}
 			}}
-			removeItem={(item) => {}}
+			removeItem={(item) => {
+				if (isField(item)) {
+					form.removeField(item.id);
+				} else {
+					console.error('Item is not an existing field', item);
+					toastStore.trigger({
+						message: 'Something went wrong!',
+						background: 'bg-error-500'
+					});
+				}
+			}}
 		>
 			<svelte:fragment slot="placeholderGhost">
 				{#if isNewField($draggedComponentPayload)}

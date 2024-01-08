@@ -17,6 +17,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { get } from 'svelte/store';
 	import {
+		draggedComponent,
 		draggedComponentPayload,
 		draggedComponentPosition,
 		isDragging
@@ -74,6 +75,9 @@
 		});
 
 		const droppedSubscriber = isDragging.subscribe((dragging) => {
+			// If we haven't picked up an element yet
+			if (!$draggedComponent.hasPickedUp) return;
+
 			const position = get(draggedComponentPosition);
 
 			if (!dragging) {

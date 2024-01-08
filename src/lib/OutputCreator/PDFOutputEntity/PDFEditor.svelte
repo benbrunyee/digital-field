@@ -2,19 +2,13 @@
 	import { Accordion } from '@skeletonlabs/skeleton';
 	import OrderableList from '../../Draggable/OrderableList.svelte';
 	import { draggedComponentPayload } from '../../Draggable/stores/draggedSelectable';
-	import { fieldTypeIcons } from '../../FormCreator/FormSelectables/FormSelectableElementBase.svelte';
-	import {
-		isDisplayField,
-		isField,
-		isInputField,
-		isNewField
-	} from '../../FormCreator/util/isFieldType';
+	import { isDisplayField, isInputField, isNewField } from '../../FormCreator/util/isFieldType';
 	import FieldGhost from '../../SelectableElements/FieldGhost.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
 	import OutputField from '../OutputFields/OutputField.svelte';
 	import { outputFieldIcons } from '../OutputSelectables/OutputSelectableElementBase.svelte';
 	import { getOutputEntityStore, outputEntityFieldsStore } from '../stores/outputEntity';
-	import { isOutputField } from '../util/isOutputFieldType';
+	import { isNewOutputField, isOutputField } from '../util/isOutputFieldType';
 
 	const outputEntity = getOutputEntityStore();
 	const outputEntityFields = outputEntityFieldsStore(outputEntity);
@@ -34,43 +28,31 @@
 			items={$outputEntityFields}
 			idField="id"
 			addItem={(item) => {
-				if (isOutputField(item)) {
+				if (isNewOutputField(item)) {
 					outputEntity.addField(item.type);
 				}
 			}}
 			removeItem={() => {}}
 		>
 			<svelte:fragment slot="placeholderGhost">
-				{#if isNewField($draggedComponentPayload)}
-					<FieldGhost
-						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
-							fieldTypeIcons[$draggedComponentPayload.type]}
-					>
+				{#if isNewOutputField($draggedComponentPayload)}
+					<FieldGhost icon={outputFieldIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>
-				{:else if isField($draggedComponentPayload)}
-					<FieldGhost
-						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
-							fieldTypeIcons[$draggedComponentPayload.type]}
-					>
+				{:else if isOutputField($draggedComponentPayload)}
+					<FieldGhost icon={outputFieldIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>
 				{/if}
 			</svelte:fragment>
 
 			<svelte:fragment slot="draggedGhost">
-				{#if isNewField($draggedComponentPayload)}
-					<FieldGhost
-						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
-							fieldTypeIcons[$draggedComponentPayload.type]}
-					>
+				{#if isNewOutputField($draggedComponentPayload)}
+					<FieldGhost icon={outputFieldIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>
-				{:else if isField($draggedComponentPayload)}
-					<FieldGhost
-						icon={outputFieldIcons?.[$draggedComponentPayload.type] ||
-							fieldTypeIcons[$draggedComponentPayload.type]}
-					>
+				{:else if isOutputField($draggedComponentPayload)}
+					<FieldGhost icon={outputFieldIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>
 				{/if}

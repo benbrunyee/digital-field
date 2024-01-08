@@ -55,13 +55,14 @@ export const formStore = () => {
 	});
 
 	const addField = (type: FieldType, insertAfter?: number) => {
-		// TODO: Create a new field
 		let newField: FieldI | undefined;
 
 		if (isInputFieldType(type)) {
 			newField = createInputField(type);
 		} else if (isDisplayFieldType(type)) {
 			newField = createDisplayField(type);
+		} else {
+			throw new Error('Invalid field type');
 		}
 
 		if (insertAfter && insertAfter < 0) {

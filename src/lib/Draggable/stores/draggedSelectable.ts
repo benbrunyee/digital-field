@@ -6,11 +6,13 @@ export interface DraggableStore<T extends unknown> {
 		y: number;
 	};
 	dragging: boolean;
+	hasPickedUp: boolean;
 	payload: T | undefined;
 }
 
 const draggedComponentStore = <T extends unknown>() => {
 	const store = writable<DraggableStore<T>>({
+		hasPickedUp: false,
 		dragging: false,
 		payload: undefined,
 		position: {
@@ -34,6 +36,7 @@ const draggedComponentStore = <T extends unknown>() => {
 				d.position.x = x;
 				d.position.y = y;
 				d.dragging = true;
+				d.hasPickedUp = true;
 			}
 			return d;
 		});
@@ -43,6 +46,7 @@ const draggedComponentStore = <T extends unknown>() => {
 		store.update((d) => {
 			if (d) {
 				d.payload = payload;
+				d.hasPickedUp = true;
 			}
 			return d;
 		});
@@ -59,22 +63,13 @@ const draggedComponentStore = <T extends unknown>() => {
 export const draggedComponent = draggedComponentStore<unknown>();
 
 export const isDragging = derived(draggedComponent, ($draggedComponent) => {
-	if ($draggedComponent) {
-		return $draggedComponent.dragging;
-	}
-	return false;
+	return $draggedComponent.dragging;
 });
 
 export const draggedComponentPayload = derived(draggedComponent, ($draggedComponent) => {
-	if ($draggedComponent) {
-		return $draggedComponent.payload;
-	}
-	return undefined;
+	return $draggedComponent.payload;
 });
 
 export const draggedComponentPosition = derived(draggedComponent, ($draggedComponent) => {
-	if ($draggedComponent) {
-		return $draggedComponent.position;
-	}
-	return undefined;
+	return $draggedComponent.position;
 });
