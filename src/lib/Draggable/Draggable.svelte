@@ -31,7 +31,7 @@
 	let showGhost = false;
 	let lastClickedWithinElementPosition: Position = { x: 0, y: 0 };
 	let lastClickedOnScreenPosition: Position = { x: 0, y: 0 };
-	const coordinates = spring(
+	const ghostCoordinates = spring(
 		{
 			x: 0,
 			y: 0
@@ -42,6 +42,51 @@
 		}
 	);
 	let selectableElement: HTMLDivElement;
+
+	function updateGhostCoordinates(x: number, y: number, hard?: boolean) {
+		const newCoords = calculateGhostCoordinates(x, y);
+		ghostCoordinates.update(
+			(coords) => {
+				coords.x = newCoords.x;
+				coords.y = newCoords.y;
+				return coords;
+			},
+			hard ? { hard: true } : undefined
+		);
+		return newCoords;
+	}
+
+	function calculateGhostCoordinates(x: number, y: number) {
+		const { totalScrollLeft, totalScrollTop } = getScrollOffsets();
+
+		return {
+			x:
+				x -
+				lastClickedWithinElementPosition.x +
+				selectableElement.offsetWidth / 2 -
+				totalScrollLeft,
+			y:
+				y - lastClickedWithinElementPosition.y + selectableElement.offsetHeight / 2 - totalScrollTop
+		};
+	}
+
+	function getScrollOffsets() {
+		let totalScrollTop = 0;
+		let totalScrollLeft = 0;
+		let currentElement = selectableElement.parentElement;
+
+		// Traverse up the DOM tree
+		while (currentElement) {
+			// Add the scroll offsets if the current element is scrollable
+			totalScrollTop += currentElement.scrollTop || 0;
+			totalScrollLeft += currentElement.scrollLeft || 0;
+
+			// Move to the parent element
+			currentElement = currentElement.parentElement;
+		}
+
+		return { totalScrollTop, totalScrollLeft };
+	}
 
 	function pickupElement(x: number, y: number) {
 		showGhost = true;
@@ -58,10 +103,7 @@
 		});
 	}
 
-	function onInnerMouseUp(e: MouseEvent) {
-		e.preventDefault();
-
-		mouseDown = false;
+	function dropElement(x: number, y: number) {
 		showGhost = false;
 
 		// Update the store
@@ -69,15 +111,18 @@
 
 		dispatch('drop', {
 			detail: {
-				x: e.clientX,
-				y: e.clientY
+				x,
+				y
 			}
 		});
 	}
 
-	function onInnerMouseDown(e: MouseEvent) {
-		e.preventDefault();
+	function onInnerMouseUp(e: MouseEvent) {
+		mouseDown = false;
+		dropElement(e.clientX, e.clientY);
+	}
 
+	function onInnerMouseDown(e: MouseEvent) {
 		mouseDown = true;
 
 		// Set the position on the screen that was clicked
@@ -93,19 +138,7 @@
 		};
 
 		// Update the coordinates of the ghost element
-		coordinates.update(
-			(coords) => {
-				// Offset by the inverse of the clicked position so that the elemnt doesn't jump
-				coords.x =
-					e.clientX - lastClickedWithinElementPosition.x + selectableElement.offsetWidth / 2;
-				coords.y =
-					e.clientY - lastClickedWithinElementPosition.y + selectableElement.offsetHeight / 2;
-				return coords;
-			},
-			{
-				hard: true
-			}
-		);
+		updateGhostCoordinates(e.clientX, e.clientY, true);
 
 		// If threshold is greater than 0, then we don't want to start dragging yet
 		// We handle the calculation in onInnerMouseMove
@@ -115,21 +148,10 @@
 	}
 
 	function onInnerMouseMove(e: MouseEvent) {
-		e.preventDefault();
-
 		if (!mouseDown) return;
 
 		// Update the coordinates of the ghost element
-		coordinates.update(
-			(coords) => {
-				coords.x =
-					e.clientX - lastClickedWithinElementPosition.x + selectableElement.offsetWidth / 2;
-				coords.y =
-					e.clientY - lastClickedWithinElementPosition.y + selectableElement.offsetHeight / 2;
-				return coords;
-			},
-			threshold > 0 ? { hard: true } : undefined
-		);
+		updateGhostCoordinates(e.clientX, e.clientY, threshold > 0);
 
 		// If threshold is greater than 0, then we don't want to start dragging yet
 		if (threshold > 0 && !showGhost) {
@@ -160,17 +182,22 @@
 
 <svelte:window on:mousemove={onInnerMouseMove} on:mouseup={onInnerMouseUp} />
 
-<div bind:this={selectableElement} role="none" on:mousedown={onInnerMouseDown}>
-	<slot />
-</div>
-
-{#if showGhost}
-	<!-- Some reason, translating -1/2 on the y-axis doesn't center the element -->
-	<div
-		class="absolute z-50 -translate-x-1/2 -translate-y-2/3 opacity-75"
-		style={`left: ${$coordinates.x}px; top: ${$coordinates.y}px; width: ${selectableElement.offsetWidth}px; height: ${selectableElement.offsetHeight}px;`}
-		role="none"
-	>
-		<slot name="ghost" />
+<div>
+	<div bind:this={selectableElement} role="none" on:mousedown={onInnerMouseDown}>
+		<slot />
 	</div>
-{/if}
+
+	{#if showGhost}
+		<!-- -5px on height for the "pickup" effect -->
+		<div
+			class="absolute z-50 -translate-x-1/2 -translate-y-1/2 opacity-75"
+			style:left="{$ghostCoordinates.x}px"
+			style:top="{$ghostCoordinates.y - 5}px"
+			style:width="{selectableElement.clientWidth}px"
+			style:height="{selectableElement.clientHeight}px"
+			role="none"
+		>
+			<slot name="draggedGhost" />
+		</div>
+	{/if}
+</div>

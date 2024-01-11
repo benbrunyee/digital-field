@@ -1,5 +1,4 @@
-
-export function load({params}) {
+export function load({ params }) {
 	// const template = await readFile(
 	// 	'$lib/templates/handlebarTemplates/defaultPdfTemplate.handlebars'
 	// );
@@ -11,7 +10,6 @@ export function load({params}) {
 				<h1>{{ title }}</h1>
 				<div class="body">{{ body }}</div>
 			</div>
-		`,
-		test: ""
+		`
 	};
-};
+}

@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends object | number | boolean | string">
-	import { writable } from 'svelte/store';
+	import { fade } from 'svelte/transition';
 	import Draggable from './Draggable.svelte';
 	import Dropzone, {
 		type DraggedLeftZoneEventDetail,
@@ -22,6 +22,8 @@
 	export let removeItem: (item?: unknown) => void;
 
 	let hideElementIndex: number | undefined = undefined;
+	let draggingExistingElement = false;
+	let placeholderDummy: HTMLDivElement | undefined;
 
 	let ghostElement: {
 		show: boolean;
@@ -32,43 +34,36 @@
 	};
 
 	// Index: [top, bottom]
-	const measuredElements = writable<Map<number, number[]>>(
-		items.reduce((acc, item, index) => {
-			acc.set(index, [0, 0]);
-			return acc;
-		}, new Map())
-	);
+	let measuredElements = items.reduce((acc, item, index) => {
+		acc.set(index, [0, 0]);
+		return acc;
+	}, new Map());
+
+	function getItemId(item: T) {
+		return typeof item === 'object' && idField && item[idField] ? item[idField] : item;
+	}
 
 	function findNextElementIndex(y: number) {
-		if ($measuredElements.size === 0) return -1;
+		if (measuredElements.size === 0) return -1;
 
-		let nearestIndex = -1;
-		let nearestDistance = Infinity;
+		let nextElementIndex = -1;
 
-		$measuredElements.forEach(([top, bottom], index) => {
-			const distance = Math.min(Math.abs(y - top), Math.abs(y - bottom));
-
-			if (distance < nearestDistance) {
-				nearestDistance = distance;
-
-				if (distance <= (bottom - top) / 2) {
-					nearestIndex = index - 1;
-				} else {
-					nearestIndex = index;
-				}
+		measuredElements.forEach(([top, bottom], index) => {
+			if (y > (bottom - top) / 3 + top) {
+				nextElementIndex = index;
 			}
 		});
 
-		const firstElement = $measuredElements.get(0);
+		// Normalise the index
+		if (nextElementIndex < -1) {
+			nextElementIndex = -1;
+		} else if (nextElementIndex >= items.length) {
+			nextElementIndex = items.length - 1;
+		}
 
-		if (
-			firstElement &&
-			nearestIndex === -1 &&
-			nearestDistance <= (firstElement[1] - firstElement[0]) / 2
-		)
-			return -1;
+		console.log(nextElementIndex);
 
-		return nearestIndex;
+		return nextElementIndex;
 	}
 
 	function onDraggedOverZone(event: CustomEvent<DraggedOverZoneEventDetail<T>>) {
@@ -86,11 +81,19 @@
 	}
 
 	function onDropOutsideZone(event: CustomEvent<DroppedOutsideZoneEventDetail<T>>) {
-		removeItem(event.detail.payload);
+		if (
+			items.find(
+				(item) =>
+					(typeof item === 'object' && idField && item[idField] ? item[idField] : item) ===
+					event.detail.payload
+			)
+		) {
+			removeItem(event.detail.payload);
+		}
 	}
 
 	function onDropInsideZone(event: CustomEvent<DroppedInsideZoneEventDetail<T>>) {
-		addItem(event.detail.payload, ghostElement.showAfterIndex ?? 0);
+		addItem(event.detail.payload, ghostElement.showAfterIndex ?? -1);
 
 		ghostElement = {
 			show: false,
@@ -105,41 +108,69 @@
 	on:draggedLeftZone={onDraggedLeftZone}
 	on:droppedOutsideZone={onDropOutsideZone}
 >
-	<div class="space-y-1 {$$props.class ?? ''}">
-		{#each items as item, i (typeof item === 'object' && idField && item[idField] ? item[idField] : item)}
-			{#if ghostElement.show && ghostElement.showAfterIndex === -1 && i === 0}
-				<slot name="placeholderGhost" />
-			{/if}
+	<div bind:this={placeholderDummy} class="invisible absolute">
+		<slot name="placeholderGhost" />
+	</div>
 
-			<Draggable
-				threshold={20}
-				payload={item}
-				on:pickup={() => {
-					hideElementIndex = i;
-				}}
-				on:drop={() => {
-					hideElementIndex = undefined;
-				}}
+	<div
+		class="space-y-1 {$$props.class ?? ''}"
+		on:scroll={(e) => {
+			console.log(e);
+		}}
+	>
+		{#each items as item, i (getItemId(item))}
+			{@const hideElement = hideElementIndex === i}
+
+			<div
+				class="relative transition-all"
+				style:top="{ghostElement.show && (ghostElement.showAfterIndex ?? Infinity) < i
+					? placeholderDummy?.clientHeight ?? 0
+					: 0}px"
+				in:fade
+				out:fade
 			>
-				{#if hideElementIndex !== i}
-					<MeasuredElement
-						on:measure={(event) => {
-							const detail = event.detail;
-							$measuredElements.set(i, [detail.top, detail.bottom]);
-						}}
-					>
-						<slot name="content" item={{ item, i }} />
-					</MeasuredElement>
+				{#if ghostElement.show && ghostElement.showAfterIndex === i - 1}
+					<div class="absolute -translate-y-full">
+						<slot name="placeholderGhost" />
+					</div>
 				{/if}
 
-				<svelte:fragment slot="ghost">
-					<slot name="draggedGhost" {item} />
-				</svelte:fragment>
-			</Draggable>
+				<Draggable
+					threshold={20}
+					payload={item}
+					on:pickup={() => {
+						hideElementIndex = i;
+						draggingExistingElement = true;
+					}}
+					on:drop={() => {
+						hideElementIndex = undefined;
+						draggingExistingElement = false;
+					}}
+				>
+					{#if !hideElement}
+						<div class={ghostElement.show && i === 1 ? '!mt-0' : ''}>
+							<MeasuredElement
+								on:measure={(event) => {
+									const detail = event.detail;
+									measuredElements.set(i, [detail.top, detail.bottom]);
+								}}
+							>
+								<slot name="content" item={{ item, i }} />
+							</MeasuredElement>
+						</div>
+					{/if}
 
-			{#if ghostElement.show && ghostElement.showAfterIndex === i}
-				<slot name="placeholderGhost" />
-			{/if}
+					<svelte:fragment slot="draggedGhost">
+						<slot name="draggedGhost" {item} />
+					</svelte:fragment>
+				</Draggable>
+			</div>
 		{/each}
+
+		{#if ghostElement.show && ghostElement.showAfterIndex === items.length - 1}
+			<div class="absolute">
+				<slot name="placeholderGhost" />
+			</div>
+		{/if}
 	</div>
 </Dropzone>

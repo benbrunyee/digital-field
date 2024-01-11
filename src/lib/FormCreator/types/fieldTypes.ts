@@ -47,7 +47,6 @@ export interface InputFieldI<T extends InputFieldType> extends FieldBaseI<T> {
 	name: string;
 	required: boolean;
 	options: InputFieldOptions<T> | undefined;
-	value: string;
 	placeholder: string;
 	description: string;
 }
@@ -64,7 +63,6 @@ export const InputFieldISchema = implement<InputFieldI<InputFieldType>>().with({
 	name: z.string(),
 	required: z.boolean(),
 	options: z.any().optional(),
-	value: z.string(),
 	placeholder: z.string(),
 	description: z.string()
 });

@@ -10,8 +10,10 @@
 
 	onMount(() => {
 		resizeObserver = new ResizeObserver((entries) => {
-			top = entries[0].contentRect.top;
-			bottom = entries[0].contentRect.bottom;
+			const boundingRect = element.getBoundingClientRect();
+
+			top = boundingRect.top;
+			bottom = boundingRect.bottom;
 		});
 
 		resizeObserver.observe(element);

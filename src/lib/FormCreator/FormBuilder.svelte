@@ -20,30 +20,35 @@
 			: isDisplayField($draggedComponentPayload)
 				? formatFieldType($draggedComponentPayload.type)
 				: '';
+
+	$: console.log($form.fields);
 </script>
 
-<div
-	class="border-surface-800-100-token h-min min-h-14 w-full border border-dashed p-2 rounded-token"
->
+<div class="border-surface-800-100-token h-min min-h-14 w-full border p-2 rounded-token">
 	<Accordion>
 		<OrderableList
 			items={$form.fields}
 			idField="id"
 			addItem={(item, insertAfter) => {
+				// Add a new field
 				if (isNewField(item)) {
 					form.addField(item.type, insertAfter);
-				} else if (isField(item)) {
-					// Reorder the item in the list
+					return;
+				}
+
+				// Moving an existing field
+				if (isField(item)) {
 					const newFields = [...$form.fields.filter((f) => f.id !== item.id)];
 					newFields.splice(insertAfter + 1, 0, item);
 					$form.fields = newFields;
-				} else {
-					console.error('Item is not a new or existing field', item);
-					toastStore.trigger({
-						message: 'Something went wrong!',
-						background: 'bg-error-500'
-					});
+					return;
 				}
+
+				console.error('Item is not a new or existing field', item);
+				toastStore.trigger({
+					message: 'Something went wrong!',
+					background: 'bg-error-500'
+				});
 			}}
 			removeItem={(item) => {
 				if (isField(item)) {

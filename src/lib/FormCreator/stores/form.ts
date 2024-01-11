@@ -65,13 +65,13 @@ export const formStore = () => {
 			throw new Error('Invalid field type');
 		}
 
-		if (insertAfter && insertAfter < 0) {
+		if ((insertAfter ?? -1) < -1) {
 			insertAfter = 0;
 		}
 
 		const fieldLength = get(store).fields.length;
 
-		if (insertAfter && insertAfter > fieldLength) {
+		if ((insertAfter ?? Infinity) > fieldLength) {
 			insertAfter = fieldLength;
 		}
 

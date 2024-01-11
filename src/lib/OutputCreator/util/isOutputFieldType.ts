@@ -38,14 +38,10 @@ export function isNewOutputField(item: unknown): item is OutputFieldI {
 	);
 }
 
-export function isTypeOfOutputDisplayFieldType(
-	type: unknown
-): type is OutputDisplayFieldType {
+export function isOutputDisplayFieldType(type: unknown): type is OutputDisplayFieldType {
 	return outputDisplayFieldTypes.includes(type as OutputDisplayFieldType);
 }
 
-export function isTypeOfOutputInputFieldType(
-	type: unknown
-): type is OutputInputFieldType {
+export function isOutputInputFieldType(type: unknown): type is OutputInputFieldType {
 	return outputFieldTypes.includes(type as OutputInputFieldType);
 }

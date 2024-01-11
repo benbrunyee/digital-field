@@ -103,6 +103,6 @@
 	}
 </script>
 
-<div use:dropzone>
+<div {...$$restProps} use:dropzone>
 	<slot />
 </div>

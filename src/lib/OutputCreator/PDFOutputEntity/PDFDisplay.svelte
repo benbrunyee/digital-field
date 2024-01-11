@@ -31,6 +31,6 @@
 </script>
 
 <div class="flex flex-1 lg:w-2/3">
-	{@html html}
+	<div contenteditable bind:innerHTML={html}></div>
 	<div use:pdfDisplay class="flex-auto"></div>
 </div>

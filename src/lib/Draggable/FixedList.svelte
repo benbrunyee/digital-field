@@ -10,12 +10,17 @@
 	export let items: T[];
 </script>
 
-<div class="space-y-2 {$$props.class ?? ''}">
+<div
+	class="space-y-2 {$$props.class ?? ''}"
+	on:scroll={(e) => {
+		console.log(e);
+	}}
+>
 	{#each items as item}
 		<Draggable payload={item}>
 			<slot name="content" {item} />
 
-			<svelte:fragment slot="ghost">
+			<svelte:fragment slot="draggedGhost">
 				<slot name="draggedGhost" {item} />
 			</svelte:fragment>
 		</Draggable>
