@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { createId } from '../../util/createId';
-import { type FieldI, type FieldType } from '../types/fieldTypes';
+import { type FormField, type FormFieldTypes } from '../types/fieldTypes';
 import type { Form } from '../types/formTypes';
 import { createDisplayField, createInputField } from '../util/createFields';
 import { filterForInputField } from '../util/filterForFieldType';
@@ -27,35 +27,38 @@ export const formStore = () => {
 			{
 				id: createId('date'),
 				name: 'Date of Survey',
+				ref: 'dateOfSurvey',
 				type: 'date',
-				options: undefined,
+				options: {},
 				required: false,
-				value: '',
 				description: '',
-				placeholder: '',
 				createdAt: new Date(),
 				updatedAt: new Date()
 			},
 			{
 				id: createId('text'),
 				name: 'Surveyor Name',
+				ref: 'surveyorName',
 				type: 'text',
-				options: undefined,
+				options: {},
 				required: false,
-				value: '',
 				description: '',
-				placeholder: '',
 				createdAt: new Date(),
 				updatedAt: new Date()
 			}
 		],
 		updatedAt: new Date(),
 		outputs: [],
-		owner: ''
+		ownerId: '',
+		options: {
+			entryStates: []
+		},
+		status: 'draft',
+		type: 'form'
 	});
 
-	const addField = (type: FieldType, insertAfter?: number) => {
-		let newField: FieldI | undefined;
+	const addField = (type: FormFieldTypes, insertAfter?: number) => {
+		let newField: FormField | undefined;
 
 		if (isInputFieldType(type)) {
 			newField = createInputField(type);

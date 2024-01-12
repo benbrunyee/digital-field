@@ -5,7 +5,8 @@
 		heading: 'material-symbols:format-color-text-rounded',
 		subheading: 'material-symbols:format-color-text-rounded',
 		divider: 'material-symbols:align-space-even-rounded',
-		html: 'material-symbols:code-rounded'
+		html: 'material-symbols:code-rounded',
+		paragraph: 'material-symbols:format-color-text-rounded'
 	};
 
 	export const outputFieldIcons: {
@@ -21,7 +22,8 @@
 		heading: 'A heading.',
 		subheading: 'A subheading.',
 		divider: 'A horizontal line.',
-		html: "Custom HTML. You can use the form's data in your HTML by using the following syntax: <code>{data:fieldName}</code>."
+		html: "Custom HTML. You can use the form's data in your HTML by using the following syntax: <code>{data:fieldName}</code>.",
+		paragraph: 'A paragraph.'
 	};
 </script>
 

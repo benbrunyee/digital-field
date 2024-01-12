@@ -15,7 +15,8 @@
 		text: 'material-symbols:text-fields-rounded',
 		time: 'material-symbols:nest-clock-farsight-analog-outline-rounded',
 		multiple_choice: 'material-symbols:checklist-rounded',
-		video: 'material-symbols:hangout-video-outline-rounded'
+		video: 'material-symbols:hangout-video-outline-rounded',
+		'multi-entry': 'material-symbols:ad-group-outline-rounded'
 	};
 
 	export const fieldDisplayTypeIcons: {
@@ -23,18 +24,19 @@
 	} = {
 		heading: 'material-symbols:format-color-text-rounded',
 		subheading: 'material-symbols:format-color-text-rounded',
-		separator: 'material-symbols:space-bar-rounded'
+		separator: 'material-symbols:space-bar-rounded',
+		paragraph: 'material-symbols:format-color-text-rounded'
 	};
 
 	export const fieldTypeIcons: {
-		[k in FieldType]: string;
+		[k in FormFieldTypes]: string;
 	} = {
 		...fieldInputTypeIcons,
 		...fieldDisplayTypeIcons
 	};
 
 	export const fieldTooltipText: {
-		[k in FieldType]: string;
+		[k in FormFieldTypes]: string;
 	} = {
 		multiple_choice: 'A question with multiple choices. The user can select one or more options.',
 		address: 'Allows the user to enter an address.',
@@ -52,7 +54,9 @@
 		video: 'Upload a video.',
 		heading: 'A heading.',
 		subheading: 'A subheading.',
-		separator: 'A horizontal line.'
+		separator: 'A horizontal line.',
+		'multi-entry': 'Define a structure that can be repeated multiple times.',
+		paragraph: 'A paragraph.'
 	};
 </script>
 
@@ -60,9 +64,13 @@
 	import Icon from '@iconify/svelte';
 	import SelectableBase from '../../SelectableElements/SelectableBase.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
-	import { type DisplayFieldType, type FieldType, type InputFieldType } from '../types/fieldTypes';
+	import {
+		type DisplayFieldType,
+		type FormFieldTypes,
+		type InputFieldType
+	} from '../types/fieldTypes';
 
-	export let type: FieldType;
+	export let type: FormFieldTypes;
 	export let tooltip = true;
 </script>
 

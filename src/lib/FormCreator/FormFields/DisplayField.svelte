@@ -3,9 +3,9 @@
 	import FieldBase from '../../Fields/FieldBase.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
 	import { fieldTypeIcons } from '../FormSelectables/FormSelectableElementBase.svelte';
-	import type { DisplayFieldI, DisplayFieldType } from '../types/fieldTypes';
+	import type { DisplayField, DisplayFieldType } from '../types/fieldTypes';
 
-	export let field: DisplayFieldI<DisplayFieldType>;
+	export let field: DisplayField<DisplayFieldType>;
 </script>
 
 <FieldBase id={field.id} name={formatFieldType(field.type)}>

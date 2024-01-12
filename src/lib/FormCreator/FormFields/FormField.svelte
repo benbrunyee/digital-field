@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { type FieldI } from '../types/fieldTypes';
+	import { type FormField } from '../types/fieldTypes';
 	import { isDisplayField, isInputField } from '../util/isFieldType';
 	import DisplayField from './DisplayField.svelte';
 	import InputField from './InputField.svelte';
 
-	export let field: FieldI;
+	export let field: FormField;
 
 	// Update the context using a store
 	let hasChanged = writable(false);

@@ -1,5 +1,6 @@
-import type { OutputEntityI } from '../../OutputCreator/types/outputEntityTypes';
-import type { FieldI } from './fieldTypes';
+import type { InputEntity } from '../../InputEntity/types/inputEntity';
+import type { OutputEntity } from '../../OutputCreator/types/outputEntityTypes';
+import type { FormField } from './fieldTypes';
 
 /**
  * A form is what you would expect, a entity that contains fields specifically for inputting data.
@@ -7,12 +8,20 @@ import type { FieldI } from './fieldTypes';
  * This data can then be used in an output e.g., PDF.
  */
 
-export interface Form {
-	id: string;
-	name: string;
-	fields: FieldI[];
-	outputs: OutputEntityI[];
-	owner: string;
-	updatedAt: Date | undefined;
-	createdAt: Date | undefined;
+export interface Form extends InputEntity<Form, FormField> {
+	ownerId: string;
+	status: FormStatus;
+	options: FormOptions;
+	outputs: OutputEntity[];
 }
+
+export type FormOptions = {
+	entryStates: EntryState[];
+};
+
+export type EntryState = {
+	name: string;
+	colour: string;
+};
+
+export type FormStatus = 'draft' | 'active' | 'disabled' | 'deleted';

@@ -1,6 +1,10 @@
 import { z } from 'zod';
-import { inputFieldTypes, type InputFieldType } from '../../FormCreator/types/fieldTypes';
-import { implement } from '../../util/typeToZod';
+import {
+	allFormFieldTypes,
+	inputFieldTypes,
+	type InputFieldType
+} from '../../FormCreator/types/fieldTypes';
+import { implement } from '../../util/types/typeToZod';
 
 /**
  * Types of fields:
@@ -10,8 +14,14 @@ import { implement } from '../../util/typeToZod';
 
 // Top-level available field types
 
-export const outputDisplayFieldTypes = ['heading', 'subheading', 'divider', 'html'] as const;
-export const outputFieldTypes = [...inputFieldTypes, ...outputDisplayFieldTypes] as const;
+export const outputDisplayFieldTypes = [
+	'heading',
+	'subheading',
+	'paragraph',
+	'divider',
+	'html'
+] as const;
+export const outputFieldTypes = [...allFormFieldTypes, ...outputDisplayFieldTypes] as const;
 
 // Field Typescript types
 
@@ -21,59 +31,25 @@ export type OutputFieldType = OutputInputFieldType | OutputDisplayFieldType;
 
 // Field object Typescript types
 
-interface OutputBaseI<T extends OutputFieldType> {
-	id: string;
+export type OutputInputField<T extends OutputInputFieldType> = {
+	fieldId: string;
 	type: T;
-	createdAt: Date | undefined;
-	updatedAt: Date | undefined;
-}
-export interface OutputInputFieldI<T extends OutputInputFieldType> extends OutputBaseI<T> {
-	options: OutputInputFieldOptions<T> | undefined;
-}
-export const OutputInputFieldISchema = implement<OutputInputFieldI<OutputInputFieldType>>().with({
-	id: z.string(),
-	type: z.enum(inputFieldTypes),
-	createdAt: z.date().optional(),
-	updatedAt: z.date().optional(),
-	options: z.any().optional()
+};
+export type OutputDisplayField<T extends OutputDisplayFieldType> = {
+	type: T;
+};
+
+export const OutputInputFieldSchema = implement<OutputInputField<OutputInputFieldType>>().with({
+	fieldId: z.string(),
+	type: z.enum(inputFieldTypes)
 });
-export interface OutputDisplayFieldI<T extends OutputDisplayFieldType> extends OutputBaseI<T> {
-	options: OutputDisplayFieldOptions<T> | undefined;
-}
-export const OutputDisplayFieldISchema = implement<
-	OutputDisplayFieldI<OutputDisplayFieldType>
+export const OutputDisplayFieldSchema = implement<
+	OutputDisplayField<OutputDisplayFieldType>
 >().with({
-	id: z.string(),
-	type: z.enum(outputDisplayFieldTypes),
-	createdAt: z.date().optional(),
-	updatedAt: z.date().optional(),
-	options: z.any().optional()
+	type: z.enum(outputDisplayFieldTypes)
 });
 
-export type OutputFieldI =
-	| OutputDisplayFieldI<OutputDisplayFieldType>
-	| OutputInputFieldI<OutputInputFieldType>;
-export const OutputFieldISchema = z.union([OutputDisplayFieldISchema, OutputInputFieldISchema]);
-
-// TODO: Field options
-
-export type OutputInputFieldOptions<T extends InputFieldType> = T extends 'text'
-	? TextOutputOptions
-	: T;
-
-export type BaseOutputFieldOptions = {
-	css: string;
-	hidden: boolean;
-};
-
-export type TextOutputOptions = BaseOutputFieldOptions & {
-	css: string;
-};
-
-export type OutputDisplayFieldOptions<T extends OutputDisplayFieldType> = T extends 'h1'
-	? H1OutputOptions
-	: T;
-
-export type H1OutputOptions = BaseOutputFieldOptions & {
-	css: string;
-};
+export type OutputField =
+	| OutputDisplayField<OutputDisplayFieldType>
+	| OutputInputField<OutputInputFieldType>;
+export const OutputFieldSchema = z.union([OutputDisplayFieldSchema, OutputInputFieldSchema]);

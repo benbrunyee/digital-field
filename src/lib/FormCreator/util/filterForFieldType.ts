@@ -1,6 +1,6 @@
 import type { AllFieldsI } from '../../SelectableElements/types/fieldTypes';
-import { inputFieldTypes, type InputFieldI, type InputFieldType } from '../types/fieldTypes';
+import { allFormFieldTypes, type InputField, type InputFieldType } from '../types/fieldTypes';
 
-export function filterForInputField(field: AllFieldsI): field is InputFieldI<InputFieldType> {
-	return inputFieldTypes.includes(field.type as InputFieldType);
+export function filterForInputField(field: AllFieldsI): field is InputField<InputFieldType> {
+	return allFormFieldTypes.includes(field.type as InputFieldType);
 }

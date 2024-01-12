@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { implement } from '../../util/typeToZod';
+import type { InputEntityField } from '../../InputEntity/types/inputField';
+import { implement } from '../../util/types/typeToZod';
 
 /**
  * Types of fields:
@@ -23,68 +24,66 @@ export const inputFieldTypes = [
 	'signature',
 	'file',
 	'address',
-	'link'
+	'link',
+	'multi-entry'
 ] as const;
-export const displayFieldTypes = ['heading', 'subheading', 'separator'] as const;
-export const fieldTypes = [...inputFieldTypes, ...displayFieldTypes] as const;
+export const displayFieldTypes = ['heading', 'subheading', 'paragraph', 'separator'] as const;
+export const allFormFieldTypes = [...inputFieldTypes, ...displayFieldTypes] as const;
 
 // Field Typescript types
 
 export type InputFieldType = (typeof inputFieldTypes)[number];
 export type DisplayFieldType = (typeof displayFieldTypes)[number];
-export type FieldType = InputFieldType | DisplayFieldType;
+
+export type FormFieldTypes = InputFieldType | DisplayFieldType;
 
 // Field object Typescript types
 
-interface FieldBaseI<T extends FieldType> {
-	id: string;
-	type: T;
-	createdAt: Date | undefined;
-	updatedAt: Date | undefined;
-}
-
-export interface InputFieldI<T extends InputFieldType> extends FieldBaseI<T> {
+export interface InputField<T extends InputFieldType>
+	extends InputEntityField<T, InputFieldOptions<T>> {
 	name: string;
+	ref: string;
 	required: boolean;
-	options: InputFieldOptions<T> | undefined;
-	placeholder: string;
 	description: string;
 }
-export interface DisplayFieldI<T extends DisplayFieldType> extends FieldBaseI<T> {
-	options: DisplayFieldOptions<T> | undefined;
+export interface DisplayField<T extends DisplayFieldType>
+	extends InputEntityField<T, DisplayFieldOptions<T>> {
+	value?: string;
 }
-export type FieldI = InputFieldI<InputFieldType> | DisplayFieldI<DisplayFieldType>;
 
-export const InputFieldISchema = implement<InputFieldI<InputFieldType>>().with({
+export type FormField = InputField<InputFieldType> | DisplayField<DisplayFieldType>;
+
+export const InputFieldSchema = implement<InputField<InputFieldType>>().with({
 	id: z.string(),
+	ref: z.string(),
 	type: z.enum(inputFieldTypes),
 	createdAt: z.date().optional(),
 	updatedAt: z.date().optional(),
 	name: z.string(),
 	required: z.boolean(),
 	options: z.any().optional(),
-	placeholder: z.string(),
 	description: z.string()
 });
 
-export const DisplayFieldISchema = implement<DisplayFieldI<DisplayFieldType>>().with({
+export const DisplayFieldSchema = implement<DisplayField<DisplayFieldType>>().with({
 	id: z.string(),
+	value: z.string().optional(),
 	type: z.enum(displayFieldTypes),
 	createdAt: z.date().optional(),
 	updatedAt: z.date().optional(),
 	options: z.any().optional()
 });
 
-export const FieldISchema = z.union([InputFieldISchema, DisplayFieldISchema]);
+export const FormFieldSchema = z.union([InputFieldSchema, DisplayFieldSchema]);
 
 // TODO: Field options
 
-export type InputFieldOptions<T extends InputFieldType> = T extends 'text' ? TextOptions : T;
+export type InputFieldOptions<T extends InputFieldType> = T extends 'text' ? TextOptions : {};
 export type TextOptions = {
 	placeholder: string;
 };
 
-export type DisplayFieldOptions<T extends DisplayFieldType> = T extends 'h1' ? H1Options : T;
+export type DisplayFieldOptions<T extends DisplayFieldType> = T extends 'heading' ? H1Options : {};
 export type H1Options = {
 	bold: boolean;
 };

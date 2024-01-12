@@ -1,4 +1,4 @@
-export function createId(prefix: string) {
+export function createId(prefix = '') {
 	// If prefix doesn't start with a letter, add a letter
 	if (!/^[a-z]/i.test(prefix)) {
 		prefix = 'a' + prefix;

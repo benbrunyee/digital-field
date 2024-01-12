@@ -24,9 +24,10 @@
 	class="border-surface-800-100-token h-min min-h-14 flex-1 border border-dashed p-2 rounded-token"
 >
 	<Accordion>
+		<!-- TODO: Type is not a valid ID -->
 		<OrderableList
 			items={$outputEntityFields}
-			idField="id"
+			idField="type"
 			addItem={(item) => {
 				if (isNewOutputField(item)) {
 					outputEntity.addField(item.type);

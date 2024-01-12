@@ -1,32 +1,32 @@
 import {
-	OutputFieldISchema,
-	OutputInputFieldISchema,
+	OutputFieldSchema,
+	OutputInputFieldSchema,
 	outputDisplayFieldTypes,
 	outputFieldTypes,
-	type OutputDisplayFieldI,
+	type OutputDisplayField,
 	type OutputDisplayFieldType,
-	type OutputFieldI,
-	type OutputInputFieldI,
+	type OutputField,
+	type OutputInputField,
 	type OutputInputFieldType
 } from '../types/outputFieldTypes';
 
-export function isOutputField(field: unknown): field is OutputFieldI {
-	return OutputFieldISchema.safeParse(field).success;
+export function isOutputField(field: unknown): field is OutputField {
+	return OutputFieldSchema.safeParse(field).success;
 }
 
 export function isOutputInputField(
 	field: unknown
-): field is OutputInputFieldI<OutputInputFieldType> {
-	return OutputInputFieldISchema.safeParse(field).success;
+): field is OutputInputField<OutputInputFieldType> {
+	return OutputInputFieldSchema.safeParse(field).success;
 }
 
 export function isOutputDisplayField(
 	field: unknown
-): field is OutputDisplayFieldI<OutputDisplayFieldType> {
-	return OutputFieldISchema.safeParse(field).success;
+): field is OutputDisplayField<OutputDisplayFieldType> {
+	return OutputFieldSchema.safeParse(field).success;
 }
 
-export function isNewOutputField(item: unknown): item is OutputFieldI {
+export function isNewOutputField(item: unknown): item is OutputField {
 	return (
 		item !== null &&
 		typeof item === 'object' &&

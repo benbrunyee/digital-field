@@ -2,9 +2,10 @@
 	import { createEventDispatcher } from 'svelte';
 	import FieldBase from '../../Fields/FieldBase.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
-	import type { OutputDisplayFieldI, OutputDisplayFieldType } from '../types/outputFieldTypes';
+	import type { WithId } from '../../util/types/withId';
+	import type { OutputDisplayField, OutputDisplayFieldType } from '../types/outputFieldTypes';
 
-	export let field: OutputDisplayFieldI<OutputDisplayFieldType>;
+	export let field: WithId<OutputDisplayField<OutputDisplayFieldType>>;
 
 	const dispatch = createEventDispatcher();
 

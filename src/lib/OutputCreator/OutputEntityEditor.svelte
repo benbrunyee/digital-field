@@ -8,10 +8,8 @@
 </script>
 
 <div class="flex flex-auto self-stretch">
-	{#if $outputEntity.type === 'pdf'}
-		<div class="flex flex-auto flex-row space-x-2">
-			<PdfEditor />
-			<PdfDisplay />
-		</div>
-	{/if}
+	<div class="flex flex-auto flex-row space-x-2">
+		<PdfEditor />
+		<PdfDisplay />
+	</div>
 </div>

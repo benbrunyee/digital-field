@@ -1,24 +1,37 @@
-import type { OutputFieldI } from './outputFieldTypes';
-
 // Top-level available form types
 
-export const outputEntityTypes = ['pdf'] as const;
-export const outputEntityStates = ['draft', 'published', 'archived'] as const;
+import type { WithId } from '../../util/types/withId';
+import type { OutputField } from './outputFieldTypes';
+import type { Template } from './template';
+
+export const outputEntityStates = ['draft', 'active', 'disabled', ['deleted']] as const;
 
 // Form Typescript types
 
-export type OutputEntityTypes = (typeof outputEntityTypes)[number];
-export type OutputEntityState = (typeof outputEntityStates)[number];
+type OutputEntityState = (typeof outputEntityStates)[number];
 
 // Form object Typescript types
 
-export interface OutputEntityI {
+export interface OutputEntity {
 	id: string;
 	name: string;
-	type: OutputEntityTypes;
-	fields: OutputFieldI[];
-	owner: string;
-	state: OutputEntityState;
+	formId: string;
 	updatedAt: Date | undefined;
 	createdAt: Date | undefined;
+	ownerId: string;
+	overrides: Override[];
+	template: Template;
+	state: OutputEntityState;
+	isCustom: boolean;
+	fields: OutputField[];
 }
+
+export interface OutputEntityWithFieldIds extends OutputEntity {
+	fields: WithId<OutputField>[];
+}
+
+export type Override = {
+	id: string;
+	fieldId: string;
+	code: string;
+};

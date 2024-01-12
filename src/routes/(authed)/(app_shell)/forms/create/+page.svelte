@@ -9,9 +9,8 @@
 	import FormBuilder from '$lib/FormCreator/FormBuilder.svelte';
 	import OutputEntityEditor from '$lib/OutputCreator/OutputEntityEditor.svelte';
 	import { RadioGroup, RadioItem } from '@skeletonlabs/skeleton';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	// export let data: PageData;
 </script>
 
 <div class="flex flex-auto flex-col items-center space-y-4">

@@ -1,9 +1,10 @@
-import { fieldTypes } from '../FormCreator/types/fieldTypes';
+import { allFormFieldTypes } from '../FormCreator/types/fieldTypes';
 import { outputDisplayFieldTypes } from '../OutputCreator/types/outputFieldTypes';
 
-export function isNewField(
-	item: unknown
-): item is { newField: true; type: (typeof fieldTypes)[number] | typeof outputDisplayFieldTypes } {
+export function isNewField(item: unknown): item is {
+	newField: true;
+	type: (typeof allFormFieldTypes)[number] | typeof outputDisplayFieldTypes;
+} {
 	return (
 		item !== null &&
 		typeof item === 'object' &&
@@ -11,7 +12,7 @@ export function isNewField(
 		Boolean(item.newField) &&
 		'type' in item &&
 		typeof item.type === 'string' &&
-		(fieldTypes.includes(item.type as (typeof fieldTypes)[number]) ||
+		(allFormFieldTypes.includes(item.type as (typeof allFormFieldTypes)[number]) ||
 			outputDisplayFieldTypes.includes(item.type as (typeof outputDisplayFieldTypes)[number]))
 	);
 }

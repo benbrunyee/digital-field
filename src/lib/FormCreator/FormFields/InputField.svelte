@@ -4,9 +4,9 @@
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
 	import FieldBase from '../../Fields/FieldBase.svelte';
 	import { fieldTypeIcons } from '../FormSelectables/FormSelectableElementBase.svelte';
-	import { type InputFieldI, type InputFieldType } from '../types/fieldTypes';
+	import { type InputField, type InputFieldType } from '../types/fieldTypes';
 
-	export let field: InputFieldI<InputFieldType>;
+	export let field: InputField<InputFieldType>;
 
 	const type = field.type;
 
@@ -26,7 +26,8 @@
 		image: 'file',
 		link: 'url',
 		time: 'time',
-		video: 'file'
+		video: 'file',
+		'multi-entry': 'section'
 	};
 
 	const singleInputFields: InputFieldType[] = [
@@ -64,17 +65,21 @@
 	{#if singleInputFields.includes(type)}
 		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
 			<div class="input-group-shim">Default value</div>
-			<input
-				type={inputType[type]}
-				placeholder="Placeholder"
-				class={inputType[type] === 'file' ? 'px-2 py-1' : ''}
-				on:input={(e) => {
-					// We do not use bind:value here because we want to be able to dynamically
-					// change the "type" prop of the input.
-					field.placeholder = e.currentTarget.value;
-					onInputChanged();
-				}}
-			/>
+			{#if 'placeholder' in field.options}
+				<input
+					type={inputType[type]}
+					placeholder="Placeholder"
+					class={inputType[type] === 'file' ? 'px-2 py-1' : ''}
+					on:input={(e) => {
+						// We do not use bind:value here because we want to be able to dynamically
+						// change the "type" prop of the input.
+						if ('placeholder' in field.options) {
+							field.options.placeholder = e.currentTarget.value;
+							onInputChanged();
+						}
+					}}
+				/>
+			{/if}
 		</div>
 	{:else}
 		<span class="text-error-500-400-token"

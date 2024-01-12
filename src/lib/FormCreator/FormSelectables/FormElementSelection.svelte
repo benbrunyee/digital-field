@@ -1,6 +1,6 @@
 <script lang="ts">
 	import FixedList from '../../Draggable/FixedList.svelte';
-	import { displayFieldTypes, inputFieldTypes } from '../types/fieldTypes';
+	import { allFormFieldTypes, displayFieldTypes } from '../types/fieldTypes';
 	import FormSelectableElementBase from './FormSelectableElementBase.svelte';
 </script>
 
@@ -9,7 +9,7 @@
 	<hr />
 
 	<FixedList
-		items={inputFieldTypes.map((x) => ({
+		items={allFormFieldTypes.map((x) => ({
 			type: x,
 			newField: true
 		}))}

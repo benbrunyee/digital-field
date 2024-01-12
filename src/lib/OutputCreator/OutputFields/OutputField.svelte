@@ -1,17 +1,20 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
-	import type { OutputFieldI } from '../types/outputFieldTypes';
+	import type { WithId } from '../../util/types/withId';
+	import type { OutputField } from '../types/outputFieldTypes';
 	import { isOutputDisplayField, isOutputInputField } from '../util/isOutputFieldType';
 	import OutputDisplayField from './OutputDisplayField.svelte';
 	import OutputInputField from './OutputInputField.svelte';
 
-	export let field: OutputFieldI;
+	export let field: WithId<OutputField>;
 
 	// Update the context using a store
 	let hasChanged = writable(false);
 	setContext('hasChanged', hasChanged);
-	setContext('isNewField', field.createdAt === undefined);
+
+	// TODO: Find a way of determining whether this is a new field or not
+	// setContext('isNewField', field.createdAt === undefined);
 
 	function fieldHasChanged() {
 		$hasChanged = true;
