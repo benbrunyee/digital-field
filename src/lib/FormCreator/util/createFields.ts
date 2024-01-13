@@ -82,3 +82,7 @@ function createInputFieldOptions<T extends InputFieldType>(
 			return <InputFieldOptions<typeof type>>{};
 	}
 }
+
+export function createFieldRef(name: string): string {
+	return name.toLocaleLowerCase().replace(/\s(.)?/, '$1'.toUpperCase());
+}
