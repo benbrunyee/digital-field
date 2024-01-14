@@ -2,8 +2,8 @@ import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { type FormField, type FormFieldTypes } from '../types/fieldTypes';
 import type { Form } from '../types/formTypes';
-import { createDisplayField, createInputField } from '../util/createFields';
-import { createForm } from '../util/createForm';
+import { createDisplayFieldStructure, createInputFieldStructure } from '../util/createFields';
+import { createFormStructure } from '../util/createForm';
 import { filterForInputField } from '../util/filterForFieldType';
 import { isDisplayFieldType, isInputFieldType } from '../util/isFieldType';
 
@@ -13,7 +13,7 @@ export const getFormStore = (storeName?: string) =>
 	getContext<ReturnType<typeof formStore>>(storeName ?? DEFAULT_STORE_NAME);
 
 export const initializeFormStore = (initialValue?: Form, storeName?: string) => {
-	const store = formStore(initialValue ?? createForm());
+	const store = formStore(initialValue ?? createFormStructure());
 	setContext(storeName ?? DEFAULT_STORE_NAME, store);
 	return store;
 };
@@ -22,16 +22,16 @@ export const formStore = (initialValue: Form) => {
 	const store = writable<Form>(initialValue);
 
 	const createNewForm = () => {
-		store.update(() => createForm());
+		store.update(() => createFormStructure());
 	};
 
 	const addField = (type: FormFieldTypes, insertAfter?: number) => {
 		let newField: FormField | undefined;
 
 		if (isInputFieldType(type)) {
-			newField = createInputField(type);
+			newField = createInputFieldStructure(type);
 		} else if (isDisplayFieldType(type)) {
-			newField = createDisplayField(type);
+			newField = createDisplayFieldStructure(type);
 		} else {
 			throw new Error('Invalid field type');
 		}
@@ -53,7 +53,7 @@ export const formStore = (initialValue: Form) => {
 			}
 
 			if (!f) {
-				f = createForm();
+				f = createFormStructure();
 			}
 
 			if (insertAfter !== undefined) {

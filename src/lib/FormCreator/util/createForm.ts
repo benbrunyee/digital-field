@@ -2,7 +2,15 @@ import { createId } from '../../util/createId';
 import type { Form } from '../types/formTypes';
 import { createFieldRef } from './createFields';
 
-export const createForm = (): Form => ({
+export const createForm = async (form: Form) => {
+	// TODO: Implement
+	try {
+	} catch (e) {
+		console.error(e);
+	}
+};
+
+export const createFormStructure = (): Form => ({
 	id: '1',
 	name: 'Form Name',
 	createdAt: new Date(),

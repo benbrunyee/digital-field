@@ -2,7 +2,7 @@ import { getContext, setContext } from 'svelte';
 import { writable } from 'svelte/store';
 import type { EntryState } from '../../FormCreator/types/formTypes';
 import type { Entry } from '../types/entryTypes';
-import { createEntry } from '../util/createEntry';
+import { createEntryStructure } from '../util/createEntry';
 
 const DEFAULT_STORE_NAME = 'entriesStore';
 
@@ -25,7 +25,7 @@ const entriesStore = <T extends EntryState>(formId: string, initialValue?: Entry
 
 	// TODO: Remove this
 	const demoEntries: { [key: string]: Entry<T>[] } = {
-		'1': [createEntry(formId)]
+		'1': [createEntryStructure(formId)]
 	};
 
 	if (formId) {

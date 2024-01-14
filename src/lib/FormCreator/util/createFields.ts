@@ -9,7 +9,7 @@ import type {
 	InputFieldType
 } from '../types/fieldTypes';
 
-export function createDisplayField<T extends DisplayFieldType>(type: T): DisplayField<T> {
+export function createDisplayFieldStructure<T extends DisplayFieldType>(type: T): DisplayField<T> {
 	return {
 		id: createId(type),
 		createdAt: new Date(),
@@ -34,7 +34,7 @@ function createDisplayFieldOptions<T extends DisplayFieldType>(type: T): Display
 	}
 }
 
-export function createInputField<T extends InputFieldType>(type: T): InputField<T> {
+export function createInputFieldStructure<T extends InputFieldType>(type: T): InputField<T> {
 	return {
 		id: createId(type),
 		ref: type,

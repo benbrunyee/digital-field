@@ -4,10 +4,10 @@
 	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
 	import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
 	import { initializeFormStore } from '../../../../../lib/FormCreator/stores/form';
-	import { createForm } from '../../../../../lib/FormCreator/util/createForm';
+	import { createFormStructure } from '../../../../../lib/FormCreator/util/createForm';
 	import { tab } from './+page.svelte';
 
-	initializeFormStore(createForm());
+	initializeFormStore(createFormStructure());
 </script>
 
 <AppShell

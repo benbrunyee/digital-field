@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import { writable } from 'svelte/store';
 import type { Form } from '../../FormCreator/types/formTypes';
-import { createForm } from '../../FormCreator/util/createForm';
+import { createFormStructure } from '../../FormCreator/util/createForm';
 
 let DEFAULT_STORE_NAME = 'recordFormStore';
 
@@ -32,5 +32,5 @@ const formStore = (initialValue?: Form) => {
 
 // TODO: Remove this
 const demoForm: { [key: string]: Form } = {
-	'1': createForm()
+	'1': createFormStructure()
 };
