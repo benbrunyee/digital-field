@@ -26,6 +26,7 @@
 		"@types/node": "^20.10.6",
 		"@types/pdfobject": "^2.2.5",
 		"autoprefixer": "^10.4.16",
+		"firebase": "^10.7.1",
 		"handlebars": "^4.7.8",
 		"jackspeak": "^2.3.6",
 		"pdfobject": "^2.2.12",
