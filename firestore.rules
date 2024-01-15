@@ -6,24 +6,164 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Utility functions
+
+    function getRolePermissions(role) {
+      return get(/databases/$(database)/documents/$(role)).data.permissions;
+    }
+
+    function getUserOrg() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.org;
+    }
+
+    function getUserRole() {
+      return request.auth.token.role;
+    }
+
     function isUserAuthenticated() {
       return request.auth != null
     }
 
     function isUserInResourceOrg() {
-      let userOrg = get(/databases/$(database)/documents/users/$(request.auth.uid)).userDoc.data.org;
-      return userOrg == resource.data.org;
+      return resource.data.org == getUserOrg();
     }
 
-    function doesUserRoleHaveViewFormPermissions() {
-      let userRole = get(/databases/$(database)/documents/users/$(request.auth.uid)).userDoc.data.role;
-      let rolePermissions = get(/databases/$(database)/documents/$(userRole)).data.permissions
-      return "viewer" in rolePermissions;
+    function isUserOrgOwner() {
+      return resource.id == getUserOrg();
     }
+
+    function isUserOrgAdmin() {
+      let userRole = getUserRole();
+      return "updateOrg" in getRolePermissions(userRole);
+    }
+
+    // Forms
 
     match /forms/{formId} {
-      allow read: if isUserAuthenticated()
-      allow write: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewFormPermissions();
+      function doesUserRoleHaveViewFormPermissions() {
+        let userRole = getUserRole();
+        return "viewForm" in getRolePermissions(userRole);
+      }
+
+      function doesUserRoleHaveUpdateFormPermissions() {
+        let userRole = getUserRole();
+        return "updateForm" in getRolePermissions(userRole);
+      }
+
+      function doesUserRoleHaveDeleteFormPermissions() {
+        let userRole = getUserRole();
+        return "deleteForm" in getRolePermissions(userRole);
+      }
+
+      function doesUserRoleHaveCreateFormPermissions() {
+        let userRole = getUserRole();
+        return "createForm" in getRolePermissions(userRole);
+      }
+
+      allow get, list: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewFormPermissions();
+      allow create: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveCreateFormPermissions();
+      allow update: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveUpdateFormPermissions();
+      allow delete: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveDeleteFormPermissions();
+
+      // Output entities
+
+      match /outputEntities/{outputEntityId} {
+        function doesUserRoleHaveViewOutputEntityPermissions() {
+          let userRole = getUserRole();
+          return "viewOutputEntity" in getRolePermissions(userRole);
+        }
+
+        function doesUserRoleHaveUpdateOutputEntityPermissions() {
+          let userRole = getUserRole();
+          return "updateOutputEntity" in getRolePermissions(userRole);
+        }
+
+        function doesUserRoleHaveDeleteOutputEntityPermissions() {
+          let userRole = getUserRole();
+          return "deleteOutputEntity" in getRolePermissions(userRole);
+        }
+
+        function doesUserRoleHaveCreateOutputEntityPermissions() {
+          let userRole = getUserRole();
+          return "createOutputEntity" in getRolePermissions(userRole);
+        }
+
+        allow get, list: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewOutputEntityPermissions();
+        allow create: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveCreateOutputEntityPermissions();
+        allow update: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveUpdateOutputEntityPermissions();
+        allow delete: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveDeleteOutputEntityPermissions();
+      }
+
+      // Entries
+
+      match /entries/{entryId} {
+        function doesUserRoleHaveViewEntryPermissions() {
+          let userRole = getUserRole();
+          return "viewEntry" in getRolePermissions(userRole);
+        }
+
+        function doesUserRoleHaveUpdateEntryPermissions() {
+          let userRole = getUserRole();
+          return "updateEntry" in getRolePermissions(userRole);
+        }
+
+        function doesUserRoleHaveDeleteEntryPermissions() {
+          let userRole = getUserRole();
+          return "deleteEntry" in getRolePermissions(userRole);
+        }
+
+        function doesUserRoleHaveCreateEntryPermissions() {
+          let userRole = getUserRole();
+          return "createEntry" in getRolePermissions(userRole);
+        }
+
+        allow get, list: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewEntryPermissions();
+        allow create: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveCreateEntryPermissions();
+        allow update: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveUpdateEntryPermissions();
+        allow delete: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveDeleteEntryPermissions();
+      }
+    }
+
+    // Organisations
+
+    match /organisations/{orgId} {
+      function isUserInCurrentOrg() {
+        return orgId == getUserOrg();
+      }
+
+      function doesUserRoleHaveViewOrgPermissions() {
+        let userRole = getUserRole();
+        return "viewOrg" in getRolePermissions(userRole);
+      }
+
+      function doesUserRoleHaveUpdateOrgPermissions() {
+        let userRole = getUserRole();
+        return "updateOrg" in getRolePermissions(userRole);
+      }
+
+      function doesUserRoleHaveDeleteOrgPermissions() {
+        let userRole = getUserRole();
+        return "deleteOrg" in getRolePermissions(userRole);
+      }
+
+      function doesUserRoleHaveCreateOrgPermissions() {
+        let userRole = getUserRole();
+        return "createOrg" in getRolePermissions(userRole);
+      }
+
+      allow get, list: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveViewOrgPermissions();
+      allow create: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveCreateOrgPermissions();
+      allow update: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveUpdateOrgPermissions();
+      allow delete: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveDeleteOrgPermissions();
+    }
+
+    // User
+
+    match /users/{userId} {
+      allow get: if isUserAuthenticated() && request.auth.uid == userId;
+      allow create, list: if null;
+      allow update: if isUserAuthenticated() && request.auth.uid == userId;
+      allow delete: if isUserAuthenticated() && request.auth.uid == userId;
     }
   }
 }

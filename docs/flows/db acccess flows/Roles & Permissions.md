@@ -35,7 +35,7 @@ function doesUserRoleHaveViewFormPermissions() {
 }
 
 match /forms/{formId} {
-  allow read: if isUserAuthenticated()
-  allow write: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewFormPermissions();
+  allow read: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewFormPermissions();
+  allow write: if null;
 }
 ```
