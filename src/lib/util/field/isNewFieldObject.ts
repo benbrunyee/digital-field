@@ -1,5 +1,5 @@
-import { allFormFieldTypes } from '../FormCreator/types/fieldTypes';
-import { outputDisplayFieldTypes } from '../OutputCreator/types/outputFieldTypes';
+import { allFormFieldTypes } from '../../FormCreator/types/fieldTypes';
+import { outputDisplayFieldTypes } from '../../OutputCreator/types/outputFieldTypes';
 
 export function isNewField(item: unknown): item is {
 	newField: true;

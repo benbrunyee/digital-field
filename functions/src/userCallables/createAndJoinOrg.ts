@@ -1,9 +1,8 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { app } from '..';
 import { AuthenticatedCallableRequest } from '../util/withAuth';
 
-const firestore = getFirestore(app);
+const firestore = getFirestore();
 
 export const createAndJoinOrgFn = async (request: AuthenticatedCallableRequest) => {
 	const orgName = request.data.orgName;

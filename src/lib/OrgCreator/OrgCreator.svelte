@@ -3,7 +3,7 @@
 	import { auth, firestore } from '$lib/firebase';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { addDoc, collection } from 'firebase/firestore';
-	import { toastError } from '../util/toastError';
+	import { toastError } from '../util/toast/toastError';
 
 	const toastStore = getToastStore();
 
@@ -12,7 +12,7 @@
 	const createOrganisation = async () => {
 		if (!auth.currentUser) {
 			toastError(toastStore, 'You must be signed in to create an organisation');
-			goto('/sign-in');
+			goto('/app/sign-in');
 			return;
 		}
 

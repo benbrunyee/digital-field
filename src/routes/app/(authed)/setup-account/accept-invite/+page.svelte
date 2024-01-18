@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import type { Org } from '$lib/OrgCreator/types/orgType';
 	import { functions } from '$lib/firebase';
-	import { toastError } from '$lib/util/toastError';
+	import { toastError } from '$lib/util/toast/toastError';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { httpsCallable } from 'firebase/functions';
 
@@ -48,7 +48,7 @@
 	};
 
 	const continueSetup = () => {
-		goto('/setup-account/create-organisation');
+		goto('/app/setup-account/create-organisation');
 	};
 </script>
 

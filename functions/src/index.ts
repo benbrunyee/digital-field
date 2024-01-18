@@ -1,12 +1,15 @@
-import * as firebase from 'firebase-admin';
+import * as admin from 'firebase-admin';
+
+admin.initializeApp();
+
+import * as functions from 'firebase-functions';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { CallableOptions, onCall } from 'firebase-functions/v2/https';
+import { onUserCreateFn } from './triggers/onUserCreate';
 import { createAndJoinOrgFn } from './userCallables/createAndJoinOrg';
 import { acceptOrgInviteFn } from './userCallables/org/invites/acceptOrgInvite';
 import { sendOrgInviteFn } from './userCallables/org/invites/sendOrgInvite';
 import { withAuth } from './util/withAuth';
-
-export const app = firebase.initializeApp();
 
 export const secureOptions: CallableOptions = {
 	enforceAppCheck: true
@@ -33,3 +36,7 @@ export const onOrgUpdate = onDocumentUpdated('org/{orgId}', (event) => {
 		event.data.after.ref.set({ updatedAt: updateDate }, { merge: true });
 	}
 });
+
+// Other triggers
+
+export const onUserCreate = functions.auth.user().onCreate(onUserCreateFn);

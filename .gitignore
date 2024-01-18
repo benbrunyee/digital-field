@@ -12,3 +12,5 @@ vite.config.ts.timestamp-*
 
 src/lib/firebase.ts
 firebase-debug.log
+firestore-debug.log
+ui-debug.log

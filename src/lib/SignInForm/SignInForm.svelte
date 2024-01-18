@@ -7,7 +7,7 @@
 		signInWithEmailAndPassword,
 		signInWithPopup
 	} from 'firebase/auth';
-	import { toastError } from '../util/toastError';
+	import { toastError } from '../util/toast/toastError';
 
 	const toastStore = getToastStore();
 
@@ -18,7 +18,7 @@
 
 	const signIn = async (email: string, password: string) => {
 		try {
-			const credential = await signInWithEmailAndPassword(auth, email, password);
+			await signInWithEmailAndPassword(auth, email, password);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign in');
@@ -27,7 +27,7 @@
 
 	const signUp = async (email: string, password: string) => {
 		try {
-			const credential = await createUserWithEmailAndPassword(auth, email, password);
+			await createUserWithEmailAndPassword(auth, email, password);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign up');
@@ -36,7 +36,7 @@
 
 	const signUpWithGoogle = async () => {
 		try {
-			const credential = await signInWithPopup(auth, googleAuthProvider);
+			await signInWithPopup(auth, googleAuthProvider);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign up with Google');

@@ -19,7 +19,7 @@
 
 		if (lastLoadedOrgId) {
 			// Navigate to the last loaded org
-			goto(`/org/${lastLoadedOrgId}`);
+			goto(`/app/org/${lastLoadedOrgId}`);
 		}
 	});
 

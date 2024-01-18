@@ -1,8 +1,7 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { app } from '..';
 
-const firestore = getFirestore(app);
+const firestore = getFirestore();
 
 export const getUserDoc = async (uid: string) => {
 	const userRef = await firestore.collection('users').doc(uid).get();
