@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { auth, firestore } from '$lib/firebase';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { addDoc, collection } from 'firebase/firestore';
-	import { auth, firestore } from '../../firebase';
 	import { toastError } from '../util/toastError';
 
 	const toastStore = getToastStore();

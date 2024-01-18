@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
-const OrgPlanSchema = z.enum(['standard']);
-export type OrgPlan = z.infer<typeof OrgPlanSchema>;
+const orgPlanSchema = z.enum(['standard']);
+export type OrgPlan = z.infer<typeof orgPlanSchema>;
 
-const OrgSchema = z.object({
+const orgSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	ownerId: z.string(),
-	users: z.array(z.string()),
-	plan: OrgPlanSchema,
+	members: z.array(z.string()),
+	plan: orgPlanSchema,
 	createdAt: z.date(),
 	updatedAt: z.date()
 });
-export type Org = z.infer<typeof OrgSchema>;
+export type Org = z.infer<typeof orgSchema>;

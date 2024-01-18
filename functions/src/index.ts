@@ -1,24 +1,22 @@
+import * as firebase from 'firebase-admin';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
-import { CallableOptions, HttpsError, onCall } from 'firebase-functions/v2/https';
+import { CallableOptions, onCall } from 'firebase-functions/v2/https';
+import { createAndJoinOrgFn } from './userCallables/createAndJoinOrg';
+import { acceptOrgInviteFn } from './userCallables/org/invites/acceptOrgInvite';
+import { sendOrgInviteFn } from './userCallables/org/invites/sendOrgInvite';
+import { withAuth } from './util/withAuth';
 
-const secureOptions: CallableOptions = {
+export const app = firebase.initializeApp();
+
+export const secureOptions: CallableOptions = {
 	enforceAppCheck: true
 };
 
 // Callable functions
 
-export const acceptOrgInvite = onCall(secureOptions, async (request) => {
-	const orgId = request.data.orgId;
-	const uid = request.auth?.uid;
-
-	if (!uid) {
-		throw new HttpsError('permission-denied', 'User needs to be logged in');
-	}
-
-	if (!orgId) {
-		throw new HttpsError('invalid-argument', 'orgId is required');
-	}
-});
+export const acceptOrgInvite = onCall(secureOptions, withAuth(acceptOrgInviteFn));
+export const sendOrgInvite = onCall(secureOptions, withAuth(sendOrgInviteFn));
+export const createAndJoinOrg = onCall(secureOptions, withAuth(createAndJoinOrgFn));
 
 // Document triggers
 

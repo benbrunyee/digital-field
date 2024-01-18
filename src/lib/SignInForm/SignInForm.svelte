@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { auth, googleAuthProvider } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import {
@@ -6,7 +7,6 @@
 		signInWithEmailAndPassword,
 		signInWithPopup
 	} from 'firebase/auth';
-	import { auth, googleAuthProvider } from '../../firebase';
 	import { toastError } from '../util/toastError';
 
 	const toastStore = getToastStore();

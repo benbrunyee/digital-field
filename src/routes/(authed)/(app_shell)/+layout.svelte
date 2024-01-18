@@ -12,6 +12,16 @@
 		LightSwitch,
 		getDrawerStore
 	} from '@skeletonlabs/skeleton';
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		const lastLoadedOrgId = localStorage.getItem('lastLoadedOrgId');
+
+		if (lastLoadedOrgId) {
+			// Navigate to the last loaded org
+			goto(`/org/${lastLoadedOrgId}`);
+		}
+	});
 
 	afterNavigate(({ from }) => {
 		previousPage = from?.url.pathname || previousPage;

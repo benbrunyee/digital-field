@@ -10,5 +10,5 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .yarn
 
-src/firebase.ts
+src/lib/firebase.ts
 firebase-debug.log
