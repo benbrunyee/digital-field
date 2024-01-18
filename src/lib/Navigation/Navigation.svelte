@@ -2,11 +2,11 @@
 	export const navigation = [
 		{
 			name: 'Homepage',
-			path: '/'
+			path: '/app'
 		},
 		{
 			name: 'Forms',
-			path: '/forms'
+			path: '/app/forms'
 		}
 	] as const;
 </script>
@@ -37,8 +37,7 @@
 						drawerClose();
 						setPageTitle(navItem.name);
 					}}
-					data-active={$page.url.pathname === navItem.path ||
-						$page.url.pathname.startsWith(navItem.path + '/')}
+					data-active={$page.url.pathname === navItem.path}
 					class="data-[active=true]:bg-surface-50-900-token data-[active=true]:text-primary-500"
 					>{navItem.name}</a
 				>

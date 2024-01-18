@@ -8,8 +8,8 @@ const firestore = getFirestore();
 export const userSchema = z.object({
 	id: z.string(),
 	email: z.string(),
-	created: z.date(),
-	updated: z.date(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
 	orgInvites: z.record(
 		z.string(),
 		z.object({
@@ -38,8 +38,8 @@ export const onUserCreateFn = async (
 	const userObj: User = {
 		id: user.uid,
 		email: user.email ?? '',
-		created: date,
-		updated: date,
+		createdAt: date,
+		updatedAt: date,
 		orgInvites: {},
 		orgs: {}
 	};
