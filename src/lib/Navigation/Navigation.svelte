@@ -1,19 +1,21 @@
 <script lang="ts" context="module">
-	export const navigation = [
-		{
-			name: 'Homepage',
-			path: '/app'
-		},
-		{
-			name: 'Forms',
-			path: '/app/forms'
-		}
-	] as const;
+	export const navigation = (orgId: string) =>
+		[
+			{
+				name: 'Homepage',
+				path: `/app/org/${orgId}`
+			},
+			{
+				name: 'Forms',
+				path: `/app/org/${orgId}/forms`
+			}
+		] as const;
 </script>
 
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
+	import { orgIdStore } from '../stores/org';
 	import { pageTitle } from './stores/pageTitle';
 
 	const drawerStore = getDrawerStore();
@@ -29,7 +31,7 @@
 
 <nav class="list-nav h-full p-4">
 	<ul>
-		{#each navigation as navItem}
+		{#each navigation($orgIdStore) as navItem}
 			<li>
 				<a
 					href={navItem.path}

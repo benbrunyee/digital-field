@@ -24,7 +24,7 @@
 				try {
 					const userData = await getUserDoc();
 					userStore.set(userData);
-					goto('/app');
+					goto(`/app/org/${$userStore?.primaryOrgId}`);
 				} catch (e) {
 					console.error(e);
 					toastError(toastStore, 'Failed to load user data');

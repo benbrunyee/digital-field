@@ -5,7 +5,12 @@ admin.initializeApp();
 import * as functions from 'firebase-functions';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { CallableOptions, onCall } from 'firebase-functions/v2/https';
+import { createUserRolesFn } from './development/createUserRoles';
 import { beforeSignInFn } from './triggers/beforeUserSignIn';
+import { onFormCreateFn } from './triggers/docTriggers/onFormCreate';
+import { onFormUpdateFn } from './triggers/docTriggers/onFormUpdate';
+import { onOrgCreateFn } from './triggers/docTriggers/onOrgCreate';
+import { onOrgUpdateFn } from './triggers/docTriggers/onOrgUpdate';
 import { onUserCreateFn } from './triggers/onUserCreate';
 import { createAndJoinOrgFn } from './userCallables/org/createAndJoinOrg';
 import { acceptOrgInviteFn } from './userCallables/org/invites/acceptOrgInvite';
@@ -17,6 +22,10 @@ export const secureOptions: CallableOptions = {
 	enforceAppCheck: true
 };
 
+// Dev callables
+
+export const createUserRoles = onCall(secureOptions, createUserRolesFn);
+
 // Callable functions
 
 export const acceptOrgInvite = onCall(secureOptions, withAuth(acceptOrgInviteFn));
@@ -26,19 +35,13 @@ export const updateUserDetails = onCall(secureOptions, withAuth(updateUserDetail
 
 // Document triggers
 
-export const onOrgCreation = onDocumentCreated('org/{orgId}', (event) => {
-	if (event.data) {
-		const creationDate = new Date();
-		event.data?.ref.set({ createdAt: creationDate, updatedAt: creationDate }, { merge: true });
-	}
-});
+// Org triggers
+export const onOrgCreate = onDocumentCreated('org/{orgId}', onOrgCreateFn);
+export const onOrgUpdate = onDocumentUpdated('org/{orgId}', onOrgUpdateFn);
 
-export const onOrgUpdate = onDocumentUpdated('org/{orgId}', (event) => {
-	if (event.data) {
-		const updateDate = new Date();
-		event.data.after.ref.set({ updatedAt: updateDate }, { merge: true });
-	}
-});
+// Form triggers
+export const onFormCreate = onDocumentCreated('forms/{formId}', onFormCreateFn);
+export const onFormUpdate = onDocumentUpdated('forms/{formId}', onFormUpdateFn);
 
 // Other triggers
 

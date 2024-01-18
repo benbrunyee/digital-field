@@ -1,37 +1,46 @@
 // Top-level available form types
 
+import { z } from 'zod';
 import type { WithId } from '../../util/types/withId';
-import type { OutputField } from './outputFieldTypes';
-import type { Template } from './template';
+import { outputFieldSchema, type OutputField } from './outputFieldTypes';
+import { templateSchema } from './template';
 
-export const outputEntityStates = ['draft', 'active', 'disabled', ['deleted']] as const;
+export const outputEntityStates = ['draft', 'active', 'disabled', 'deleted'] as const;
 
 // Form Typescript types
 
-type OutputEntityState = (typeof outputEntityStates)[number];
-
-// Form object Typescript types
-
-export interface OutputEntity {
-	id: string;
-	name: string;
-	formId: string;
-	updatedAt: Date | undefined;
-	createdAt: Date | undefined;
-	ownerId: string;
-	overrides: Override[];
-	template: Template;
-	state: OutputEntityState;
-	isCustom: boolean;
-	fields: OutputField[];
-}
+export const outputEntityStatesSchema = z.enum(outputEntityStates);
+export type OutputEntityState = z.infer<typeof outputEntityStatesSchema>;
 
 export interface OutputEntityWithFieldIds extends OutputEntity {
 	fields: WithId<OutputField>[];
 }
 
-export type Override = {
-	id: string;
-	fieldId: string;
-	code: string;
-};
+export const overrideSchema = z.object({
+	id: z.string(),
+	fieldId: z.string(),
+	code: z.string()
+});
+export type Override = z.infer<typeof overrideSchema>;
+
+// Form object Typescript types
+
+export const unsavedOutputEntitySchema = z.object({
+	name: z.string(),
+	formId: z.string(),
+	ownerId: z.string(),
+	overrides: z.array(overrideSchema),
+	template: templateSchema,
+	state: z.enum(outputEntityStates),
+	isCustom: z.boolean(),
+	fields: z.array(outputFieldSchema)
+});
+export type UnsavedOutputEntity = z.infer<typeof unsavedOutputEntitySchema>;
+
+export const outputEntitySchema = z.object({
+	...unsavedOutputEntitySchema.shape,
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date()
+});
+export type OutputEntity = z.infer<typeof outputEntitySchema>;

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { orgIdStore } from '$lib/stores/org';
 	import { onMount } from 'svelte';
 
 	// Get the loaded org from the url
@@ -11,6 +12,8 @@
 
 		if (orgId) {
 			localStorage.setItem('lastLoadedOrgId', orgId);
+			$orgIdStore = orgId;
+			console.log('orgId', orgId);
 		}
 	});
 </script>

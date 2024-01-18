@@ -8,11 +8,7 @@ const firestore = getFirestore();
 
 export const beforeSignInFn = async (user: AuthUserRecord, context: AuthEventContext) => {
 	// Ensure that the document exists
-	const uid = context.auth?.uid;
-
-	if (!uid) {
-		throw new Error('User is not authenticated');
-	}
+	const uid = user.uid;
 
 	const { email, displayName } = user;
 

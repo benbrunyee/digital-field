@@ -1,30 +1,53 @@
+import { z } from 'zod';
 import type { OutputFieldType } from './outputFieldTypes';
 
-export interface Template {
-	id: string;
-	type: TemplateType;
-	topPage: Page | undefined;
-	tailPage: Page | undefined;
-	fieldTemplates: FieldTemplate[];
-	options: TemplateOptions;
-}
+const templateTypeSchema = z.enum(['pdf']);
+export type TemplateType = z.infer<typeof templateTypeSchema>;
 
-export type TemplateType = 'pdf';
+export const pageTypeSchema = z.enum(['code', 'pdf']);
+export type PageType = z.infer<typeof pageSchema>;
 
+export const pageSchema = z.object({
+	id: z.string(),
+	type: pageTypeSchema,
+	value: z.string()
+});
 export type Page = {
 	id: string;
 	type: PageType;
 	value: string;
 };
 
-export type PageType = 'code' | 'pdf';
-
+export const fieldTemplateSchema = z.object({
+	id: z.string(),
+	type: z.enum([
+		'text',
+		'image',
+		'signature',
+		'date',
+		'checkbox',
+		'radio',
+		'dropdown',
+		'number',
+		'file'
+	]),
+	code: z.string()
+});
 export type FieldTemplate = {
 	id: string;
 	type: OutputFieldType;
 	code: string;
 };
 
-export type TemplateOptions = {
-	[key: string]: any;
-};
+export const templateOptionsSchema = z.record(z.string(), z.any());
+export type TemplateOptions = z.infer<typeof templateOptionsSchema>;
+
+export const templateSchema = z.object({
+	id: z.string(),
+	type: templateTypeSchema,
+	topPage: pageSchema.optional(),
+	tailPage: pageSchema.optional(),
+	fieldTemplates: z.array(fieldTemplateSchema),
+	options: templateOptionsSchema
+});
+export type Template = z.infer<typeof templateSchema>;

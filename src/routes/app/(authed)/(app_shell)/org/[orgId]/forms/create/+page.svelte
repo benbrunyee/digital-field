@@ -2,7 +2,7 @@
 	import { writable } from 'svelte/store';
 
 	export const tabs = ['input', 'output'] as const;
-	export const tab = writable<(typeof tabs)[number]>('output');
+	export const tab = writable<(typeof tabs)[number]>('input');
 </script>
 
 <script lang="ts">

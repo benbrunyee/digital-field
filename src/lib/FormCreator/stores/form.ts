@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { type FormField, type FormFieldTypes } from '../types/fieldTypes';
-import type { Form } from '../types/formTypes';
+import type { Form, UnsavedForm } from '../types/formTypes';
 import { createDisplayFieldStructure, createInputFieldStructure } from '../util/createFields';
 import { createFormStructure } from '../util/createForm';
 import { filterForInputField } from '../util/filterForFieldType';
@@ -9,17 +9,19 @@ import { isDisplayFieldType, isInputFieldType } from '../util/isFieldType';
 
 let DEFAULT_STORE_NAME = 'formStore';
 
-export const getFormStore = (storeName?: string) =>
-	getContext<ReturnType<typeof formStore>>(storeName ?? DEFAULT_STORE_NAME);
+export const getFormStore = (storeName?: string) => {
+	const store = getContext<ReturnType<typeof formStore>>(storeName ?? DEFAULT_STORE_NAME);
+	return store ?? initializeFormStore();
+};
 
-export const initializeFormStore = (initialValue?: Form, storeName?: string) => {
+export const initializeFormStore = (initialValue?: UnsavedForm | Form, storeName?: string) => {
 	const store = formStore(initialValue ?? createFormStructure());
 	setContext(storeName ?? DEFAULT_STORE_NAME, store);
 	return store;
 };
 
-export const formStore = (initialValue: Form) => {
-	const store = writable<Form>(initialValue);
+export const formStore = (initialValue: UnsavedForm | Form) => {
+	const store = writable<UnsavedForm | Form>(initialValue);
 
 	const createNewForm = () => {
 		store.update(() => createFormStructure());
@@ -88,7 +90,7 @@ export const formStore = (initialValue: Form) => {
 };
 
 export const fieldsStore = (store: ReturnType<typeof formStore>) =>
-	derived(store, ($form) => $form?.fields);
+	derived(store, ($form) => $form.fields);
 
 export const inputFieldsStore = (store: ReturnType<typeof formStore>) =>
-	derived(store, ($form) => $form?.fields.filter(filterForInputField));
+	derived(store, ($form) => $form.fields.filter(filterForInputField));

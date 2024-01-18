@@ -14,8 +14,6 @@
 
 	$: entryId && entry.setEntryId(entryId);
 	$: formId && form.setFormId(formId);
-
-	$: console.log($entry);
 </script>
 
 <div class="card bg-surface-50-900-token m-2 p-2">

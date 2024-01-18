@@ -4,14 +4,32 @@
 	import { draggedComponentPayload } from '../Draggable/stores/draggedSelectable';
 	import FieldGhost from '../SelectableElements/FieldGhost.svelte';
 	import { formatFieldType } from '../SelectableElements/util/formatFieldType';
+	import { loadForm } from '../util/form/loadForm';
+	import { toastError } from '../util/toast/toastError';
 	import FormField from './FormFields/FormField.svelte';
 	import { fieldTypeIcons } from './FormSelectables/FormSelectableElementBase.svelte';
-	import { getFormStore } from './stores/form';
+	import { fieldsStore, getFormStore } from './stores/form';
 	import { isDisplayField, isField, isInputField, isNewField } from './util/isFieldType';
 
-	const form = getFormStore();
+	export let formId = '';
 
 	const toastStore = getToastStore();
+	const form = getFormStore();
+	const fields = fieldsStore(form);
+
+	$: if (formId) {
+		new Promise<void>(async (resolve) => {
+			try {
+				const existingForm = await loadForm(formId);
+				$form = existingForm;
+			} catch (error) {
+				console.error(error);
+				toastError(toastStore, 'Failed to load form');
+			}
+
+			return resolve();
+		});
+	}
 
 	$: displayText = isInputField($draggedComponentPayload)
 		? $draggedComponentPayload.name || formatFieldType($draggedComponentPayload.type)
@@ -21,7 +39,7 @@
 				? formatFieldType($draggedComponentPayload.type)
 				: '';
 
-	$: console.log($form.fields);
+	$: console.log($fields);
 </script>
 
 <div class="border-surface-800-100-token h-min min-h-14 w-full border p-2 rounded-token">

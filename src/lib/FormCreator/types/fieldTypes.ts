@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { InputEntityField } from '../../InputEntity/types/inputField';
+import type { InputEntityField, UnsavedInputEntityField } from '../../InputEntity/types/inputField';
 import { implement } from '../../util/types/typeToZod';
 
 /**
@@ -32,8 +32,10 @@ export const allFormFieldTypes = [...inputFieldTypes, ...displayFieldTypes] as c
 
 // Field Typescript types
 
-export type InputFieldType = (typeof inputFieldTypes)[number];
-export type DisplayFieldType = (typeof displayFieldTypes)[number];
+export const inputFieldTypesSchema = z.enum(inputFieldTypes);
+export type InputFieldType = z.infer<typeof inputFieldTypesSchema>;
+export const displayFieldTypesSchema = z.enum(displayFieldTypes);
+export type DisplayFieldType = z.infer<typeof displayFieldTypesSchema>;
 
 export type FormFieldTypes = InputFieldType | DisplayFieldType;
 
@@ -46,35 +48,63 @@ export interface InputField<T extends InputFieldType>
 	required: boolean;
 	description: string;
 }
+export interface UnsavedInputField<T extends InputFieldType>
+	extends UnsavedInputEntityField<T, InputFieldOptions<T>> {
+	name: string;
+	ref: string;
+	required: boolean;
+	description: string;
+}
+
 export interface DisplayField<T extends DisplayFieldType>
 	extends InputEntityField<T, DisplayFieldOptions<T>> {
 	value?: string;
 }
+export interface UnsavedDisplayField<T extends DisplayFieldType>
+	extends UnsavedInputEntityField<T, DisplayFieldOptions<T>> {
+	value?: string;
+}
 
 export type FormField = InputField<InputFieldType> | DisplayField<DisplayFieldType>;
+export type UnsavedFormField =
+	| UnsavedInputField<InputFieldType>
+	| UnsavedDisplayField<DisplayFieldType>;
 
-export const InputFieldSchema = implement<InputField<InputFieldType>>().with({
+export const inputFieldSchema = implement<InputField<InputFieldType>>().with({
 	id: z.string(),
 	ref: z.string(),
 	type: z.enum(inputFieldTypes),
-	createdAt: z.date().optional(),
-	updatedAt: z.date().optional(),
+	createdAt: z.date(),
+	updatedAt: z.date(),
 	name: z.string(),
 	required: z.boolean(),
-	options: z.any().optional(),
+	options: z.record(z.string(), z.any()),
+	description: z.string()
+});
+export const unsavedInputFieldSchema = implement<UnsavedInputField<InputFieldType>>().with({
+	ref: z.string(),
+	type: z.enum(inputFieldTypes),
+	name: z.string(),
+	required: z.boolean(),
+	options: z.record(z.string(), z.any()),
 	description: z.string()
 });
 
-export const DisplayFieldSchema = implement<DisplayField<DisplayFieldType>>().with({
+export const displayFieldSchema = implement<DisplayField<DisplayFieldType>>().with({
 	id: z.string(),
 	value: z.string().optional(),
 	type: z.enum(displayFieldTypes),
-	createdAt: z.date().optional(),
-	updatedAt: z.date().optional(),
-	options: z.any().optional()
+	createdAt: z.date(),
+	updatedAt: z.date(),
+	options: z.record(z.string(), z.any())
+});
+export const unsavedDisplayFieldSchema = implement<UnsavedDisplayField<DisplayFieldType>>().with({
+	type: z.enum(displayFieldTypes),
+	value: z.string().optional(),
+	options: z.record(z.string(), z.any())
 });
 
-export const FormFieldSchema = z.union([InputFieldSchema, DisplayFieldSchema]);
+export const formFieldSchema = z.union([inputFieldSchema, displayFieldSchema]);
 
 // TODO: Field options
 

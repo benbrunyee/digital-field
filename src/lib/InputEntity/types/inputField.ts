@@ -1,11 +1,17 @@
 import type { DisplayFieldType, InputFieldType } from '../../FormCreator/types/fieldTypes';
 import type { InputEntity } from './inputEntity';
 
-export interface InputEntityField<T extends InputEntityFieldType, O extends InputFieldOption> {
+export interface InputEntityField<T extends InputEntityFieldType, O extends InputFieldOption>
+	extends UnsavedInputEntityField<T, O> {
 	id: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+export interface UnsavedInputEntityField<
+	T extends InputEntityFieldType,
+	O extends InputFieldOption
+> {
 	type: T;
-	createdAt: Date | undefined;
-	updatedAt: Date | undefined;
 	options: O;
 }
 

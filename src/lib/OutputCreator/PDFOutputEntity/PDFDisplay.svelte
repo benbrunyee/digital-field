@@ -15,8 +15,6 @@
 
 		const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
 
-		console.log($page.data.pdf);
-
 		// Random unique ID that starts with a letter
 		node.id = 'pdf-' + Math.random().toString(36).substring(2, 9);
 

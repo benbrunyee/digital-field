@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { initializeFormStore } from '$lib/EntryCreator/stores/form';
 	import FormElementSelection from '$lib/FormCreator/FormSelectables/FormElementSelection.svelte';
 	import FormSettings from '$lib/FormCreator/FormSettings.svelte';
+	import { createFormStructure } from '$lib/FormCreator/util/createForm';
 	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
 	import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
-	import { initializeFormStore } from '../../../../../lib/FormCreator/stores/form';
-	import { createFormStructure } from '../../../../../lib/FormCreator/util/createForm';
 	import { tab } from './+page.svelte';
 
 	initializeFormStore(createFormStructure());
@@ -38,9 +38,9 @@
 		{/if}
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarRight">
-		<h3 class="h3 ml-2">Settings</h3>
-		<hr />
-		<FormSettings />
+		{#if $tab === 'input'}
+			<FormSettings />
+		{/if}
 	</svelte:fragment>
 	<!-- (pageHeader) -->
 	<!-- Router Slot -->

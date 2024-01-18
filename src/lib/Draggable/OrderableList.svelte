@@ -24,6 +24,7 @@
 	let hideElementIndex: number | undefined = undefined;
 	let draggingExistingElement = false;
 	let placeholderDummy: HTMLDivElement | undefined;
+	let listContainer: HTMLDivElement | undefined;
 
 	let ghostElement: {
 		show: boolean;
@@ -60,8 +61,6 @@
 		} else if (nextElementIndex >= items.length) {
 			nextElementIndex = items.length - 1;
 		}
-
-		console.log(nextElementIndex);
 
 		return nextElementIndex;
 	}
@@ -113,6 +112,7 @@
 	</div>
 
 	<div
+		bind:this={listContainer}
 		class="space-y-1 {$$props.class ?? ''}"
 		on:scroll={(e) => {
 			console.log(e);

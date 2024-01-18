@@ -3,6 +3,8 @@
 	import { page } from '$app/stores';
 	import Navigation, { navigation } from '$lib/Navigation/Navigation.svelte';
 	import { pageTitle } from '$lib/Navigation/stores/pageTitle';
+	import { orgIdStore } from '$lib/stores/org';
+	import { userStore } from '$lib/util/user/stores/userStore';
 	import Icon from '@iconify/svelte';
 	import {
 		AppBar,
@@ -13,23 +15,26 @@
 		getDrawerStore
 	} from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { userStore } from '../../../../lib/util/user/stores/userStore';
 
-	$: avatarInitials = $userStore?.name.charAt(0) ?? $userStore?.email.charAt(0) ?? '..';
+	$: avatarInitials = $userStore?.name.charAt(0) || $userStore?.email.charAt(0) || '..';
 
 	onMount(() => {
 		const lastLoadedOrgId = localStorage.getItem('lastLoadedOrgId');
 
 		if (lastLoadedOrgId) {
 			// Navigate to the last loaded org
+			$orgIdStore = lastLoadedOrgId;
 			goto(`/app/org/${lastLoadedOrgId}`);
+		} else {
+			// Navigate to the first org the user owns
+			goto(`/app/org/${$userStore.primaryOrgId}`);
 		}
 	});
 
 	afterNavigate(({ from }) => {
 		previousPage = from?.url.pathname || previousPage;
 
-		navigation.forEach((navItem) => {
+		navigation($orgIdStore).forEach((navItem) => {
 			if (
 				navItem.path === $page.url.pathname ||
 				$page.url.pathname.startsWith(navItem.path + '/')

@@ -39,11 +39,11 @@ export type OutputDisplayField<T extends OutputDisplayFieldType> = {
 	type: T;
 };
 
-export const OutputInputFieldSchema = implement<OutputInputField<OutputInputFieldType>>().with({
+export const outputInputFieldSchema = implement<OutputInputField<OutputInputFieldType>>().with({
 	fieldId: z.string(),
 	type: z.enum(inputFieldTypes)
 });
-export const OutputDisplayFieldSchema = implement<
+export const outputDisplayFieldSchemao = implement<
 	OutputDisplayField<OutputDisplayFieldType>
 >().with({
 	type: z.enum(outputDisplayFieldTypes)
@@ -52,4 +52,4 @@ export const OutputDisplayFieldSchema = implement<
 export type OutputField =
 	| OutputDisplayField<OutputDisplayFieldType>
 	| OutputInputField<OutputInputFieldType>;
-export const OutputFieldSchema = z.union([OutputDisplayFieldSchema, OutputInputFieldSchema]);
+export const outputFieldSchema = z.union([outputDisplayFieldSchemao, outputInputFieldSchema]);

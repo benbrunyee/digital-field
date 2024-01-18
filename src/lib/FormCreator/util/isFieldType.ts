@@ -1,8 +1,8 @@
 import {
-	DisplayFieldSchema,
-	FormFieldSchema,
-	InputFieldSchema,
 	allFormFieldTypes,
+	displayFieldSchema,
+	formFieldSchema,
+	inputFieldSchema,
 	type DisplayField,
 	type DisplayFieldType,
 	type FormField,
@@ -11,11 +11,11 @@ import {
 } from '../types/fieldTypes';
 
 export function isField(field: unknown): field is FormField {
-	return FormFieldSchema.safeParse(field).success;
+	return formFieldSchema.safeParse(field).success;
 }
 
 export function isInputField(field: unknown): field is InputField<InputFieldType> {
-	return InputFieldSchema.safeParse(field).success;
+	return inputFieldSchema.safeParse(field).success;
 }
 
 export function isInputFieldType(type: unknown): type is InputFieldType {
@@ -23,7 +23,7 @@ export function isInputFieldType(type: unknown): type is InputFieldType {
 }
 
 export function isDisplayField(field: unknown): field is DisplayField<DisplayFieldType> {
-	return DisplayFieldSchema.safeParse(field).success;
+	return displayFieldSchema.safeParse(field).success;
 }
 
 export function isDisplayFieldType(type: unknown): type is DisplayFieldType {

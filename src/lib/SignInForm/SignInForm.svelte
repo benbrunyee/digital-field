@@ -15,32 +15,45 @@
 	let password = '';
 	let state: 'sign-in' | 'sign-up' = 'sign-in';
 	let error = '';
+	let isSubmitting = false;
 
 	const signIn = async (email: string, password: string) => {
+		isSubmitting = true;
+
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign in');
 		}
+
+		isSubmitting = false;
 	};
 
 	const signUp = async (email: string, password: string) => {
+		isSubmitting = true;
+
 		try {
 			await createUserWithEmailAndPassword(auth, email, password);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign up');
 		}
+
+		isSubmitting = false;
 	};
 
 	const signUpWithGoogle = async () => {
+		isSubmitting = true;
+
 		try {
 			await signInWithPopup(auth, googleAuthProvider);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign up with Google');
 		}
+
+		isSubmitting = false;
 	};
 </script>
 
@@ -62,10 +75,15 @@
 
 <div class="text-center">
 	<button
+		disabled={isSubmitting}
 		on:click={() => (state === 'sign-in' ? signIn(email, password) : signUp(email, password))}
 		class="variant-filled-primary btn">{state === 'sign-in' ? 'Sign In' : 'Sign Up'}</button
 	>
-	<button on:click={() => signUpWithGoogle()} class="variant-filled-tertiary btn">
+	<button
+		disabled={isSubmitting}
+		on:click={() => signUpWithGoogle()}
+		class="variant-filled-tertiary btn"
+	>
 		<span><Icon icon="mdi:google" /></span>
 		<span>Sign Up with Google</span>
 	</button>

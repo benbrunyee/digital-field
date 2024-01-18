@@ -16,7 +16,6 @@ export const getUserDoc = async () => {
 		const value = userData?.[key];
 
 		if (value && isFirestoreTimestamp(value)) {
-			console.log('Converting timestamp to date');
 			userData[key] = value.toDate();
 		}
 	}

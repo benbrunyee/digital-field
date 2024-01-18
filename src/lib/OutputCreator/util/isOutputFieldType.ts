@@ -1,8 +1,8 @@
 import {
-	OutputFieldSchema,
-	OutputInputFieldSchema,
 	outputDisplayFieldTypes,
+	outputFieldSchema,
 	outputFieldTypes,
+	outputInputFieldSchema,
 	type OutputDisplayField,
 	type OutputDisplayFieldType,
 	type OutputField,
@@ -11,19 +11,19 @@ import {
 } from '../types/outputFieldTypes';
 
 export function isOutputField(field: unknown): field is OutputField {
-	return OutputFieldSchema.safeParse(field).success;
+	return outputFieldSchema.safeParse(field).success;
 }
 
 export function isOutputInputField(
 	field: unknown
 ): field is OutputInputField<OutputInputFieldType> {
-	return OutputInputFieldSchema.safeParse(field).success;
+	return outputInputFieldSchema.safeParse(field).success;
 }
 
 export function isOutputDisplayField(
 	field: unknown
 ): field is OutputDisplayField<OutputDisplayFieldType> {
-	return OutputFieldSchema.safeParse(field).success;
+	return outputFieldSchema.safeParse(field).success;
 }
 
 export function isNewOutputField(item: unknown): item is OutputField {

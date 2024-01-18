@@ -9,15 +9,15 @@ service cloud.firestore {
     // Utility functions
 
     function getRolePermissions(role) {
-      return get(/databases/$(database)/documents/$(role)).data.permissions;
+      return get(/databases/$(database)/documents/userRoles/$(role)).data.permissions;
     }
 
     function getUserOrg() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.org;
     }
 
-    function getUserRole() {
-      return request.auth.token.role;
+    function getUserOrgRole(orgId) {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.orgs[orgId].role;
     }
 
     function isUserAuthenticated() {
@@ -33,7 +33,7 @@ service cloud.firestore {
     }
 
     function isUserOrgAdmin() {
-      let userRole = getUserRole();
+      let userRole = getUserOrgRole();
       return "updateOrg" in getRolePermissions(userRole);
     }
 
@@ -41,22 +41,22 @@ service cloud.firestore {
 
     match /forms/{formId} {
       function doesUserRoleHaveViewFormPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole(request.resource.data.orgId);
         return "viewForm" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveUpdateFormPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole(request.resource.data.orgId);
         return "updateForm" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveDeleteFormPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole(request.resource.data.orgId);
         return "deleteForm" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveCreateFormPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole(request.resource.data.orgId);
         return "createForm" in getRolePermissions(userRole);
       }
 
@@ -65,7 +65,7 @@ service cloud.firestore {
       }
 
       allow get, list: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewFormPermissions();
-      allow create: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveCreateFormPermissions() && !containsProtectedFormKeys();
+      allow create: if isUserAuthenticated() && doesUserRoleHaveCreateFormPermissions() && !containsProtectedFormKeys();
       allow update: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveUpdateFormPermissions() && !containsProtectedFormKeys();
       allow delete: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveDeleteFormPermissions();
 
@@ -73,22 +73,22 @@ service cloud.firestore {
 
       match /outputEntities/{outputEntityId} {
         function doesUserRoleHaveViewOutputEntityPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "viewOutputEntity" in getRolePermissions(userRole);
         }
 
         function doesUserRoleHaveUpdateOutputEntityPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "updateOutputEntity" in getRolePermissions(userRole);
         }
 
         function doesUserRoleHaveDeleteOutputEntityPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "deleteOutputEntity" in getRolePermissions(userRole);
         }
 
         function doesUserRoleHaveCreateOutputEntityPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "createOutputEntity" in getRolePermissions(userRole);
         }
 
@@ -106,22 +106,22 @@ service cloud.firestore {
 
       match /entries/{entryId} {
         function doesUserRoleHaveViewEntryPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "viewEntry" in getRolePermissions(userRole);
         }
 
         function doesUserRoleHaveUpdateEntryPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "updateEntry" in getRolePermissions(userRole);
         }
 
         function doesUserRoleHaveDeleteEntryPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "deleteEntry" in getRolePermissions(userRole);
         }
 
         function doesUserRoleHaveCreateEntryPermissions() {
-          let userRole = getUserRole();
+          let userRole = getUserOrgRole();
           return "createEntry" in getRolePermissions(userRole);
         }
 
@@ -144,22 +144,22 @@ service cloud.firestore {
       }
 
       function doesUserRoleHaveViewOrgPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole();
         return "viewOrg" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveUpdateOrgPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole();
         return "updateOrg" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveDeleteOrgPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole();
         return "deleteOrg" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveCreateOrgPermissions() {
-        let userRole = getUserRole();
+        let userRole = getUserOrgRole();
         return "createOrg" in getRolePermissions(userRole);
       }
 
@@ -168,7 +168,7 @@ service cloud.firestore {
       }
 
       allow get, list: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveViewOrgPermissions();
-      allow create: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveCreateOrgPermissions() && !containsProtectedOrgKeys();
+      allow create: if null;
       allow update: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveUpdateOrgPermissions() && !containsProtectedOrgKeys();
       allow delete: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveDeleteOrgPermissions();
     }
