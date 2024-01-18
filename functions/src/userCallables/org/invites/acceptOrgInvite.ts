@@ -3,6 +3,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { getOrgDoc } from '../../../util/getOrgDoc';
 import { getUserDoc } from '../../../util/getUserDoc';
+import { ORG_COLLECTION, USER_COLLECTION } from '../../../util/types/collections';
 import { AuthenticatedCallableRequest } from '../../../util/withAuth';
 
 const firestore = getFirestore();
@@ -52,13 +53,13 @@ export const acceptOrgInviteFn = async (
 
 const addUserToOrg = (uid: string, orgId: string) => {
 	// TODO: Batch this
-	const orgRef = firestore.collection('org').doc(orgId);
-	const userRef = firestore.collection('users').doc(uid);
+	const orgRef = firestore.collection(ORG_COLLECTION).doc(orgId);
+	const userRef = firestore.collection(USER_COLLECTION).doc(uid);
 
 	const orgPromise = orgRef.update(`members.${uid}`, true);
 
 	// TODO: Get the role from the invite
-	const userPromise = userRef.update(`org.${orgId}`, { orgId, role: 'viewer' });
+	const userPromise = userRef.update(`orgs.${orgId}`, { orgId, role: 'viewer' });
 
 	return Promise.all([orgPromise, userPromise]);
 };

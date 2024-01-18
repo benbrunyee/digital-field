@@ -1,10 +1,11 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
+import { USER_COLLECTION } from './types/collections';
 
 const firestore = getFirestore();
 
 export const getUserDoc = async (uid: string) => {
-	const userRef = await firestore.collection('users').doc(uid).get();
+	const userRef = await firestore.collection(USER_COLLECTION).doc(uid).get();
 
 	if (!userRef.exists) {
 		return null;
@@ -14,7 +15,7 @@ export const getUserDoc = async (uid: string) => {
 };
 
 export const getUserDocByEmail = async (email: string) => {
-	const userRef = await firestore.collection('users').where('email', '==', email).get();
+	const userRef = await firestore.collection(USER_COLLECTION).where('email', '==', email).get();
 
 	if (userRef.empty) {
 		return null;

@@ -1,6 +1,7 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { AuthenticatedCallableRequest } from '../util/withAuth';
+import { ORG_COLLECTION, USER_COLLECTION } from '../../util/types/collections';
+import { AuthenticatedCallableRequest } from '../../util/withAuth';
 
 const firestore = getFirestore();
 
@@ -14,7 +15,7 @@ export const createAndJoinOrgFn = async (request: AuthenticatedCallableRequest) 
 
 	// Check if user is already in an org
 	// If so, throw an error
-	const userDoc = await firestore.collection('users').doc(uid).get();
+	const userDoc = await firestore.collection(USER_COLLECTION).doc(uid).get();
 	const userData = userDoc.data();
 
 	if (userData?.orgId) {
@@ -24,7 +25,7 @@ export const createAndJoinOrgFn = async (request: AuthenticatedCallableRequest) 
 	// TODO: Batch this
 
 	// Create org
-	const orgDoc = await firestore.collection('org').add({
+	const orgDoc = await firestore.collection(ORG_COLLECTION).add({
 		name: orgName,
 		members: {
 			[uid]: true

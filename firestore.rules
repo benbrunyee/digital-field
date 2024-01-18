@@ -176,13 +176,9 @@ service cloud.firestore {
     // User
 
     match /users/{userId} {
-      function containsProtectedUserKeys() {
-        return request.resource.data.keys().hasAny(["id", "createdAt", "updatedAt"]);
-      }
-
       allow get: if isUserAuthenticated() && request.auth.uid == userId;
       allow create, list: if null;
-      allow update: if isUserAuthenticated() && request.auth.uid == userId && !containsProtectedUserKeys();
+      allow update: if null;
       allow delete: if isUserAuthenticated() && request.auth.uid == userId;
     }
   }

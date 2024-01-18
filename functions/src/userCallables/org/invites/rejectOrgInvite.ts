@@ -5,6 +5,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { getOrgDoc } from '../../../util/getOrgDoc';
 import { getUserDoc } from '../../../util/getUserDoc';
+import { ORG_COLLECTION, USER_COLLECTION } from '../../../util/types/collections';
 import { AuthenticatedCallableRequest } from '../../../util/withAuth';
 
 const firestore = getFirestore();
@@ -59,14 +60,14 @@ export const rejectOrgInviteFn = async (
 
 const removeOrgInvite = (uid: string, orgId: string, { updateOrg = true }) => {
 	// TODO: Batch this
-	const userRef = firestore.collection('users').doc(uid);
+	const userRef = firestore.collection(USER_COLLECTION).doc(uid);
 	const userPromise = userRef.update(`orgInvites.${orgId}`, firebase.firestore.FieldValue.delete());
 
 	if (!updateOrg) {
 		return userPromise;
 	}
 
-	const orgRef = firestore.collection('org').doc(orgId);
+	const orgRef = firestore.collection(ORG_COLLECTION).doc(orgId);
 	const orgPromise = orgRef.update(`memberInvites.${uid}`, firebase.firestore.FieldValue.delete());
 
 	return Promise.all([orgPromise, userPromise]);

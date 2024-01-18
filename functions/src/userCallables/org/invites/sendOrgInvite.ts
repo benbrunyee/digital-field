@@ -1,6 +1,7 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { getUserDocByEmail } from '../../../util/getUserDoc';
+import { USER_COLLECTION } from '../../../util/types/collections';
 import { AuthenticatedCallableRequest } from '../../../util/withAuth';
 
 const firestore = getFirestore();
@@ -31,7 +32,7 @@ export const sendOrgInviteFn = async (request: AuthenticatedCallableRequest) => 
 };
 
 const createUserWithInvite = async (email: string, orgId: string) => {
-	const userRef = await firestore.collection('users').add({
+	const userRef = await firestore.collection(USER_COLLECTION).add({
 		email,
 		orgInvites: { [orgId]: true }
 	});
@@ -39,6 +40,6 @@ const createUserWithInvite = async (email: string, orgId: string) => {
 };
 
 const addInviteToUser = async (uid: string, orgId: string) => {
-	const userRef = await firestore.collection('users').doc(uid);
+	const userRef = await firestore.collection(USER_COLLECTION).doc(uid);
 	return userRef.update({ orgInvites: { [orgId]: true } });
 };

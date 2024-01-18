@@ -13,6 +13,7 @@
 		getDrawerStore
 	} from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+	import { userStore } from '../../../../lib/util/user/stores/userStore';
 
 	onMount(() => {
 		const lastLoadedOrgId = localStorage.getItem('lastLoadedOrgId');
@@ -71,10 +72,11 @@
 			<svelte:fragment slot="trail">
 				<LightSwitch />
 				<Avatar
-					initials=".."
-					border="border-4 border-surface-300-600-token hover:!border-primary-500"
+					initials={$userStore?.email.charAt(0) ?? '..'}
+					border="border-1 border-surface-300-600-token hover:!border-primary-500"
 					cursor="cursor-pointer"
 					class="w-10 lg:w-14"
+					background="bg-primary-400-500-token"
 				/>
 			</svelte:fragment>
 		</AppBar>

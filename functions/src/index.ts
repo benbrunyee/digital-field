@@ -5,10 +5,12 @@ admin.initializeApp();
 import * as functions from 'firebase-functions';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { CallableOptions, onCall } from 'firebase-functions/v2/https';
+import { beforeSignInFn } from './triggers/beforeUserSignIn';
 import { onUserCreateFn } from './triggers/onUserCreate';
-import { createAndJoinOrgFn } from './userCallables/createAndJoinOrg';
+import { createAndJoinOrgFn } from './userCallables/org/createAndJoinOrg';
 import { acceptOrgInviteFn } from './userCallables/org/invites/acceptOrgInvite';
 import { sendOrgInviteFn } from './userCallables/org/invites/sendOrgInvite';
+import { updateUserDetailsFn } from './userCallables/user/updateUserDetails';
 import { withAuth } from './util/withAuth';
 
 export const secureOptions: CallableOptions = {
@@ -20,6 +22,7 @@ export const secureOptions: CallableOptions = {
 export const acceptOrgInvite = onCall(secureOptions, withAuth(acceptOrgInviteFn));
 export const sendOrgInvite = onCall(secureOptions, withAuth(sendOrgInviteFn));
 export const createAndJoinOrg = onCall(secureOptions, withAuth(createAndJoinOrgFn));
+export const updateUserDetails = onCall(secureOptions, withAuth(updateUserDetailsFn));
 
 // Document triggers
 
@@ -40,3 +43,4 @@ export const onOrgUpdate = onDocumentUpdated('org/{orgId}', (event) => {
 // Other triggers
 
 export const onUserCreate = functions.auth.user().onCreate(onUserCreateFn);
+export const onUserUpdate = functions.auth.user().beforeSignIn(beforeSignInFn);
