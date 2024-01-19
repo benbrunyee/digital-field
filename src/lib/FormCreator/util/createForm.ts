@@ -3,7 +3,9 @@ import { get } from 'svelte/store';
 import { firestore } from '../../firebase';
 import { orgIdStore } from '../../stores/org';
 import { FORM_COLLECTION } from '../../util/types/collections';
-import type { Form, UnsavedForm } from '../types/formTypes';
+import type { WithId } from '../../util/types/withId';
+import type { UnsavedFormField } from '../types/fieldTypes';
+import { unsavedFormSchema, type Form, type UnsavedForm } from '../types/formTypes';
 
 const createFormDoc = async (form: UnsavedForm) => {
 	console.log('Creating form', form);
@@ -17,7 +19,22 @@ const updateFormDoc = async (form: Form) => {
 
 export const saveFormDoc = async (form: Form | UnsavedForm) => {
 	const orgId = get(orgIdStore);
-	return 'id' in form ? updateFormDoc({ ...form, orgId }) : createFormDoc({ ...form, orgId });
+
+	const formObj = form;
+
+	const unsavedForm = unsavedFormSchema.safeParse(formObj);
+	if (unsavedForm.success) {
+		unsavedForm.data.fields;
+	}
+
+	return 'id' in form ? updateFormDoc({ ...formObj, orgId }) : createFormDoc({ ...formObj, orgId });
+};
+
+const removeIdFromFields = (fields: WithId<UnsavedFormField>[]) => {
+	return fields.map((field) => {
+		const { id, ...rest } = field;
+		return rest;
+	});
 };
 
 export const createFormStructure = (): UnsavedForm => ({

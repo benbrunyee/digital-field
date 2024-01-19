@@ -1,18 +1,13 @@
-import { z } from 'zod';
-import {
-	allFormFieldTypes,
-	inputFieldTypes,
-	type InputFieldType
-} from '../../FormCreator/types/fieldTypes';
-import { implement } from '../../util/types/typeToZod';
-
 /**
  * Types of fields:
  * - Output fields: These fields are a version of only the input fields purely for printing purposes (output PDFs).
  * 	   This is used for determining the output for a given input field e.g., text, number, date, etc.
  */
 
-// Top-level available field types
+import { z } from 'zod';
+import { allFormFieldTypes } from '../../FormCreator/types/fieldTypes';
+
+// Display field types
 
 export const outputDisplayFieldTypes = [
 	'heading',
@@ -21,35 +16,68 @@ export const outputDisplayFieldTypes = [
 	'divider',
 	'html'
 ] as const;
-export const outputFieldTypes = [...allFormFieldTypes, ...outputDisplayFieldTypes] as const;
+export const outputDisplayFieldTypesSchema = z.enum(outputDisplayFieldTypes);
+export type OutputDisplayFieldType = z.infer<typeof outputDisplayFieldTypesSchema>;
 
-// Field Typescript types
+export const outputDisplayFieldSchema = z.object({
+	type: outputDisplayFieldTypesSchema,
+	value: z.string().optional()
+});
+export type OutputDisplayField = z.infer<typeof outputDisplayFieldSchema>;
 
-export type OutputInputFieldType = InputFieldType;
-export type OutputDisplayFieldType = (typeof outputDisplayFieldTypes)[number];
-export type OutputFieldType = OutputInputFieldType | OutputDisplayFieldType;
+export const existingOutputDisplayFieldSchema = outputDisplayFieldSchema.extend({
+	id: z.string()
+});
+export type ExistingOutputDisplayField = z.infer<typeof existingOutputDisplayFieldSchema>;
 
-// Field object Typescript types
+export const newOutputDisplayFieldSchema = outputDisplayFieldSchema.extend({
+	clientId: z.string()
+});
+export type NewOutputDisplayField = z.infer<typeof newOutputDisplayFieldSchema>;
 
-export type OutputInputField<T extends OutputInputFieldType> = {
-	fieldId: string;
-	type: T;
-};
-export type OutputDisplayField<T extends OutputDisplayFieldType> = {
-	type: T;
-};
+export const outputDisplayFieldCreateRequestSchema = newOutputDisplayFieldSchema.omit({
+	clientId: true
+});
+export type OutputDisplayFieldCreateRequest = z.infer<typeof outputDisplayFieldCreateRequestSchema>;
 
-export const outputInputFieldSchema = implement<OutputInputField<OutputInputFieldType>>().with({
+export const outputDisplayFieldUpdateRequestSchema = existingOutputDisplayFieldSchema;
+export type OutputDisplayFieldUpdateRequest = z.infer<typeof outputDisplayFieldUpdateRequestSchema>;
+
+// Output input field types
+
+export const outputInputFieldTypes = allFormFieldTypes;
+export const outputInputFieldTypesSchema = z.enum(outputInputFieldTypes);
+export type OutputInputFieldType = z.infer<typeof outputInputFieldTypesSchema>;
+
+export const outputInputFieldSchema = z.object({
 	fieldId: z.string(),
-	type: z.enum(inputFieldTypes)
+	type: outputInputFieldTypesSchema
 });
-export const outputDisplayFieldSchemao = implement<
-	OutputDisplayField<OutputDisplayFieldType>
->().with({
-	type: z.enum(outputDisplayFieldTypes)
-});
+export type OutputInputField = z.infer<typeof outputInputFieldSchema>;
 
-export type OutputField =
-	| OutputDisplayField<OutputDisplayFieldType>
-	| OutputInputField<OutputInputFieldType>;
-export const outputFieldSchema = z.union([outputDisplayFieldSchemao, outputInputFieldSchema]);
+export const existingOutputInputFieldSchema = outputInputFieldSchema.extend({
+	id: z.string()
+});
+export type ExistingOutputInputField = z.infer<typeof existingOutputInputFieldSchema>;
+
+export const newOutputInputFieldSchema = outputInputFieldSchema.extend({
+	clientId: z.string()
+});
+export type NewOutputInputField = z.infer<typeof newOutputInputFieldSchema>;
+
+export const outputInputFieldCreateRequestSchema = newOutputInputFieldSchema.omit({
+	clientId: true
+});
+export type OutputInputFieldCreateRequest = z.infer<typeof outputInputFieldCreateRequestSchema>;
+
+export const outputInputFieldUpdateRequestSchema = existingOutputInputFieldSchema;
+export type OutputInputFieldUpdateRequest = z.infer<typeof outputInputFieldUpdateRequestSchema>;
+
+// Output field types
+
+export const outputFieldTypes = [...outputInputFieldTypes, ...outputDisplayFieldTypes] as const;
+export const outputFieldTypesSchema = z.enum(outputFieldTypes);
+export type OutputFieldType = z.infer<typeof outputFieldTypesSchema>;
+
+export const outputFieldSchema = z.union([outputInputFieldSchema, outputDisplayFieldSchema]);
+export type OutputField = z.infer<typeof outputFieldSchema>;

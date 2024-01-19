@@ -42,7 +42,7 @@
 	$: console.log($fields);
 </script>
 
-<div class="border-surface-800-100-token h-min min-h-14 w-full border p-2 rounded-token">
+<div class="border-surface-400-500-token h-min min-h-14 w-full border p-2 rounded-token">
 	<Accordion>
 		<OrderableList
 			items={$form.fields}

@@ -64,10 +64,31 @@ service cloud.firestore {
         return request.resource.data.keys().hasAny(["id", "createdAt", "updatedAt"]);
       }
 
-      allow get, list: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewFormPermissions();
-      allow create: if isUserAuthenticated() && doesUserRoleHaveCreateFormPermissions() && !containsProtectedFormKeys();
-      allow update: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveUpdateFormPermissions() && !containsProtectedFormKeys();
-      allow delete: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveDeleteFormPermissions();
+      function onlyHasAllowedKeys() {
+        return request.resource.data.keys().hasOnly([
+        "name",
+        "description",
+        "fields",
+        "options",
+        "orgId",
+        "type",
+        "status",
+        ]);
+      }
+
+      allow get, list: if isUserAuthenticated()
+        && isUserInResourceOrg()
+        && doesUserRoleHaveViewFormPermissions();
+      allow create: if isUserAuthenticated()
+        && doesUserRoleHaveCreateFormPermissions()
+        && !containsProtectedFormKeys();
+      allow update: if isUserAuthenticated()
+        && isUserInResourceOrg()
+        && doesUserRoleHaveUpdateFormPermissions()
+        && !containsProtectedFormKeys();
+      allow delete: if isUserAuthenticated()
+        && isUserInResourceOrg()
+        && doesUserRoleHaveDeleteFormPermissions();
 
       // Output entities
 
@@ -96,10 +117,20 @@ service cloud.firestore {
           return request.resource.data.keys().hasAny(["id", "createdAt", "updatedAt"]);
         }
 
-        allow get, list: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewOutputEntityPermissions();
-        allow create: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveCreateOutputEntityPermissions() && !containsProtectedOutputEntityKeys();
-        allow update: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveUpdateOutputEntityPermissions() && !containsProtectedOutputEntityKeys();
-        allow delete: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveDeleteOutputEntityPermissions();
+        allow get, list: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveViewOutputEntityPermissions();
+        allow create: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveCreateOutputEntityPermissions()
+          && !containsProtectedOutputEntityKeys();
+        allow update: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveUpdateOutputEntityPermissions()
+          && !containsProtectedOutputEntityKeys();
+        allow delete: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveDeleteOutputEntityPermissions();
       }
 
       // Entries
@@ -129,10 +160,20 @@ service cloud.firestore {
           return request.resource.data.keys().hasAny(["id", "createdAt", "updatedAt"]);
         }
 
-        allow get, list: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveViewEntryPermissions();
-        allow create: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveCreateEntryPermissions() && !containsProtectedEntryKeys();
-        allow update: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveUpdateEntryPermissions() && !containsProtectedEntryKeys();
-        allow delete: if isUserAuthenticated() && isUserInResourceOrg() && doesUserRoleHaveDeleteEntryPermissions();
+        allow get, list: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveViewEntryPermissions();
+        allow create: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveCreateEntryPermissions()
+          && !containsProtectedEntryKeys();
+        allow update: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveUpdateEntryPermissions()
+          && !containsProtectedEntryKeys();
+        allow delete: if isUserAuthenticated()
+          && isUserInResourceOrg()
+          && doesUserRoleHaveDeleteEntryPermissions();
       }
     }
 
@@ -167,19 +208,28 @@ service cloud.firestore {
         return request.resource.data.keys().hasAny(["id", "members", "createdAt", "updatedAt"]);
       }
 
-      allow get, list: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveViewOrgPermissions();
+      allow get, list: if isUserAuthenticated()
+        && isUserInCurrentOrg()
+        && doesUserRoleHaveViewOrgPermissions();
       allow create: if null;
-      allow update: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveUpdateOrgPermissions() && !containsProtectedOrgKeys();
-      allow delete: if isUserAuthenticated() && isUserInCurrentOrg() && doesUserRoleHaveDeleteOrgPermissions();
+      allow update: if isUserAuthenticated()
+        && isUserInCurrentOrg()
+        && doesUserRoleHaveUpdateOrgPermissions()
+        && !containsProtectedOrgKeys();
+      allow delete: if isUserAuthenticated()
+        && isUserInCurrentOrg()
+        && doesUserRoleHaveDeleteOrgPermissions();
     }
 
     // User
 
     match /users/{userId} {
-      allow get: if isUserAuthenticated() && request.auth.uid == userId;
+      allow get: if isUserAuthenticated()
+        && request.auth.uid == userId;
       allow create, list: if null;
       allow update: if null;
-      allow delete: if isUserAuthenticated() && request.auth.uid == userId;
+      allow delete: if isUserAuthenticated()
+        && request.auth.uid == userId;
     }
   }
 }

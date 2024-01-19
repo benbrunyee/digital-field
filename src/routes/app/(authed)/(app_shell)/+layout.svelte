@@ -62,7 +62,7 @@
 	<Navigation />
 </Drawer>
 
-<AppShell slotSidebarLeft="w-0 lg:w-64 lg:border-r lg:border-neutral-400">
+<AppShell slotSidebarLeft="w-0 lg:w-64 lg:border-r lg:border-surface-300-600-token">
 	<svelte:fragment slot="header">
 		<AppBar slotTrail="place-content-end" shadow="shadow-xl">
 			<svelte:fragment slot="lead">

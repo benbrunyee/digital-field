@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { type FormField } from '../types/fieldTypes';
+	import { type FormField, type UnsavedFormField } from '../types/fieldTypes';
 	import { isDisplayField, isInputField } from '../util/isFieldType';
 	import DisplayField from './DisplayField.svelte';
 	import InputField from './InputField.svelte';
 
-	export let field: FormField;
+	export let field: FormField | UnsavedFormField;
 
 	// Update the context using a store
 	let hasChanged = writable(false);
 	setContext('hasChanged', hasChanged);
-	setContext('isNewField', field.createdAt === undefined);
+	setContext('isNewField', !("createdAt" in field));
 
 	function fieldHasChanged() {
 		$hasChanged = true;

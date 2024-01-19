@@ -1,9 +1,9 @@
 <script>
-	import { goto } from '$app/navigation';
+	import LoadingSpinner from '$lib/LoadingSpinner/LoadingSpinner.svelte';
 	import { auth } from '$lib/firebase';
 	import { toastError } from '$lib/util/toast/toastError';
-	import { getUserDoc } from '$lib/util/user/getUserDoc';
-	import { userStore } from '$lib/util/user/stores/userStore';
+	import { onSignIn } from '$lib/util/user/onSignIn';
+	import { onSignOut } from '$lib/util/user/onSignOut';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 	import { Toast, getToastStore, initializeStores, storePopup } from '@skeletonlabs/skeleton';
 	import { onAuthStateChanged } from 'firebase/auth';
@@ -14,17 +14,19 @@
 
 	const toastStore = getToastStore();
 
+	let isLoading = true;
+
 	onMount(() => {
 		onAuthStateChanged(auth, async (user) => {
+			isLoading = false;
+
 			if (!user) {
 				// User is signed out
-				goto('/app/sign-in');
+				onSignOut();
 			} else {
 				// User is signed in
 				try {
-					const userData = await getUserDoc();
-					userStore.set(userData);
-					goto(`/app/org/${$userStore?.primaryOrgId}`);
+					await onSignIn();
 				} catch (e) {
 					console.error(e);
 					toastError(toastStore, 'Failed to load user data');
@@ -35,4 +37,11 @@
 </script>
 
 <Toast />
-<slot />
+
+{#if isLoading}
+	<div class="flex h-screen items-center justify-center">
+		<LoadingSpinner />
+	</div>
+{:else}
+	<slot />
+{/if}

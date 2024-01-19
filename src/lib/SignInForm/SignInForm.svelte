@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
 	import { getToastStore } from '@skeletonlabs/skeleton';
@@ -22,6 +23,7 @@
 
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
+			goto('/app/');
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign in');
@@ -35,6 +37,7 @@
 
 		try {
 			await createUserWithEmailAndPassword(auth, email, password);
+			goto('/app/');
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign up');

@@ -1,6 +1,4 @@
 import { z } from 'zod';
-import type { InputEntityField, UnsavedInputEntityField } from '../../InputEntity/types/inputField';
-import { implement } from '../../util/types/typeToZod';
 
 /**
  * Types of fields:
@@ -8,7 +6,7 @@ import { implement } from '../../util/types/typeToZod';
  * - Display fields: These are fields that are used for display purposes, these are read-only when inputting data e.g., h1, h2, separator, etc.
  */
 
-// Top-level available field types
+// Input field types
 
 export const inputFieldTypes = [
 	'text',
@@ -27,93 +25,83 @@ export const inputFieldTypes = [
 	'link',
 	'multi-entry'
 ] as const;
-export const displayFieldTypes = ['heading', 'subheading', 'paragraph', 'separator'] as const;
-export const allFormFieldTypes = [...inputFieldTypes, ...displayFieldTypes] as const;
-
-// Field Typescript types
-
 export const inputFieldTypesSchema = z.enum(inputFieldTypes);
 export type InputFieldType = z.infer<typeof inputFieldTypesSchema>;
+
+export const inputFieldOptionsSchema = z.record(z.string(), z.any());
+
+export const inputFieldSchema = z.object({
+	name: z.string(),
+	ref: z.string(),
+	required: z.boolean(),
+	description: z.string(),
+	type: inputFieldTypesSchema,
+	options: inputFieldOptionsSchema
+});
+
+export const existingInputFieldSchema = inputFieldSchema.extend({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date()
+});
+export type ExistingInputField = z.infer<typeof existingInputFieldSchema>;
+
+export const newInputFieldSchema = inputFieldSchema.extend({
+	clientId: z.string()
+});
+export type NewInputField = z.infer<typeof newInputFieldSchema>;
+
+export const inputFieldCreateRequestSchema = newInputFieldSchema.omit({
+	clientId: true
+});
+export type InputFieldCreateRequest = z.infer<typeof inputFieldCreateRequestSchema>;
+
+export const inputFieldUpdateRequestSchema = existingInputFieldSchema.omit({
+	createdAt: true,
+	updatedAt: true
+});
+export type InputFieldUpdateRequest = z.infer<typeof inputFieldUpdateRequestSchema>;
+
+// Display field types
+
+export const displayFieldTypes = ['heading', 'subheading', 'paragraph', 'separator'] as const;
 export const displayFieldTypesSchema = z.enum(displayFieldTypes);
 export type DisplayFieldType = z.infer<typeof displayFieldTypesSchema>;
 
+export const displayFieldOptionsSchema = z.record(z.string(), z.any());
+
+export const displayFieldSchema = z.object({
+	type: displayFieldTypesSchema,
+	value: z.string().optional(),
+	options: displayFieldOptionsSchema
+});
+export type DisplayField = z.infer<typeof displayFieldSchema>;
+
+export const existingDisplayFieldSchema = displayFieldSchema.extend({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date()
+});
+export type ExistingDisplayField = z.infer<typeof existingDisplayFieldSchema>;
+
+export const newDisplayFieldSchema = displayFieldSchema.extend({
+	clientId: z.string()
+});
+export type NewDisplayField = z.infer<typeof newDisplayFieldSchema>;
+
+export const displayFieldCreateRequestSchema = newDisplayFieldSchema.omit({
+	clientId: true
+});
+export type DisplayFieldCreateRequest = z.infer<typeof displayFieldCreateRequestSchema>;
+
+export const displayFieldUpdateRequestSchema = existingDisplayFieldSchema.omit({
+	createdAt: true,
+	updatedAt: true
+});
+export type DisplayFieldUpdateRequest = z.infer<typeof displayFieldUpdateRequestSchema>;
+
+// All field types
+
+export const allFormFieldTypes = [...inputFieldTypes, ...displayFieldTypes] as const;
+export const formFieldTypesSchema = z.enum(allFormFieldTypes);
 export type FormFieldTypes = InputFieldType | DisplayFieldType;
-
-// Field object Typescript types
-
-export interface InputField<T extends InputFieldType>
-	extends InputEntityField<T, InputFieldOptions<T>> {
-	name: string;
-	ref: string;
-	required: boolean;
-	description: string;
-}
-export interface UnsavedInputField<T extends InputFieldType>
-	extends UnsavedInputEntityField<T, InputFieldOptions<T>> {
-	name: string;
-	ref: string;
-	required: boolean;
-	description: string;
-}
-
-export interface DisplayField<T extends DisplayFieldType>
-	extends InputEntityField<T, DisplayFieldOptions<T>> {
-	value?: string;
-}
-export interface UnsavedDisplayField<T extends DisplayFieldType>
-	extends UnsavedInputEntityField<T, DisplayFieldOptions<T>> {
-	value?: string;
-}
-
-export type FormField = InputField<InputFieldType> | DisplayField<DisplayFieldType>;
-export type UnsavedFormField =
-	| UnsavedInputField<InputFieldType>
-	| UnsavedDisplayField<DisplayFieldType>;
-
-export const inputFieldSchema = implement<InputField<InputFieldType>>().with({
-	id: z.string(),
-	ref: z.string(),
-	type: z.enum(inputFieldTypes),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	name: z.string(),
-	required: z.boolean(),
-	options: z.record(z.string(), z.any()),
-	description: z.string()
-});
-export const unsavedInputFieldSchema = implement<UnsavedInputField<InputFieldType>>().with({
-	ref: z.string(),
-	type: z.enum(inputFieldTypes),
-	name: z.string(),
-	required: z.boolean(),
-	options: z.record(z.string(), z.any()),
-	description: z.string()
-});
-
-export const displayFieldSchema = implement<DisplayField<DisplayFieldType>>().with({
-	id: z.string(),
-	value: z.string().optional(),
-	type: z.enum(displayFieldTypes),
-	createdAt: z.date(),
-	updatedAt: z.date(),
-	options: z.record(z.string(), z.any())
-});
-export const unsavedDisplayFieldSchema = implement<UnsavedDisplayField<DisplayFieldType>>().with({
-	type: z.enum(displayFieldTypes),
-	value: z.string().optional(),
-	options: z.record(z.string(), z.any())
-});
-
-export const formFieldSchema = z.union([inputFieldSchema, displayFieldSchema]);
-
-// TODO: Field options
-
-export type InputFieldOptions<T extends InputFieldType> = T extends 'text' ? TextOptions : {};
-export type TextOptions = {
-	placeholder: string;
-};
-
-export type DisplayFieldOptions<T extends DisplayFieldType> = T extends 'heading' ? H1Options : {};
-export type H1Options = {
-	bold: boolean;
-};

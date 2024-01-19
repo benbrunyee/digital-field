@@ -1,17 +1,4 @@
 import { z } from 'zod';
-import type { UnsavedInputEntity } from '../../InputEntity/types/inputEntity';
-import {
-	outputEntitySchema,
-	unsavedOutputEntitySchema,
-	type OutputEntity,
-	type UnsavedOutputEntity
-} from '../../OutputCreator/types/outputEntityTypes';
-import { implement } from '../../util/types/typeToZod';
-import {
-	unsavedDisplayFieldSchema,
-	unsavedInputFieldSchema,
-	type UnsavedFormField
-} from './fieldTypes';
 
 /**
  * A form is what you would expect, a entity that contains fields specifically for inputting data.
@@ -19,54 +6,56 @@ import {
  * This data can then be used in an output e.g., PDF.
  */
 
-const entryStateSchema = z.object({
-	name: z.string(),
-	colour: z.string()
-});
-export type EntryState = z.infer<typeof entryStateSchema>;
-
-const formOptionsSchema = z.object({
-	entryStates: z.array(entryStateSchema)
-});
-export type FormOptions = z.infer<typeof formOptionsSchema>;
-
 const formStatusSchema = z.enum(['draft', 'active', 'disabled', 'deleted']);
 export type FormStatus = z.infer<typeof formStatusSchema>;
 
-export const unsavedFormSchema = implement<UnsavedForm>().with({
-	fields: z.union([z.array(unsavedInputFieldSchema), z.array(unsavedDisplayFieldSchema)]),
-	name: z.string(),
-	type: z.enum(['form']),
-	status: formStatusSchema,
-	options: z.object({
+export const formOptionsSchema = z.union([
+	z.record(z.string(), z.any()),
+	z.object({
 		entryStates: z.array(
 			z.object({
 				name: z.string(),
 				colour: z.string()
 			})
 		)
-	}),
-	outputs: z.array(unsavedOutputEntitySchema),
-	orgId: z.string()
-});
-export interface UnsavedForm extends UnsavedInputEntity<UnsavedForm, UnsavedFormField> {
-	status: FormStatus;
-	options: FormOptions;
-	outputs: UnsavedOutputEntity[];
-}
+	})
+]);
+export type FormOptions = z.infer<typeof formOptionsSchema>;
 
-export const formSchema = implement<Form>().with({
-	...unsavedFormSchema.shape,
+export const formTypeSchema = z.enum(['form']);
+export type FormType = z.infer<typeof formTypeSchema>;
+
+export const formSchema = z.object({
+	name: z.string(),
+	fields: z.array(z.any()), // TODO
 	ownerId: z.string(),
-	id: z.string(),
-	updatedAt: z.date(),
-	createdAt: z.date(),
-	outputs: z.array(outputEntitySchema)
+	orgId: z.string(),
+	type: formTypeSchema,
+	options: formOptionsSchema,
+	status: formStatusSchema,
+	outputs: z.array(z.any()) // TODO
 });
-export interface Form extends UnsavedForm {
-	id: string;
-	ownerId: string;
-	outputs: OutputEntity[];
-	createdAt: Date;
-	updatedAt: Date;
-}
+export type Form = z.infer<typeof formSchema>;
+
+export const existingFormSchema = formSchema.extend({
+	id: z.string(),
+	createdAt: z.date(),
+	updatedAt: z.date()
+});
+export type ExistingForm = z.infer<typeof existingFormSchema>;
+
+export const newFormSchema = formSchema.extend({
+	clientId: z.string()
+});
+export type NewForm = z.infer<typeof newFormSchema>;
+
+export const formCreateRequestSchema = newFormSchema.omit({
+	clientId: true
+});
+export type FormCreateRequest = z.infer<typeof formCreateRequestSchema>;
+
+export const formUpdateRequestSchema = existingFormSchema.omit({
+	createdAt: true,
+	updatedAt: true
+});
+export type FormUpdateRequest = z.infer<typeof formUpdateRequestSchema>;

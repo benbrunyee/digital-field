@@ -65,7 +65,11 @@ const userRoles = {
 };
 
 export const createUserRolesFn = async (request: CallableRequest) => {
+	const promises = [];
+
 	for (const [role, permissions] of Object.entries(userRoles)) {
-		await firestore.collection('userRoles').doc(role).set({ permissions });
+		promises.push(firestore.collection('userRoles').doc(role).set({ permissions }));
 	}
+
+	await Promise.all(promises);
 };

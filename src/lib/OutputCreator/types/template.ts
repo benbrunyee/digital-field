@@ -8,7 +8,6 @@ export const pageTypeSchema = z.enum(['code', 'pdf']);
 export type PageType = z.infer<typeof pageSchema>;
 
 export const pageSchema = z.object({
-	id: z.string(),
 	type: pageTypeSchema,
 	value: z.string()
 });
@@ -19,7 +18,7 @@ export type Page = {
 };
 
 export const fieldTemplateSchema = z.object({
-	id: z.string(),
+	id: z.string(), // TODO
 	type: z.enum([
 		'text',
 		'image',
@@ -43,7 +42,6 @@ export const templateOptionsSchema = z.record(z.string(), z.any());
 export type TemplateOptions = z.infer<typeof templateOptionsSchema>;
 
 export const templateSchema = z.object({
-	id: z.string(),
 	type: templateTypeSchema,
 	topPage: pageSchema.optional(),
 	tailPage: pageSchema.optional(),

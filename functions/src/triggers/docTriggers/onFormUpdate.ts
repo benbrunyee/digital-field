@@ -1,5 +1,6 @@
 import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { Change, FirestoreEvent } from 'firebase-functions/v2/firestore';
+import { createId } from '../../util/createId';
 
 export const onFormUpdateFn = (
 	event: FirestoreEvent<
@@ -8,22 +9,32 @@ export const onFormUpdateFn = (
 			formId: string;
 		}
 	>
-) => {
-	if (event.data) {
-		// Check if last updated is more than 5 seconds ago
-		const lastUpdated = event.data.after.get('updatedAt');
+): void => {
+	if (!event.data) {
+		return;
+	}
 
-		if (lastUpdated) {
-			const lastUpdatedDate = new Date(lastUpdated.toDate());
-			const currentDate = new Date();
-			const diff = currentDate.getTime() - lastUpdatedDate.getTime();
-			const seconds = diff / 1000;
-			if (seconds < 5) {
-				return;
+	// Update the updatedAt field
+	if (event.data.before.data().updatedAt !== event.data.after.data().updatedAt) {
+		event.data.after.ref.set({ updatedAt: event.data.after.updateTime }, { merge: true });
+	}
+
+	// Update all the fields without an id to have an id
+	const fields = event.data.after.data().fields;
+
+	if (fields && fields instanceof Array && fields.length > 0) {
+		const updatedFields = fields.map((field: any) => {
+			if (!field.type) {
+				throw new Error('Field type is required');
 			}
-		}
 
-		const updateDate = new Date();
-		event.data.after.ref.set({ updatedAt: updateDate }, { merge: true });
+			if (!field.id) {
+				return { ...field, id: createId(`${field.type}-`) };
+			}
+
+			return field;
+		});
+
+		event.data.after.ref.set({ fields: updatedFields }, { merge: true });
 	}
 };

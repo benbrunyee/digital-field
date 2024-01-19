@@ -21,7 +21,7 @@
 </script>
 
 <div
-	class="border-surface-800-100-token h-min min-h-14 flex-1 border border-dashed p-2 rounded-token"
+	class="border-surface-400-500-token h-min min-h-14 flex-1 border border-dashed p-2 rounded-token"
 >
 	<Accordion>
 		<!-- TODO: Type is not a valid ID -->

@@ -24,7 +24,7 @@ export const secureOptions: CallableOptions = {
 
 // Dev callables
 
-export const createUserRoles = onCall(secureOptions, createUserRolesFn);
+export const createUserRoles = onCall(createUserRolesFn);
 
 // Callable functions
 
