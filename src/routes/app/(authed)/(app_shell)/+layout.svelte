@@ -15,6 +15,7 @@
 		getDrawerStore
 	} from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+	import { onSignOut } from '../../../../lib/util/user/onSignOut';
 
 	$: avatarInitials = $userStore?.name.charAt(0) || $userStore?.email.charAt(0) || '..';
 
@@ -27,7 +28,13 @@
 			goto(`/app/org/${lastLoadedOrgId}`);
 		} else {
 			// Navigate to the first org the user owns
-			goto(`/app/org/${$userStore.primaryOrgId}`);
+			const primaryOrg = $userStore.primaryOrgId;
+
+			if (primaryOrg) {
+				goto(`/app/org/${$userStore.primaryOrgId}`);
+			} else {
+				onSignOut();
+			}
 		}
 	});
 

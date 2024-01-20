@@ -7,5 +7,6 @@ export const onSignOut = () => {
 	localStorage.clear();
 	userStore.set(createEmptyUserObject());
 	orgIdStore.set('');
+	console.log('Redirecting');
 	goto('/app/sign-in');
 };

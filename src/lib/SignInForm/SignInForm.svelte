@@ -65,29 +65,30 @@
 	<button class="btn" on:click={() => (state = 'sign-up')}>Sign Up</button>
 </div>
 
-<div class="space-y-2">
-	<input bind:value={email} type="email" placeholder="Email" class="input" />
-	<input bind:value={password} type="password" placeholder="Password" class="input" />
-</div>
-
-{#if error}
-	<div class="text-center">
-		<span class="text-error-500-400-token">{error}</span>
+<form class="flex flex-col space-y-2">
+	<div class="space-y-2">
+		<input bind:value={email} type="email" placeholder="Email" class="input" />
+		<input bind:value={password} type="password" placeholder="Password" class="input" />
 	</div>
-{/if}
+	{#if error}
+		<div class="text-center">
+			<span class="text-error-500-400-token">{error}</span>
+		</div>
+	{/if}
 
-<div class="text-center">
-	<button
-		disabled={isSubmitting}
-		on:click={() => (state === 'sign-in' ? signIn(email, password) : signUp(email, password))}
-		class="variant-filled-primary btn">{state === 'sign-in' ? 'Sign In' : 'Sign Up'}</button
-	>
-	<button
-		disabled={isSubmitting}
-		on:click={() => signUpWithGoogle()}
-		class="variant-filled-tertiary btn"
-	>
-		<span><Icon icon="mdi:google" /></span>
-		<span>Sign Up with Google</span>
-	</button>
-</div>
+	<div class="text-center">
+		<button
+			disabled={isSubmitting}
+			on:click={() => (state === 'sign-in' ? signIn(email, password) : signUp(email, password))}
+			class="variant-filled-primary btn">{state === 'sign-in' ? 'Sign In' : 'Sign Up'}</button
+		>
+		<button
+			disabled={isSubmitting}
+			on:click={() => signUpWithGoogle()}
+			class="variant-filled-tertiary btn"
+		>
+			<span><Icon icon="mdi:google" /></span>
+			<span>Sign Up with Google</span>
+		</button>
+	</div>
+</form>

@@ -58,6 +58,7 @@ export const createOrgDoc = async (ownerId: string) => {
 
 	log('Creating org doc', org);
 	const orgRef = await firestore.collection(ORG_COLLECTION).add(org);
+	firestore.collection(ORG_COLLECTION).doc(orgRef.id).update({ id: orgRef.id });
 
 	const userOrgConfig: UserOrgConfig = {
 		id: orgRef.id,

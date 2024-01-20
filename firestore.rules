@@ -12,8 +12,8 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/userRoles/$(role)).data.permissions;
     }
 
-    function getUserOrg() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.org;
+    function getUserOrgs() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.orgs.keys();
     }
 
     function getUserOrgRole(orgId) {
@@ -25,11 +25,11 @@ service cloud.firestore {
     }
 
     function isUserInResourceOrg() {
-      return resource.data.org == getUserOrg();
+      return resource.data.org == getUserOrgs();
     }
 
     function isUserOrgOwner() {
-      return resource.id == getUserOrg();
+      return resource.id == getUserOrgs();
     }
 
     function isUserOrgAdmin() {
@@ -179,28 +179,28 @@ service cloud.firestore {
 
     // Organisations
 
-    match /organisations/{orgId} {
+    match /orgs/{orgId} {
       function isUserInCurrentOrg() {
-        return orgId == getUserOrg();
+        return orgId in getUserOrgs();
       }
 
       function doesUserRoleHaveViewOrgPermissions() {
-        let userRole = getUserOrgRole();
+        let userRole = getUserOrgRole(orgId);
         return "viewOrg" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveUpdateOrgPermissions() {
-        let userRole = getUserOrgRole();
+        let userRole = getUserOrgRole(orgId);
         return "updateOrg" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveDeleteOrgPermissions() {
-        let userRole = getUserOrgRole();
+        let userRole = getUserOrgRole(orgId);
         return "deleteOrg" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveCreateOrgPermissions() {
-        let userRole = getUserOrgRole();
+        let userRole = getUserOrgRole(orgId);
         return "createOrg" in getRolePermissions(userRole);
       }
 
