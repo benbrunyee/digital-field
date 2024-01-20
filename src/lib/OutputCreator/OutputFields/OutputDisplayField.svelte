@@ -2,10 +2,15 @@
 	import { createEventDispatcher } from 'svelte';
 	import FieldBase from '../../Fields/FieldBase.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
-	import type { WithId } from '../../util/types/withId';
-	import type { OutputDisplayField, OutputDisplayFieldType } from '../types/outputFieldTypes';
+	import type {
+		ExistingOutputDisplayField,
+		NewOutputDisplayField
+	} from '../types/outputFieldTypes';
+	import { isNewOutputDisplayField } from '../util/isOutputFieldType';
 
-	export let field: WithId<OutputDisplayField<OutputDisplayFieldType>>;
+	export let field: ExistingOutputDisplayField | NewOutputDisplayField;
+
+	$: id = isNewOutputDisplayField(field) ? field.clientId : field.id;
 
 	const dispatch = createEventDispatcher();
 
@@ -14,6 +19,6 @@
 	}
 </script>
 
-<FieldBase id={field.id} name={formatFieldType(field.type)}>
+<FieldBase {id} name={formatFieldType(field.type)}>
 	<svelte:fragment slot="icon"></svelte:fragment>
 </FieldBase>

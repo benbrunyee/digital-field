@@ -2,20 +2,28 @@
 	import { Accordion } from '@skeletonlabs/skeleton';
 	import OrderableList from '../../Draggable/OrderableList.svelte';
 	import { draggedComponentPayload } from '../../Draggable/stores/draggedSelectable';
-	import { isDisplayField, isInputField, isNewField } from '../../FormCreator/util/isFieldType';
+	import {
+		isDisplayField,
+		isInputField,
+		isNewInputField
+	} from '../../FormCreator/util/isFieldType';
 	import FieldGhost from '../../SelectableElements/FieldGhost.svelte';
 	import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
 	import OutputField from '../OutputFields/OutputField.svelte';
 	import { outputFieldIcons } from '../OutputSelectables/OutputSelectableElementBase.svelte';
 	import { getOutputEntityStore, outputEntityFieldsStore } from '../stores/outputEntity';
-	import { isNewOutputField, isOutputField } from '../util/isOutputFieldType';
+	import {
+		isNewOutputDisplayField,
+		isNewOutputInputField,
+		isOutputField
+	} from '../util/isOutputFieldType';
 
 	const outputEntity = getOutputEntityStore();
 	const outputEntityFields = outputEntityFieldsStore(outputEntity);
 
 	$: displayText = isInputField($draggedComponentPayload)
 		? $draggedComponentPayload.name
-		: isDisplayField($draggedComponentPayload) || isNewField($draggedComponentPayload)
+		: isDisplayField($draggedComponentPayload) || isNewInputField($draggedComponentPayload)
 			? formatFieldType($draggedComponentPayload.type)
 			: '';
 </script>
@@ -29,14 +37,14 @@
 			items={$outputEntityFields}
 			idField="type"
 			addItem={(item) => {
-				if (isNewOutputField(item)) {
+				if (isNewOutputInputField(item) || isNewOutputDisplayField(item)) {
 					outputEntity.addField(item.type);
 				}
 			}}
 			removeItem={() => {}}
 		>
 			<svelte:fragment slot="placeholderGhost">
-				{#if isNewOutputField($draggedComponentPayload)}
+				{#if isNewOutputInputField($draggedComponentPayload) || isNewOutputDisplayField($draggedComponentPayload)}
 					<FieldGhost icon={outputFieldIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>
@@ -48,7 +56,7 @@
 			</svelte:fragment>
 
 			<svelte:fragment slot="draggedGhost">
-				{#if isNewOutputField($draggedComponentPayload)}
+				{#if isNewOutputInputField($draggedComponentPayload) || isNewOutputDisplayField($draggedComponentPayload)}
 					<FieldGhost icon={outputFieldIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>

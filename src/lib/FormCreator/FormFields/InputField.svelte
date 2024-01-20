@@ -4,9 +4,16 @@
 	import type { HTMLInputTypeAttribute } from 'svelte/elements';
 	import FieldBase from '../../Fields/FieldBase.svelte';
 	import { fieldTypeIcons } from '../FormSelectables/FormSelectableElementBase.svelte';
-	import { type InputField, type InputFieldType } from '../types/fieldTypes';
+	import {
+		type ExistingInputField,
+		type InputFieldType,
+		type NewInputField
+	} from '../types/fieldTypes';
+	import { isNewInputField } from '../util/isFieldType';
 
-	export let field: InputField<InputFieldType>;
+	export let field: ExistingInputField | NewInputField;
+
+	$: id = isNewInputField(field) ? field.clientId : field.id;
 
 	const type = field.type;
 
@@ -51,7 +58,7 @@
 	}
 </script>
 
-<FieldBase id={field.id} bind:name={field.name}>
+<FieldBase {id} bind:name={field.name}>
 	<!-- Single input field types -->
 	<svelte:fragment slot="icon">
 		<Icon icon={fieldTypeIcons[field.type]} class="h-4 w-4" />

@@ -1,13 +1,26 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 	import { writable } from 'svelte/store';
-	import type { WithId } from '../../util/types/withId';
-	import type { OutputField } from '../types/outputFieldTypes';
-	import { isOutputDisplayField, isOutputInputField } from '../util/isOutputFieldType';
+	import type {
+		ExistingOutputDisplayField,
+		ExistingOutputInputField,
+		NewOutputDisplayField,
+		NewOutputInputField
+	} from '../types/outputFieldTypes';
+	import {
+		isExistingOutputDisplayField,
+		isExistingOutputInputField,
+		isNewOutputDisplayField,
+		isNewOutputInputField
+	} from '../util/isOutputFieldType';
 	import OutputDisplayField from './OutputDisplayField.svelte';
 	import OutputInputField from './OutputInputField.svelte';
 
-	export let field: WithId<OutputField>;
+	export let field:
+		| NewOutputInputField
+		| ExistingOutputInputField
+		| NewOutputDisplayField
+		| ExistingOutputDisplayField;
 
 	// Update the context using a store
 	let hasChanged = writable(false);
@@ -22,9 +35,9 @@
 </script>
 
 <div class="bg-surface-50-900-token rounded-token">
-	{#if isOutputInputField(field)}
+	{#if isExistingOutputInputField(field) || isNewOutputInputField(field)}
 		<OutputInputField bind:field on:fieldChanged={fieldHasChanged} />
-	{:else if isOutputDisplayField(field)}
+	{:else if isExistingOutputDisplayField(field) || isNewOutputDisplayField(field)}
 		<OutputDisplayField bind:field on:fieldChanged={fieldHasChanged} />
 	{:else}
 		<span>There was a problem with displaying this element.</span>

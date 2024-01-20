@@ -1,11 +1,18 @@
 import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
-import { type FormField, type FormFieldTypes } from '../types/fieldTypes';
-import type { Form, UnsavedForm } from '../types/formTypes';
+import type { FormFieldTypes, NewDisplayField, NewInputField } from '../types/fieldTypes';
+import type { ExistingForm, NewForm } from '../types/formTypes';
 import { createDisplayFieldStructure, createInputFieldStructure } from '../util/createFields';
 import { createFormStructure } from '../util/createForm';
-import { filterForInputField } from '../util/filterForFieldType';
-import { isDisplayFieldType, isInputFieldType } from '../util/isFieldType';
+import {
+	isDisplayFieldType,
+	isExistingDisplayField,
+	isExistingInputField,
+	isInputField,
+	isInputFieldType,
+	isNewDisplayField,
+	isNewInputField
+} from '../util/isFieldType';
 
 let DEFAULT_STORE_NAME = 'formStore';
 
@@ -14,21 +21,21 @@ export const getFormStore = (storeName?: string) => {
 	return store ?? initializeFormStore();
 };
 
-export const initializeFormStore = (initialValue?: UnsavedForm | Form, storeName?: string) => {
+export const initializeFormStore = (initialValue?: NewForm | ExistingForm, storeName?: string) => {
 	const store = formStore(initialValue ?? createFormStructure());
 	setContext(storeName ?? DEFAULT_STORE_NAME, store);
 	return store;
 };
 
-export const formStore = (initialValue: UnsavedForm | Form) => {
-	const store = writable<UnsavedForm | Form>(initialValue);
+export const formStore = (initialValue: NewForm | ExistingForm) => {
+	const store = writable<NewForm | ExistingForm>(initialValue);
 
 	const createNewForm = () => {
 		store.update(() => createFormStructure());
 	};
 
 	const addField = (type: FormFieldTypes, insertAfter?: number) => {
-		let newField: FormField | undefined;
+		let newField: NewDisplayField | NewInputField;
 
 		if (isInputFieldType(type)) {
 			newField = createInputFieldStructure(type);
@@ -76,7 +83,15 @@ export const formStore = (initialValue: UnsavedForm | Form) => {
 				return f;
 			}
 
-			f.fields = f.fields.filter((field) => field.id !== id);
+			f.fields = f.fields.filter((field) => {
+				if (isExistingDisplayField(field) || isExistingInputField(field)) {
+					return field.id !== id;
+				} else if (isNewDisplayField(field.type) || isNewInputField(field.type)) {
+					return field.clientId !== id;
+				}
+
+				return true;
+			});
 			return f;
 		});
 	};
@@ -93,4 +108,4 @@ export const fieldsStore = (store: ReturnType<typeof formStore>) =>
 	derived(store, ($form) => $form.fields);
 
 export const inputFieldsStore = (store: ReturnType<typeof formStore>) =>
-	derived(store, ($form) => $form.fields.filter(filterForInputField));
+	derived(store, ($form) => $form.fields.filter((f) => isInputField(f)));

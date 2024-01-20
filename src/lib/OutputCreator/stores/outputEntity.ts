@@ -1,10 +1,19 @@
 import { getContext, setContext } from 'svelte';
 import { derived, writable } from 'svelte/store';
 import { createId } from '../../util/createId';
-import type { WithId } from '../../util/types/withId';
-import type { UnsavedOutputEntity } from '../types/outputEntityTypes';
-import type { OutputField, OutputFieldType } from '../types/outputFieldTypes';
-import { isOutputInputFieldType } from '../util/isOutputFieldType';
+import type { ExistingOutputEntity, NewOutputEntity } from '../types/outputEntityTypes';
+import type {
+	NewOutputDisplayField,
+	NewOutputInputField,
+	OutputFieldType
+} from '../types/outputFieldTypes';
+import { createOutputEntityStructure } from '../util/createOutputEntity';
+import {
+	isExistingOutputDisplayField,
+	isExistingOutputInputField,
+	isNewOutputDisplayField,
+	isOutputInputFieldType
+} from '../util/isOutputFieldType';
 
 let DEFAULT_STORE_NAME = 'outputEntityStore';
 
@@ -13,46 +22,28 @@ export const getOutputEntityStore = (storeName?: string) =>
 
 export const initializeOutputEntityStores = (
 	storeName?: string,
-	initialValue?: UnsavedOutputEntity
+	initialValue?: NewOutputEntity | ExistingOutputEntity
 ) => {
-	const store = outputEntityStore(initialValue);
+	const store = outputEntityStore(initialValue ?? createOutputEntityStructure());
 	setContext(storeName ?? DEFAULT_STORE_NAME, store);
 	return store;
 };
 
-export const outputEntityStore = (initialValue?: UnsavedOutputEntity) => {
-	const store = writable<UnsavedOutputEntity>(
-		initialValue ?? {
-			formId: '',
-			isCustom: false,
-			overrides: [],
-			template: {
-				id: '1',
-				fieldTemplates: [],
-				options: {},
-				tailPage: undefined,
-				topPage: undefined,
-				type: 'pdf'
-			},
-			name: 'Test Output Entity',
-			fields: [],
-			ownerId: '',
-			state: 'draft'
-		}
-	);
+export const outputEntityStore = (initialValue: NewOutputEntity | ExistingOutputEntity) => {
+	const store = writable<NewOutputEntity | ExistingOutputEntity>(initialValue);
 
 	const addField = (type: OutputFieldType, atIndex?: number) => {
-		let newField: WithId<OutputField> | undefined = undefined;
+		let newField: NewOutputDisplayField | NewOutputInputField | undefined;
 
 		if (isOutputInputFieldType(type)) {
 			newField = {
-				id: createId(type),
+				clientId: createId(type),
 				fieldId: createId(type),
 				type
 			};
 		} else {
 			newField = {
-				id: createId(type),
+				clientId: createId(type),
 				type
 			};
 		}
@@ -74,7 +65,15 @@ export const outputEntityStore = (initialValue?: UnsavedOutputEntity) => {
 
 	const removeField = (id: string) => {
 		store.update((outputEntity) => {
-			outputEntity.fields = outputEntity.fields.filter((field) => field.id !== id);
+			outputEntity.fields = outputEntity.fields.filter((field) => {
+				if (isExistingOutputDisplayField(field) || isExistingOutputInputField(field)) {
+					return field.id !== id;
+				} else if (isNewOutputDisplayField(field) || isNewOutputDisplayField(field)) {
+					return field.clientId !== id;
+				}
+
+				return true;
+			});
 			return outputEntity;
 		});
 	};

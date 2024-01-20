@@ -1,5 +1,5 @@
 import { doc, getDoc } from 'firebase/firestore';
-import { formSchema } from '../../FormCreator/types/formTypes';
+import { existingFormSchema } from '../../FormCreator/types/formTypes';
 import { firestore } from '../../firebase';
 
 export const loadForm = async (id: string) => {
@@ -11,7 +11,7 @@ export const loadForm = async (id: string) => {
 
 	const formData = formDoc.data();
 
-	const formDataParsed = formSchema.parse(formData);
+	const formDataParsed = existingFormSchema.parse(formData);
 
 	return formDataParsed;
 };

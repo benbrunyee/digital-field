@@ -1,7 +1,12 @@
 // Top-level available form types
 
 import { z } from 'zod';
-import { outputFieldSchema } from './outputFieldTypes';
+import {
+	existingOutputDisplayFieldSchema,
+	existingOutputInputFieldSchema,
+	newOutputDisplayFieldSchema,
+	newOutputInputFieldSchema
+} from './outputFieldTypes';
 import { templateSchema } from './template';
 
 export const outputEntityStates = ['draft', 'active', 'disabled', 'deleted'] as const;
@@ -25,20 +30,28 @@ export const outputEntitySchema = z.object({
 	overrides: z.array(overrideSchema),
 	template: templateSchema, // TODO
 	state: outputEntityStatesSchema,
-	isCustom: z.boolean(),
-	fields: z.array(outputFieldSchema)
+	isCustom: z.boolean()
 });
 export type OutputEntity = z.infer<typeof outputEntitySchema>;
 
 export const existingOutputEntitySchema = outputEntitySchema.extend({
 	id: z.string(),
 	createdAt: z.date(),
-	updatedAt: z.date()
+	updatedAt: z.date(),
+	fields: z.array(
+		z.union([
+			newOutputDisplayFieldSchema,
+			existingOutputDisplayFieldSchema,
+			newOutputInputFieldSchema,
+			existingOutputInputFieldSchema
+		])
+	)
 });
 export type ExistingOutputEntity = z.infer<typeof existingOutputEntitySchema>;
 
 export const newOutputEntitySchema = outputEntitySchema.extend({
-	clientId: z.string()
+	clientId: z.string(),
+	fields: z.array(z.union([newOutputDisplayFieldSchema, newOutputInputFieldSchema]))
 });
 export type NewOutputEntity = z.infer<typeof newOutputEntitySchema>;
 

@@ -9,7 +9,15 @@
 	import FormField from './FormFields/FormField.svelte';
 	import { fieldTypeIcons } from './FormSelectables/FormSelectableElementBase.svelte';
 	import { fieldsStore, getFormStore } from './stores/form';
-	import { isDisplayField, isField, isInputField, isNewField } from './util/isFieldType';
+	import {
+		isDisplayField,
+		isExistingDisplayField,
+		isExistingInputField,
+		isField,
+		isInputField,
+		isNewDisplayField,
+		isNewInputField
+	} from './util/isFieldType';
 
 	export let formId = '';
 
@@ -33,7 +41,7 @@
 
 	$: displayText = isInputField($draggedComponentPayload)
 		? $draggedComponentPayload.name || formatFieldType($draggedComponentPayload.type)
-		: isNewField($draggedComponentPayload)
+		: isNewDisplayField($draggedComponentPayload) || isNewInputField($draggedComponentPayload)
 			? formatFieldType($draggedComponentPayload.type)
 			: isDisplayField($draggedComponentPayload)
 				? formatFieldType($draggedComponentPayload.type)
@@ -44,19 +52,30 @@
 
 <div class="border-surface-400-500-token h-min min-h-14 w-full border p-2 rounded-token">
 	<Accordion>
+		<!-- TODO: Orderable list should have an internal ID as well as a dynamic id field -->
 		<OrderableList
 			items={$form.fields}
-			idField="id"
+			idField="type"
 			addItem={(item, insertAfter) => {
 				// Add a new field
-				if (isNewField(item)) {
+				if (isNewDisplayField(item) || isNewInputField(item)) {
 					form.addField(item.type, insertAfter);
 					return;
 				}
 
 				// Moving an existing field
-				if (isField(item)) {
-					const newFields = [...$form.fields.filter((f) => f.id !== item.id)];
+				if (isExistingDisplayField(item) || isExistingInputField(item)) {
+					const newFields = [
+						...$form.fields.filter((f) => {
+							if (isExistingDisplayField(f) || isExistingInputField(f)) {
+								return f.id !== item.id;
+							} else if (isNewDisplayField(f) || isNewInputField(f)) {
+								return f.clientId !== item.id;
+							}
+
+							return true;
+						})
+					];
 					newFields.splice(insertAfter + 1, 0, item);
 					$form.fields = newFields;
 					return;
@@ -70,7 +89,11 @@
 			}}
 			removeItem={(item) => {
 				if (isField(item)) {
-					form.removeField(item.id);
+					if (isExistingInputField(item) || isExistingDisplayField(item)) {
+						form.removeField(item.id);
+					} else if (isNewDisplayField(item) || isNewInputField(item)) {
+						form.removeField(item.clientId);
+					}
 				} else {
 					console.error('Item is not an existing field', item);
 					toastStore.trigger({
@@ -81,7 +104,7 @@
 			}}
 		>
 			<svelte:fragment slot="placeholderGhost">
-				{#if isNewField($draggedComponentPayload)}
+				{#if isNewInputField($draggedComponentPayload) || isNewDisplayField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>
@@ -93,7 +116,7 @@
 			</svelte:fragment>
 
 			<svelte:fragment slot="draggedGhost">
-				{#if isNewField($draggedComponentPayload)}
+				{#if isNewInputField($draggedComponentPayload) || isNewDisplayField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>

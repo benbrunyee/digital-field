@@ -5,7 +5,7 @@
  */
 
 import { z } from 'zod';
-import { allFormFieldTypes } from '../../FormCreator/types/fieldTypes';
+import { inputFieldTypes } from '../../FormCreator/types/fieldTypes';
 
 // Display field types
 
@@ -45,7 +45,7 @@ export type OutputDisplayFieldUpdateRequest = z.infer<typeof outputDisplayFieldU
 
 // Output input field types
 
-export const outputInputFieldTypes = allFormFieldTypes;
+export const outputInputFieldTypes = inputFieldTypes;
 export const outputInputFieldTypesSchema = z.enum(outputInputFieldTypes);
 export type OutputInputFieldType = z.infer<typeof outputInputFieldTypesSchema>;
 

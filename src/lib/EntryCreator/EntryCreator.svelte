@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { isDisplayField, isInputField } from '$lib/FormCreator/util/isFieldType';
+	import {
+		isExistingDisplayField,
+		isExistingInputField,
+		isInputField
+	} from '$lib/FormCreator/util/isFieldType';
 	import type { EntryState } from '../FormCreator/types/formTypes';
 	import { initializeEntryStore } from './stores/entry';
 	import { getFormStore } from './stores/form';
@@ -23,25 +27,27 @@
 		<div class="space-y-2">
 			{#each $form.fields as field}
 				{#if field}
+					{@const fieldObj = {
+						id:
+							isExistingInputField(field) || isExistingDisplayField(field)
+								? field.id
+								: field.clientId,
+						value: isInputField(field) ? field.name : field.value
+					}}
+
 					<div class="space-y-1">
 						<div class="ml-2">
-							{#if isInputField(field)}
-								<label for="input-{field.id}">
-									{field.name}
-								</label>
-							{:else if isDisplayField(field)}
-								<label for="input-{field.id}">
-									{field.value}
-								</label>
-							{/if}
+							<label for="input-{fieldObj.id}">
+								{fieldObj.value}
+							</label>
 						</div>
 
 						<input
 							class="input"
-							name="input-{field.id}"
+							name="input-{fieldObj.id}"
 							on:input={(e) => {
 								// We don't bind because the element isn't guaranteed to exist in the entry
-								entry.setFieldValue(field.id, e.currentTarget.value);
+								entry.setFieldValue(fieldObj.id, e.currentTarget.value);
 							}}
 						/>
 					</div>

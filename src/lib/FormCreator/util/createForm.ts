@@ -2,49 +2,52 @@ import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import { get } from 'svelte/store';
 import { firestore } from '../../firebase';
 import { orgIdStore } from '../../stores/org';
+import { createId } from '../../util/createId';
 import { FORM_COLLECTION } from '../../util/types/collections';
-import type { WithId } from '../../util/types/withId';
-import type { UnsavedFormField } from '../types/fieldTypes';
-import { unsavedFormSchema, type Form, type UnsavedForm } from '../types/formTypes';
+import { userStore } from '../../util/user/stores/userStore';
+import type { ExistingForm, NewForm } from '../types/formTypes';
 
-const createFormDoc = async (form: UnsavedForm) => {
+const createFormDoc = async (form: NewForm) => {
 	console.log('Creating form', form);
 	return await addDoc(collection(firestore, FORM_COLLECTION), form);
 };
 
-const updateFormDoc = async (form: Form) => {
+const updateFormDoc = async (form: ExistingForm) => {
 	console.log('Updating form', form);
 	return await setDoc(doc(firestore, FORM_COLLECTION), form);
 };
 
-export const saveFormDoc = async (form: Form | UnsavedForm) => {
+export const saveFormDoc = async (form: NewForm | ExistingForm) => {
 	const orgId = get(orgIdStore);
 
 	const formObj = form;
 
-	const unsavedForm = unsavedFormSchema.safeParse(formObj);
-	if (unsavedForm.success) {
-		unsavedForm.data.fields;
+	// TODO: Implement
+};
+
+export const createFormStructure = (): NewForm => {
+	const uid = get(userStore).id;
+	const orgId = get(orgIdStore);
+
+	if (!uid) {
+		throw new Error('User not logged in');
 	}
 
-	return 'id' in form ? updateFormDoc({ ...formObj, orgId }) : createFormDoc({ ...formObj, orgId });
-};
+	if (!orgId) {
+		throw new Error('Org not selected');
+	}
 
-const removeIdFromFields = (fields: WithId<UnsavedFormField>[]) => {
-	return fields.map((field) => {
-		const { id, ...rest } = field;
-		return rest;
-	});
+	return {
+		clientId: createId('form'),
+		ownerId: uid,
+		name: 'Form Name',
+		fields: [],
+		outputs: [],
+		options: {
+			entryStates: []
+		},
+		status: 'draft',
+		type: 'form',
+		orgId
+	};
 };
-
-export const createFormStructure = (): UnsavedForm => ({
-	name: 'Form Name',
-	fields: [],
-	outputs: [],
-	options: {
-		entryStates: []
-	},
-	status: 'draft',
-	type: 'form',
-	orgId: get(orgIdStore)
-});

@@ -1,45 +1,39 @@
 import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
 import { createId } from '../../util/createId';
 import type {
-	DisplayField,
-	DisplayFieldOptions,
 	DisplayFieldType,
-	InputField,
-	InputFieldOptions,
-	InputFieldType
+	InputFieldType,
+	NewDisplayField,
+	NewInputField
 } from '../types/fieldTypes';
 
-export function createDisplayFieldStructure<T extends DisplayFieldType>(type: T): DisplayField<T> {
+export function createDisplayFieldStructure<T extends DisplayFieldType>(type: T): NewDisplayField {
 	return {
-		id: createId(type),
-		createdAt: new Date(),
-		updatedAt: new Date(),
+		clientId: createId(type),
 		type,
 		options: createDisplayFieldOptions(type)
 	};
 }
 
-function createDisplayFieldOptions<T extends DisplayFieldType>(type: T): DisplayFieldOptions<T> {
+function createDisplayFieldOptions<T extends DisplayFieldType>(type: T): any {
 	switch (type) {
 		case 'heading':
-			return <DisplayFieldOptions<'heading'>>{};
+			return {};
 		case 'subheading':
-			return <DisplayFieldOptions<typeof type>>{};
+			return {};
 		case 'paragraph':
-			return <DisplayFieldOptions<typeof type>>{};
+			return {};
 		case 'separator':
-			return <DisplayFieldOptions<typeof type>>{};
+			return {};
 		default:
-			return <DisplayFieldOptions<typeof type>>{};
+			return {};
 	}
 }
 
-export function createInputFieldStructure<T extends InputFieldType>(type: T): InputField<T> {
+export function createInputFieldStructure<T extends InputFieldType>(type: T): NewInputField {
 	return {
-		id: createId(type),
+		clientId: createId(type),
 		ref: type,
-		createdAt: new Date(),
-		updatedAt: new Date(),
 		description: '',
 		name: formatFieldType(type),
 		options: createInputFieldOptions(type),
@@ -48,38 +42,36 @@ export function createInputFieldStructure<T extends InputFieldType>(type: T): In
 	};
 }
 
-function createInputFieldOptions<T extends InputFieldType>(
-	type: T
-): InputFieldOptions<typeof type> {
+function createInputFieldOptions<T extends InputFieldType>(type: T): any {
 	switch (type) {
 		case 'text':
-			return <InputFieldOptions<'text'>>{
+			return {
 				placeholder: ''
 			};
 		case 'number':
-			return <InputFieldOptions<typeof type>>{};
+			return {};
 		case 'date':
-			return <InputFieldOptions<typeof type>>{};
+			return {};
 		case 'time':
-			return <InputFieldOptions<typeof type>>{};
+			return {};
 		case 'audio':
-			return <InputFieldOptions<typeof type>>{
+			return {
 				placeholder: ''
 			};
 		case 'address':
-			return <InputFieldOptions<typeof type>>{
+			return {
 				placeholder: ''
 			};
 		case 'link':
-			return <InputFieldOptions<typeof type>>{
+			return {
 				placeholder: ''
 			};
 		case 'multi-entry':
-			return <InputFieldOptions<typeof type>>{
+			return {
 				placeholder: ''
 			};
 		default:
-			return <InputFieldOptions<typeof type>>{};
+			return {};
 	}
 }
 

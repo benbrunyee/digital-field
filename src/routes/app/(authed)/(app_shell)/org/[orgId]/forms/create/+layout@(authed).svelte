@@ -2,12 +2,11 @@
 	import { initializeFormStore } from '$lib/EntryCreator/stores/form';
 	import FormElementSelection from '$lib/FormCreator/FormSelectables/FormElementSelection.svelte';
 	import FormSettings from '$lib/FormCreator/FormSettings.svelte';
-	import { createFormStructure } from '$lib/FormCreator/util/createForm';
 	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
 	import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
 	import { tab } from './+page.svelte';
 
-	initializeFormStore(createFormStructure());
+	initializeFormStore();
 </script>
 
 <AppShell

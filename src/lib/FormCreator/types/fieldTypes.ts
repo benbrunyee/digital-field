@@ -38,6 +38,7 @@ export const inputFieldSchema = z.object({
 	type: inputFieldTypesSchema,
 	options: inputFieldOptionsSchema
 });
+export type InputField = z.infer<typeof inputFieldSchema>;
 
 export const existingInputFieldSchema = inputFieldSchema.extend({
 	id: z.string(),
@@ -105,3 +106,5 @@ export type DisplayFieldUpdateRequest = z.infer<typeof displayFieldUpdateRequest
 export const allFormFieldTypes = [...inputFieldTypes, ...displayFieldTypes] as const;
 export const formFieldTypesSchema = z.enum(allFormFieldTypes);
 export type FormFieldTypes = InputFieldType | DisplayFieldType;
+export const formFieldSchema = z.union([inputFieldSchema, displayFieldSchema]);
+export type FormField = z.infer<typeof formFieldSchema>;
