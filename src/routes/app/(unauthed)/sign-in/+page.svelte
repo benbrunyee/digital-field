@@ -1,5 +1,8 @@
 <script lang="ts">
 	import SignInForm from '$lib/SignInForm/SignInForm.svelte';
+	import { orgIdStore } from '$lib/stores/org';
+
+	orgIdStore.set('');
 </script>
 
 <div class="flex min-h-screen flex-col items-center justify-center">

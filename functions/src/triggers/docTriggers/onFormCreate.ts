@@ -15,7 +15,11 @@ export const onFormCreateFn = (
 	}
 
 	event.data.ref.set(
-		{ updatedAt: event.data.updateTime, createdAt: event.data.createTime },
+		{
+			id: event.data.id,
+			updatedAt: event.data.updateTime,
+			createdAt: event.data.createTime
+		},
 		{ merge: true }
 	);
 

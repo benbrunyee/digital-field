@@ -7,6 +7,7 @@ export const userOrgRoleSchema = z.enum(['viewer', 'collaborator', 'editor', 'or
 export type UserOrgRole = z.infer<typeof userOrgRoleSchema>;
 
 export const orgMemberSchema = z.object({
+	id: z.string(),
 	role: userOrgRoleSchema
 });
 

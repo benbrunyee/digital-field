@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import {
+	displayFieldCreateRequestSchema,
 	existingDisplayFieldSchema,
 	existingInputFieldSchema,
+	inputFieldCreateRequestSchema,
 	newDisplayFieldSchema,
 	newInputFieldSchema
 } from './fieldTypes';
@@ -68,13 +70,11 @@ export const newFormSchema = formSchema.extend({
 });
 export type NewForm = z.infer<typeof newFormSchema>;
 
-export const formCreateRequestSchema = newFormSchema.omit({
-	clientId: true
+export const formCreateRequestSchema = newFormSchema.extend({
+	clientId: z.void(),
+	fields: z.array(z.union([displayFieldCreateRequestSchema, inputFieldCreateRequestSchema]))
 });
 export type FormCreateRequest = z.infer<typeof formCreateRequestSchema>;
 
-export const formUpdateRequestSchema = existingFormSchema.omit({
-	createdAt: true,
-	updatedAt: true
-});
+export const formUpdateRequestSchema = existingFormSchema;
 export type FormUpdateRequest = z.infer<typeof formUpdateRequestSchema>;

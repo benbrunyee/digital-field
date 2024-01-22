@@ -4,7 +4,7 @@
 	import { draggedComponentPayload } from '../Draggable/stores/draggedSelectable';
 	import FieldGhost from '../SelectableElements/FieldGhost.svelte';
 	import { formatFieldType } from '../SelectableElements/util/formatFieldType';
-	import { loadForm } from '../util/form/loadForm';
+	import { loadForm } from '../util/form/loadForms';
 	import { toastError } from '../util/toast/toastError';
 	import FormField from './FormFields/FormField.svelte';
 	import { fieldTypeIcons } from './FormSelectables/FormSelectableElementBase.svelte';
@@ -55,7 +55,6 @@
 		<!-- TODO: Orderable list should have an internal ID as well as a dynamic id field -->
 		<OrderableList
 			items={$form.fields}
-			idField="type"
 			addItem={(item, insertAfter) => {
 				// Add a new field
 				if (isNewDisplayField(item) || isNewInputField(item)) {

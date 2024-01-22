@@ -67,8 +67,14 @@
 
 <form class="flex flex-col space-y-2">
 	<div class="space-y-2">
-		<input bind:value={email} type="email" placeholder="Email" class="input" />
-		<input bind:value={password} type="password" placeholder="Password" class="input" />
+		<input bind:value={email} type="email" placeholder="Email" class="input" autocomplete="email" />
+		<input
+			bind:value={password}
+			type="password"
+			placeholder="Password"
+			class="input"
+			autocomplete={state === 'sign-in' ? 'current-password' : 'new-password'}
+		/>
 	</div>
 	{#if error}
 		<div class="text-center">

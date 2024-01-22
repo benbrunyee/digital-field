@@ -19,7 +19,7 @@ export type OrgPlan = z.infer<typeof orgPlanSchema>;
 const orgSchema = z.object({
 	name: z.string(),
 	ownerId: z.string(),
-	members: z.record(z.string(), z.object({ role: userOrgRoleSchema })),
+	members: z.record(z.string(), z.object({ id: z.string(), role: userOrgRoleSchema })),
 	plan: orgPlanSchema,
 	createdAt: z.date(),
 	updatedAt: z.date()
@@ -47,6 +47,7 @@ export const createOrgDoc = async (ownerId: string) => {
 		name: 'My Organization',
 		members: {
 			[ownerId]: {
+				id: ownerId,
 				role: 'owner'
 			}
 		},

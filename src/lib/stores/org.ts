@@ -1,3 +1,3 @@
-import { writable } from 'svelte/store';
+import { localStorageStore } from '@skeletonlabs/skeleton';
 
-export const orgIdStore = writable<string>('');
+export const orgIdStore = localStorageStore('lastLoadedOrg', '');

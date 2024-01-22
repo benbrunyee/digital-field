@@ -20,12 +20,9 @@
 	$: avatarInitials = $userStore?.name.charAt(0) || $userStore?.email.charAt(0) || '..';
 
 	onMount(() => {
-		const lastLoadedOrgId = localStorage.getItem('lastLoadedOrgId');
-
-		if (lastLoadedOrgId) {
+		if ($orgIdStore) {
 			// Navigate to the last loaded org
-			$orgIdStore = lastLoadedOrgId;
-			goto(`/app/org/${lastLoadedOrgId}`);
+			goto(`/app/org/${$orgIdStore}`);
 		} else {
 			// Navigate to the first org the user owns
 			const primaryOrg = $userStore.primaryOrgId;

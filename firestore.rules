@@ -25,11 +25,11 @@ service cloud.firestore {
     }
 
     function isUserInResourceOrg() {
-      return resource.data.org == getUserOrgs();
+      return resource.data.orgId in getUserOrgs();
     }
 
     function isUserOrgOwner() {
-      return resource.id == getUserOrgs();
+      return getUserOrgRole(resource.id) == "owner";
     }
 
     function isUserOrgAdmin() {
@@ -37,21 +37,25 @@ service cloud.firestore {
       return "updateOrg" in getRolePermissions(userRole);
     }
 
+    function isUpdatingField(fieldName) {
+      return request.resource.data[fieldName] != resource.data[fieldName];
+    }
+
     // Forms
 
     match /forms/{formId} {
       function doesUserRoleHaveViewFormPermissions() {
-        let userRole = getUserOrgRole(request.resource.data.orgId);
+        let userRole = getUserOrgRole(resource.data.orgId);
         return "viewForm" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveUpdateFormPermissions() {
-        let userRole = getUserOrgRole(request.resource.data.orgId);
+        let userRole = getUserOrgRole(resource.data.orgId);
         return "updateForm" in getRolePermissions(userRole);
       }
 
       function doesUserRoleHaveDeleteFormPermissions() {
-        let userRole = getUserOrgRole(request.resource.data.orgId);
+        let userRole = getUserOrgRole(resource.data.orgId);
         return "deleteForm" in getRolePermissions(userRole);
       }
 
@@ -60,20 +64,11 @@ service cloud.firestore {
         return "createForm" in getRolePermissions(userRole);
       }
 
-      function containsProtectedFormKeys() {
-        return request.resource.data.keys().hasAny(["id", "createdAt", "updatedAt"]);
-      }
-
-      function onlyHasAllowedKeys() {
-        return request.resource.data.keys().hasOnly([
-        "name",
-        "description",
-        "fields",
-        "options",
-        "orgId",
-        "type",
-        "status",
-        ]);
+      function orgKeysAreProtected() {
+        return !(isUpdatingField("id")
+          || isUpdatingField("createdAt")
+          || isUpdatingField("ownerId")
+          || isUpdatingField("orgId"));
       }
 
       allow get, list: if isUserAuthenticated()
@@ -81,11 +76,11 @@ service cloud.firestore {
         && doesUserRoleHaveViewFormPermissions();
       allow create: if isUserAuthenticated()
         && doesUserRoleHaveCreateFormPermissions()
-        && !containsProtectedFormKeys();
+        && orgKeysAreProtected();
       allow update: if isUserAuthenticated()
         && isUserInResourceOrg()
         && doesUserRoleHaveUpdateFormPermissions()
-        && !containsProtectedFormKeys();
+        && orgKeysAreProtected();
       allow delete: if isUserAuthenticated()
         && isUserInResourceOrg()
         && doesUserRoleHaveDeleteFormPermissions();

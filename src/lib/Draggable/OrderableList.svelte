@@ -17,7 +17,6 @@
 	 */
 
 	export let items: T[];
-	export let idField: keyof T | undefined = undefined;
 	export let addItem: (item: unknown, insertAfter: number) => void;
 	export let removeItem: (item?: unknown) => void;
 
@@ -39,10 +38,6 @@
 		acc.set(index, [0, 0]);
 		return acc;
 	}, new Map());
-
-	function getItemId(item: T) {
-		return typeof item === 'object' && idField && item[idField] ? item[idField] : item;
-	}
 
 	function findNextElementIndex(y: number) {
 		if (measuredElements.size === 0) return -1;
@@ -80,13 +75,7 @@
 	}
 
 	function onDropOutsideZone(event: CustomEvent<DroppedOutsideZoneEventDetail<T>>) {
-		if (
-			items.find(
-				(item) =>
-					(typeof item === 'object' && idField && item[idField] ? item[idField] : item) ===
-					event.detail.payload
-			)
-		) {
+		if (items.find((item) => item === event.detail.payload)) {
 			removeItem(event.detail.payload);
 		}
 	}
@@ -118,7 +107,7 @@
 			console.log(e);
 		}}
 	>
-		{#each items as item, i (getItemId(item))}
+		{#each items as item, i}
 			{@const hideElement = hideElementIndex === i}
 
 			<div

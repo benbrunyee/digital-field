@@ -1,6 +1,7 @@
 <script lang="ts">
 	import FixedList from '../../Draggable/FixedList.svelte';
-	import { allFormFieldTypes, displayFieldTypes } from '../types/fieldTypes';
+	import { displayFieldTypes, inputFieldTypes } from '../types/fieldTypes';
+	import { createDisplayFieldStructure, createInputFieldStructure } from '../util/createFields';
 	import FormSelectableElementBase from './FormSelectableElementBase.svelte';
 </script>
 
@@ -9,10 +10,10 @@
 	<hr />
 
 	<FixedList
-		items={allFormFieldTypes.map((x) => ({
-			type: x,
-			newField: true
-		}))}
+		items={[
+			...inputFieldTypes.map((type) => createInputFieldStructure(type)),
+			...displayFieldTypes.map((type) => createDisplayFieldStructure(type))
+		]}
 	>
 		<svelte:fragment slot="draggedGhost" let:item>
 			<FormSelectableElementBase

@@ -29,7 +29,6 @@
 				onSignOut();
 			}
 
-			localStorage.setItem('lastLoadedOrgId', orgId);
 			$orgIdStore = orgId;
 		}
 	});

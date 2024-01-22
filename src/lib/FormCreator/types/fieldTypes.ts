@@ -41,9 +41,7 @@ export const inputFieldSchema = z.object({
 export type InputField = z.infer<typeof inputFieldSchema>;
 
 export const existingInputFieldSchema = inputFieldSchema.extend({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date()
+	id: z.string()
 });
 export type ExistingInputField = z.infer<typeof existingInputFieldSchema>;
 
@@ -57,10 +55,7 @@ export const inputFieldCreateRequestSchema = newInputFieldSchema.omit({
 });
 export type InputFieldCreateRequest = z.infer<typeof inputFieldCreateRequestSchema>;
 
-export const inputFieldUpdateRequestSchema = existingInputFieldSchema.omit({
-	createdAt: true,
-	updatedAt: true
-});
+export const inputFieldUpdateRequestSchema = existingInputFieldSchema;
 export type InputFieldUpdateRequest = z.infer<typeof inputFieldUpdateRequestSchema>;
 
 // Display field types
@@ -79,9 +74,7 @@ export const displayFieldSchema = z.object({
 export type DisplayField = z.infer<typeof displayFieldSchema>;
 
 export const existingDisplayFieldSchema = displayFieldSchema.extend({
-	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date()
+	id: z.string()
 });
 export type ExistingDisplayField = z.infer<typeof existingDisplayFieldSchema>;
 
@@ -95,10 +88,7 @@ export const displayFieldCreateRequestSchema = newDisplayFieldSchema.omit({
 });
 export type DisplayFieldCreateRequest = z.infer<typeof displayFieldCreateRequestSchema>;
 
-export const displayFieldUpdateRequestSchema = existingDisplayFieldSchema.omit({
-	createdAt: true,
-	updatedAt: true
-});
+export const displayFieldUpdateRequestSchema = existingDisplayFieldSchema;
 export type DisplayFieldUpdateRequest = z.infer<typeof displayFieldUpdateRequestSchema>;
 
 // All field types
