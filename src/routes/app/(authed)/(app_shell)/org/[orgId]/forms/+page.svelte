@@ -69,10 +69,10 @@
 				</div>
 
 				<div class="space-x-1">
-					<a href={`forms/editor/${form.id}`} class="variant-outline-primary btn">Edit</a>
-					<button on:click={() => deleteForm(form.id)} class="variant-filled-error btn"
+					<button on:click={() => deleteForm(form.id)} class="variant-outline-error btn btn-sm"
 						>Delete</button
 					>
+					<a href={`forms/editor/${form.id}`} class="variant-filled-secondary btn btn-sm">Edit</a>
 				</div>
 			</div>
 		{/each}
