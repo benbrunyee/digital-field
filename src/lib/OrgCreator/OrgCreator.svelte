@@ -3,7 +3,7 @@
 	import { auth, firestore } from '$lib/firebase';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { addDoc, collection } from 'firebase/firestore';
-	import { toastError } from '../util/toast/toastError';
+	import { toastError } from '../util/toast/toastNotifications';
 
 	const toastStore = getToastStore();
 

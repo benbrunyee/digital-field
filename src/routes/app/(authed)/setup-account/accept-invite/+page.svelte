@@ -8,7 +8,7 @@
 	import { goto } from '$app/navigation';
 	import type { Org } from '$lib/OrgCreator/types/orgType';
 	import { functions } from '$lib/firebase';
-	import { toastError } from '$lib/util/toast/toastError';
+	import { toastError } from '$lib/util/toast/toastNotifications';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { httpsCallable } from 'firebase/functions';
 
@@ -18,7 +18,7 @@
 		{
 			createdAt: new Date(),
 			id: '1',
-			members: [],
+			members: {},
 			name: 'Org 1',
 			ownerId: '1',
 			plan: 'standard',

@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { getToastStore } from '@skeletonlabs/skeleton';
-	import { toastError } from '../util/toast/toastError';
+	import { saveFormDoc } from '../util/form/createForm';
+	import { toastError, toastSuccess } from '../util/toast/toastNotifications';
 	import { getFormStore } from './stores/form';
-	import { saveFormDoc } from './util/createForm';
 
 	let isSubmitting = false;
 
@@ -13,7 +14,14 @@
 		isSubmitting = true;
 
 		try {
-			await saveFormDoc($formStore);
+			const savedForm = await saveFormDoc($formStore);
+
+			if (!savedForm) {
+				throw new Error('Failed to save form');
+			}
+
+			toastSuccess(toastStore, 'Form saved');
+			goto(`editor/${savedForm.id}`);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to save form');

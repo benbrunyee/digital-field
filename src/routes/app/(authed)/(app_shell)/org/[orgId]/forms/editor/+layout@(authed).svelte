@@ -1,9 +1,32 @@
+<script lang="ts" context="module">
+	import { writable } from 'svelte/store';
+
+	export const tabs = ['input', 'output'] as const;
+	export const tab = writable<(typeof tabs)[number]>('input');
+
+	export const isLoading = writable<boolean>(false);
+</script>
+
 <script lang="ts">
+	import FormBuilder from '$lib/FormCreator/FormBuilder.svelte';
 	import FormElementSelection from '$lib/FormCreator/FormSelectables/FormElementSelection.svelte';
 	import FormSettings from '$lib/FormCreator/FormSettings.svelte';
+	import { initializeFormStore } from '$lib/FormCreator/stores/form';
+	import LoadingSpinner from '$lib/LoadingSpinner/LoadingSpinner.svelte';
+	import OutputEntityEditor from '$lib/OutputCreator/OutputEntityEditor.svelte';
 	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
-	import { AppBar, AppShell, Avatar, LightSwitch } from '@skeletonlabs/skeleton';
-	import { tab } from '../../routes/app/(authed)/(app_shell)/org/[orgId]/forms/create/+page.svelte';
+	import {
+		AppBar,
+		AppShell,
+		Avatar,
+		LightSwitch,
+		RadioGroup,
+		RadioItem
+	} from '@skeletonlabs/skeleton';
+
+	// export let data: PageData;
+
+	initializeFormStore();
 </script>
 
 <AppShell
@@ -41,9 +64,24 @@
 	<!-- (pageHeader) -->
 	<!-- Router Slot -->
 	<div class="flex h-full p-4">
-		<slot />
+		<div class="flex flex-auto flex-col items-center space-y-4">
+			<RadioGroup>
+				<RadioItem bind:group={$tab} name="justify" value="input">Input</RadioItem>
+				<RadioItem bind:group={$tab} name="justify" value="output">Output</RadioItem>
+			</RadioGroup>
+
+			{#if $isLoading}
+				<LoadingSpinner />
+			{:else if $tab === 'input'}
+				<FormBuilder />
+			{:else if $tab === 'output'}
+				<OutputEntityEditor />
+			{/if}
+		</div>
 	</div>
 	<!-- ---- / ---- -->
 	<!-- (pageFooter) -->
 	<!-- (footer) -->
 </AppShell>
+
+<slot />

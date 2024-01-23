@@ -8,7 +8,7 @@
 		signInWithEmailAndPassword,
 		signInWithPopup
 	} from 'firebase/auth';
-	import { toastError } from '../util/toast/toastError';
+	import { toastError } from '../util/toast/toastNotifications';
 
 	const toastStore = getToastStore();
 

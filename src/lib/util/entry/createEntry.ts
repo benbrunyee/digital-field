@@ -1,10 +1,10 @@
-import { createId } from '../../util/createId';
 import {
 	existingEntrySchema,
 	newEntrySchema,
 	type ExistingEntry,
 	type NewEntry
-} from '../types/entryTypes';
+} from '../../EntryCreator/types/entryTypes';
+import { createId } from '../createId';
 
 export const updateEntryDoc = (entry: ExistingEntry) => {};
 

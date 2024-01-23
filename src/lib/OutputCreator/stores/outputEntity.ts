@@ -1,13 +1,13 @@
 import { getContext, setContext } from 'svelte';
 import { derived, writable } from 'svelte/store';
 import { createId } from '../../util/createId';
+import { createOutputEntityStructure } from '../../util/outputEntity/createOutputEntity';
 import type { ExistingOutputEntity, NewOutputEntity } from '../types/outputEntityTypes';
 import type {
 	NewOutputDisplayField,
 	NewOutputInputField,
 	OutputFieldType
 } from '../types/outputFieldTypes';
-import { createOutputEntityStructure } from '../util/createOutputEntity';
 import {
 	isExistingOutputDisplayField,
 	isExistingOutputInputField,

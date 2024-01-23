@@ -1,9 +1,8 @@
 import { getContext, setContext } from 'svelte';
 import { writable } from 'svelte/store';
-import type { EntryState } from '../../FormCreator/types/formTypes';
 import { createId } from '../../util/createId';
+import { createEntryStructure } from '../../util/entry/createEntry';
 import type { Entry } from '../types/entryTypes';
-import { createEntryStructure } from '../util/createEntry';
 
 const DEFAULT_STORE_NAME = 'entryStore';
 
@@ -11,22 +10,18 @@ export const getEntryStore = (storeName?: string) => {
 	return getContext<ReturnType<typeof entryStore>>(storeName ?? DEFAULT_STORE_NAME);
 };
 
-export const initializeEntryStore = <T extends EntryState>(
-	formId: string,
-	initialValue?: Entry<T>,
-	storeName?: string
-) => {
-	const store = entryStore(formId, initialValue ?? createEntryStructure(formId));
+export const initializeEntryStore = (formId: string, initialValue?: Entry, storeName?: string) => {
+	const store = entryStore(formId, initialValue ?? createEntryStructure(formId, 'draft'));
 	setContext(storeName ?? DEFAULT_STORE_NAME, store);
 	return store;
 };
 
-const entryStore = <T extends EntryState>(formId: string, initialValue?: Entry<T>) => {
-	const store = writable<Entry<T>>(initialValue);
+const entryStore = (formId: string, initialValue?: Entry) => {
+	const store = writable<Entry>(initialValue);
 
 	// TODO: Remove this
-	const demoEntry: { [key: string]: Entry<T> } = {
-		'1': createEntryStructure(formId)
+	const demoEntry: { [key: string]: Entry } = {
+		'1': createEntryStructure(formId, 'draft')
 	};
 
 	const setEntryId = (id: string) => {

@@ -1,7 +1,10 @@
 <script lang="ts">
 	import FixedList from '../../Draggable/FixedList.svelte';
+	import {
+		createDisplayFieldStructure,
+		createInputFieldStructure
+	} from '../../util/form/createFields';
 	import { displayFieldTypes, inputFieldTypes } from '../types/fieldTypes';
-	import { createDisplayFieldStructure, createInputFieldStructure } from '../util/createFields';
 	import FormSelectableElementBase from './FormSelectableElementBase.svelte';
 </script>
 

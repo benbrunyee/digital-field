@@ -37,7 +37,7 @@ export const entrySchema = z.object({
 	status: z.string(),
 	fields: z.array(z.any())
 });
-export type EntrySchema = z.infer<typeof entrySchema>;
+export type Entry = z.infer<typeof entrySchema>;
 
 export const existingEntrySchema = entrySchema.extend({
 	id: z.string(),

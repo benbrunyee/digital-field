@@ -1,10 +1,5 @@
 import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { get } from 'svelte/store';
-import { firestore } from '../../firebase';
-import { orgIdStore } from '../../stores/org';
-import { createId } from '../../util/createId';
-import { FORM_COLLECTION } from '../../util/types/collections';
-import { userStore } from '../../util/user/stores/userStore';
 import {
 	existingFormSchema,
 	formCreateRequestSchema,
@@ -13,7 +8,11 @@ import {
 	type ExistingForm,
 	type FormCreateRequest,
 	type NewForm
-} from '../types/formTypes';
+} from '../../FormCreator/types/formTypes';
+import { auth, firestore } from '../../firebase';
+import { orgIdStore } from '../../stores/org';
+import { createId } from '../createId';
+import { FORM_COLLECTION } from '../types/collections';
 
 const createFormDoc = async (form: NewForm) => {
 	console.debug('Creating form', form);
@@ -60,7 +59,7 @@ export const saveFormDoc = async (form: NewForm | ExistingForm) => {
 };
 
 export const createFormStructure = (): NewForm => {
-	const uid = get(userStore).id;
+	const uid = auth.currentUser?.uid;
 	const orgId = get(orgIdStore);
 
 	if (!uid) {
@@ -74,7 +73,7 @@ export const createFormStructure = (): NewForm => {
 	return {
 		clientId: createId('form'),
 		ownerId: uid,
-		name: 'Form Name',
+		name: 'My Form',
 		fields: [],
 		outputs: [],
 		options: {

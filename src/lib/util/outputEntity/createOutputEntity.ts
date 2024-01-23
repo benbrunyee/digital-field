@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
-import { createId } from '../../util/createId';
-import { userStore } from '../../util/user/stores/userStore';
-import type { NewOutputEntity } from '../types/outputEntityTypes';
+import type { NewOutputEntity } from '../../OutputCreator/types/outputEntityTypes';
+import { createId } from '../createId';
+import { userStore } from '../user/stores/userStore';
 
 export const createOutputEntityStructure = (): NewOutputEntity => {
 	const uid = get(userStore).id;

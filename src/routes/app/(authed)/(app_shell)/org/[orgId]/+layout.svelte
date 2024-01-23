@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import type { Org } from '$lib/OrgCreator/types/orgType';
 	import { orgIdStore } from '$lib/stores/org';
 	import { getOrg } from '$lib/util/org/loadOrg';
-	import { toastError } from '$lib/util/toast/toastError';
+	import { toastError } from '$lib/util/toast/toastNotifications';
+	import { onSignOut } from '$lib/util/user/onSignOut';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import type { Org } from '../../../../../../lib/OrgCreator/types/orgType';
-	import { onSignOut } from '../../../../../../lib/util/user/onSignOut';
 
 	// Get the loaded org from the url
 	// Save it to the browser's local storage

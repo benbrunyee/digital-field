@@ -4,6 +4,7 @@
 	import Navigation, { navigation } from '$lib/Navigation/Navigation.svelte';
 	import { pageTitle } from '$lib/Navigation/stores/pageTitle';
 	import { orgIdStore } from '$lib/stores/org';
+	import { onSignOut } from '$lib/util/user/onSignOut';
 	import { userStore } from '$lib/util/user/stores/userStore';
 	import Icon from '@iconify/svelte';
 	import {
@@ -15,7 +16,6 @@
 		getDrawerStore
 	} from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
-	import { onSignOut } from '../../../../lib/util/user/onSignOut';
 
 	$: avatarInitials = $userStore?.name.charAt(0) || $userStore?.email.charAt(0) || '..';
 

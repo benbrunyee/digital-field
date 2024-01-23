@@ -38,6 +38,7 @@ service cloud.firestore {
     }
 
     function isUpdatingField(fieldName) {
+      // If the field is not in the request, it is not being updated
       return request.resource.data[fieldName] != resource.data[fieldName];
     }
 
@@ -64,11 +65,15 @@ service cloud.firestore {
         return "createForm" in getRolePermissions(userRole);
       }
 
-      function orgKeysAreProtected() {
+      function orgKeysAreNotUpdated() {
         return !(isUpdatingField("id")
           || isUpdatingField("createdAt")
           || isUpdatingField("ownerId")
           || isUpdatingField("orgId"));
+      }
+
+      function orgKeysAreNotSet() {
+        return request.resource.data.keys().hasAny(["id", "createdAt", "ownerId", "orgId"]);
       }
 
       allow get, list: if isUserAuthenticated()
@@ -76,11 +81,11 @@ service cloud.firestore {
         && doesUserRoleHaveViewFormPermissions();
       allow create: if isUserAuthenticated()
         && doesUserRoleHaveCreateFormPermissions()
-        && orgKeysAreProtected();
+        && orgKeysAreNotSet();
       allow update: if isUserAuthenticated()
         && isUserInResourceOrg()
         && doesUserRoleHaveUpdateFormPermissions()
-        && orgKeysAreProtected();
+        && orgKeysAreNotUpdated();
       allow delete: if isUserAuthenticated()
         && isUserInResourceOrg()
         && doesUserRoleHaveDeleteFormPermissions();

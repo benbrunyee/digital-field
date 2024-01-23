@@ -1,5 +1,6 @@
 import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { FirestoreEvent } from 'firebase-functions/v2/firestore';
+import { addId } from '../../util/addId';
 import { updateTimestamp } from '../../util/updateTimestamps';
 
 export const onRecordCreateFn = (
@@ -8,4 +9,5 @@ export const onRecordCreateFn = (
 	updateTimestamp(event, {
 		includeCreatedAt: true
 	});
+	addId(event);
 };

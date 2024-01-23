@@ -1,11 +1,11 @@
-import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
-import { createId } from '../../util/createId';
 import type {
 	DisplayFieldType,
 	InputFieldType,
 	NewDisplayField,
 	NewInputField
-} from '../types/fieldTypes';
+} from '../../FormCreator/types/fieldTypes';
+import { formatFieldType } from '../../SelectableElements/util/formatFieldType';
+import { createId } from '../createId';
 
 export function createDisplayFieldStructure<T extends DisplayFieldType>(type: T): NewDisplayField {
 	return {

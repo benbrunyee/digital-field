@@ -5,7 +5,7 @@
 	import FieldGhost from '../SelectableElements/FieldGhost.svelte';
 	import { formatFieldType } from '../SelectableElements/util/formatFieldType';
 	import { loadForm } from '../util/form/loadForms';
-	import { toastError } from '../util/toast/toastError';
+	import { toastError } from '../util/toast/toastNotifications';
 	import FormField from './FormFields/FormField.svelte';
 	import { fieldTypeIcons } from './FormSelectables/FormSelectableElementBase.svelte';
 	import { fieldsStore, getFormStore } from './stores/form';
@@ -46,8 +46,6 @@
 			: isDisplayField($draggedComponentPayload)
 				? formatFieldType($draggedComponentPayload.type)
 				: '';
-
-	$: console.log($fields);
 </script>
 
 <div class="border-surface-400-500-token h-min min-h-14 w-full border p-2 rounded-token">

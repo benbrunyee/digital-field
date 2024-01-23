@@ -1,5 +1,6 @@
 import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { FirestoreEvent } from 'firebase-functions/v2/firestore';
+import { addId } from '../../util/addId';
 import { createId } from '../../util/createId';
 import { updateTimestamp } from '../../util/updateTimestamps';
 
@@ -37,4 +38,6 @@ export const onFormCreateFn = (
 
 		event.data.ref.set({ fields: updatedFields }, { merge: true });
 	}
+
+	addId(event);
 };

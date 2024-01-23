@@ -1,7 +1,7 @@
 <script>
 	import LoadingSpinner from '$lib/LoadingSpinner/LoadingSpinner.svelte';
 	import { auth } from '$lib/firebase';
-	import { toastError } from '$lib/util/toast/toastError';
+	import { toastError } from '$lib/util/toast/toastNotifications';
 	import { onSignIn } from '$lib/util/user/onSignIn';
 	import { onSignOut } from '$lib/util/user/onSignOut';
 	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';

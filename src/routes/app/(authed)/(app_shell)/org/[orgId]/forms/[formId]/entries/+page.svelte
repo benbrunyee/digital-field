@@ -7,7 +7,7 @@
 </script>
 
 <div>
-	<button class="btn variant-filled-primary" on:click={() => goto('entries/create')}>
+	<button class="variant-filled-primary btn" on:click={() => goto('entries/create')}>
 		Add Entry
 	</button>
 

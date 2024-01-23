@@ -4,7 +4,6 @@
 		isExistingInputField,
 		isInputField
 	} from '$lib/FormCreator/util/isFieldType';
-	import type { EntryState } from '../FormCreator/types/formTypes';
 	import { initializeEntryStore } from './stores/entry';
 	import { getFormStore } from './stores/form';
 
@@ -14,7 +13,7 @@
 	const form = getFormStore();
 
 	// TODO: Types for entry state
-	const entry = initializeEntryStore<EntryState>(formId);
+	const entry = initializeEntryStore(formId);
 
 	$: entryId && entry.setEntryId(entryId);
 	$: formId && form.setFormId(formId);

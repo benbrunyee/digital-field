@@ -1,9 +1,12 @@
 import { getContext, setContext } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
+import {
+	createDisplayFieldStructure,
+	createInputFieldStructure
+} from '../../util/form/createFields';
+import { createFormStructure } from '../../util/form/createForm';
 import type { FormFieldTypes, NewDisplayField, NewInputField } from '../types/fieldTypes';
 import type { ExistingForm, NewForm } from '../types/formTypes';
-import { createDisplayFieldStructure, createInputFieldStructure } from '../util/createFields';
-import { createFormStructure } from '../util/createForm';
 import {
 	isDisplayFieldType,
 	isExistingDisplayField,
