@@ -14,10 +14,10 @@ import {
  * This data can then be used in an output e.g., PDF.
  */
 
-const formStatusSchema = z.enum(['draft', 'active', 'disabled', 'deleted']);
+export const formStatusSchema = z.enum(['draft', 'active', 'disabled', 'deleted']);
 export type FormStatus = z.infer<typeof formStatusSchema>;
 
-const entryStateSchema = z.record(
+export const entryStateSchema = z.record(
 	z.string(),
 	z.object({
 		id: z.string(),
@@ -40,6 +40,7 @@ export type FormType = z.infer<typeof formTypeSchema>;
 
 export const formSchema = z.object({
 	name: z.string(),
+	fields: z.array(z.any()),
 	ownerId: z.string(),
 	orgId: z.string(),
 	type: formTypeSchema,

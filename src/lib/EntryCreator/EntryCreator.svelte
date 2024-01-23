@@ -18,6 +18,8 @@
 
 	$: entryId && entry.setEntryId(entryId);
 	$: formId && form.setFormId(formId);
+
+	const saveEntry = async () => {};
 </script>
 
 <div class="card bg-surface-50-900-token m-2 p-2">
@@ -53,6 +55,10 @@
 					</div>
 				{/if}
 			{/each}
+
+			<button class="variant-filled-primary btn" on:click={() => saveEntry()}>
+				Create Entry
+			</button>
 		</div>
 	{/if}
 </div>

@@ -1,7 +1,8 @@
-import { QueryDocumentSnapshot, Timestamp } from 'firebase-admin/firestore';
+import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { debug, log } from 'firebase-functions/logger';
 import { Change, FirestoreEvent } from 'firebase-functions/v2/firestore';
 import { createId } from '../../util/createId';
+import { updateTimestamp } from '../../util/updateTimestamps';
 
 export const onFormUpdateFn = (
 	event: FirestoreEvent<
@@ -15,16 +16,7 @@ export const onFormUpdateFn = (
 		return;
 	}
 
-	// Update the updatedAt field
-	if (
-		!(
-			event.data.before.data().updatedAt && event.data.before.data().updatedAt instanceof Timestamp
-		) ||
-		event.data.before.data().updatedAt.seconds !== event.data.after.updateTime.seconds
-	) {
-		log('Updating updatedAt field for form');
-		event.data.after.ref.set({ updatedAt: event.data.after.updateTime }, { merge: true });
-	}
+	updateTimestamp(event);
 
 	// Update all the fields without an id to have an id
 	const fields = event.data.after.data().fields;

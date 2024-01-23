@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { initializeEntriesStore } from '$lib/EntryCreator/stores/entries';
 
@@ -6,9 +7,15 @@
 </script>
 
 <div>
+	<button class="btn variant-filled-primary" on:click={() => goto('entries/create')}>
+		Add Entry
+	</button>
+
+	<hr />
+
 	{#each $entries as entry}
 		<div>
-			<a href="/forms/{$page.params.formId}/entries/{entry.id}">
+			<a href="entries/{entry.id}">
 				{entry.id}
 			</a>
 		</div>

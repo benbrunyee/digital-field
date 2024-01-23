@@ -1,14 +1,29 @@
-import type { EntryState } from '../../FormCreator/types/formTypes';
 import { createId } from '../../util/createId';
-import type { Entry } from '../types/entryTypes';
+import {
+	existingEntrySchema,
+	newEntrySchema,
+	type ExistingEntry,
+	type NewEntry
+} from '../types/entryTypes';
 
-export const createEntryStructure = <T extends EntryState>(
-	formId: string,
-	status?: T
-): Entry<T> => ({
-	id: createId('entry'),
-	createdAt: new Date(),
-	updatedAt: new Date(),
+export const updateEntryDoc = (entry: ExistingEntry) => {};
+
+export const createEntryDoc = (entry: NewEntry) => {};
+
+export const saveEntryDoc = (entry: NewEntry | ExistingEntry) => {
+	const existingEntryParsed = existingEntrySchema.safeParse(entry);
+	if (existingEntryParsed.success) {
+		return updateEntryDoc(existingEntryParsed.data);
+	}
+
+	const newEntryParsed = newEntrySchema.safeParse(entry);
+	if (newEntryParsed.success) {
+		return createEntryDoc(newEntryParsed.data);
+	}
+};
+
+export const createEntryStructure = (formId: string, status: string): NewEntry => ({
+	clientId: createId('entry-'),
 	fields: [],
 	formId: formId,
 	ownerId: '',

@@ -1,6 +1,7 @@
 import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { FirestoreEvent } from 'firebase-functions/v2/firestore';
 import { createId } from '../../util/createId';
+import { updateTimestamp } from '../../util/updateTimestamps';
 
 export const onFormCreateFn = (
 	event: FirestoreEvent<
@@ -14,14 +15,9 @@ export const onFormCreateFn = (
 		return;
 	}
 
-	event.data.ref.set(
-		{
-			id: event.data.id,
-			updatedAt: event.data.updateTime,
-			createdAt: event.data.createTime
-		},
-		{ merge: true }
-	);
+	updateTimestamp(event, {
+		includeCreatedAt: true
+	});
 
 	// Update all the fields without an id to have an id
 	const fields = event.data.data().fields;
