@@ -1,63 +1,82 @@
 <script lang="ts">
-	import {
-		isExistingDisplayField,
-		isExistingInputField,
-		isInputField
-	} from '$lib/FormCreator/util/isFieldType';
+	import { isExistingDisplayField, isExistingInputField } from '$lib/FormCreator/util/isFieldType';
+	import { getToastStore } from '@skeletonlabs/skeleton';
+	import LoadingSpinner from '../LoadingSpinner/LoadingSpinner.svelte';
+	import { formatFieldType } from '../SelectableElements/util/formatFieldType';
+	import { toastError } from '../util/toast/toastNotifications';
+	import EntryDisplayField from './EntryInputFields/EntryDisplayField.svelte';
+	import EntryInputField from './EntryInputFields/EntryInputField.svelte';
 	import { initializeEntryStore } from './stores/entry';
-	import { getFormStore } from './stores/form';
 
 	export let formId: string;
 	export let entryId: string | undefined = undefined;
 
-	const form = getFormStore();
-
-	// TODO: Types for entry state
+	const toastStore = getToastStore();
 	const entry = initializeEntryStore(formId);
 
-	$: entryId && entry.setEntryId(entryId);
-	$: formId && form.setFormId(formId);
+	let isLoading = true;
+
+	$: formId && entryId && loadEntry();
+	$: $entry && (isLoading = false);
+
+	$: console.log($entry);
+
+	const loadEntry = async () => {
+		console.log('Loading entry');
+
+		if (!(formId && entryId)) {
+			isLoading = false;
+			console.log('Entry not loaded');
+
+			return;
+		}
+
+		try {
+			await entry.setEntryId(entryId);
+		} catch (e) {
+			console.error(e);
+			toastError(toastStore, 'Failed to load entry');
+		}
+
+		console.log('Entry loaded');
+		isLoading = false;
+	};
 
 	const saveEntry = async () => {};
 </script>
 
-<div class="card bg-surface-50-900-token m-2 p-2">
-	{#if !$form}
-		<span class="text-error-500-400-token">Could not find form</span>
+<div class="mx-auto my-2 max-w-screen-lg p-2">
+	{#if isLoading}
+		<div class="flex items-center justify-center p-4">
+			<LoadingSpinner />
+		</div>
+	{:else if !$entry?.form}
+		<div class="card bg-surface-50-900-token p-4">
+			<span class="bg-surface-50-900-token text-error-500-400-token">Could not find form</span>
+		</div>
 	{:else}
 		<div class="space-y-2">
-			{#each $form.fields as field}
-				{#if field}
-					{@const fieldObj = {
-						id:
-							isExistingInputField(field) || isExistingDisplayField(field)
-								? field.id
-								: field.clientId,
-						value: isInputField(field) ? field.name : field.value
-					}}
+			{#each $entry.form.fields as field ('id' in field ? field.id : field.clientId)}
+				{@const id = 'id' in field ? field.id : field.clientId}
 
-					<div class="space-y-1">
-						<div class="ml-2">
-							<label for="input-{fieldObj.id}">
-								{fieldObj.value}
-							</label>
-						</div>
-
-						<input
-							class="input"
-							name="input-{fieldObj.id}"
-							on:input={(e) => {
-								// We don't bind because the element isn't guaranteed to exist in the entry
-								entry.setFieldValue(fieldObj.id, e.currentTarget.value);
-							}}
-						/>
-					</div>
+				{#if isExistingDisplayField(field)}
+					<EntryDisplayField text={field.value ?? field.type} type={field.type} />
+				{:else if isExistingInputField(field) && $entry.entry?.fields[field.id]}
+					<EntryInputField
+						name={field.name}
+						hint={formatFieldType(field.type)}
+						type={field.type}
+						bind:value={$entry.entry.fields[field.id].value}
+						options={{}}
+					/>
 				{/if}
 			{/each}
 
-			<button class="variant-filled-primary btn" on:click={() => saveEntry()}>
-				Create Entry
-			</button>
+			<div class="text-center">
+				<button class="variant-filled-primary btn" on:click={() => saveEntry()}>
+					Create Entry
+				</button>
+			</div>
 		</div>
 	{/if}
 </div>

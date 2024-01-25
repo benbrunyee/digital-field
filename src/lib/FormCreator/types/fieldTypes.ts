@@ -29,6 +29,7 @@ export const inputFieldTypesSchema = z.enum(inputFieldTypes);
 export type InputFieldType = z.infer<typeof inputFieldTypesSchema>;
 
 export const inputFieldOptionsSchema = z.record(z.string(), z.any());
+export type InputFieldOptions = z.infer<typeof inputFieldOptionsSchema>;
 
 export const inputFieldSchema = z.object({
 	name: z.string(),

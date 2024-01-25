@@ -73,6 +73,9 @@
 						>Delete</button
 					>
 					<a href={`forms/editor/${form.id}`} class="variant-filled-secondary btn btn-sm">Edit</a>
+					<a href={`forms/${form.id}/entries/create`} class="variant-filled-secondary btn btn-sm"
+						>Add Entry</a
+					>
 				</div>
 			</div>
 		{/each}

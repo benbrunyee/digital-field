@@ -21,7 +21,7 @@ let DEFAULT_STORE_NAME = 'formStore';
 
 export const getFormStore = (storeName?: string) => {
 	const store = getContext<ReturnType<typeof formStore>>(storeName ?? DEFAULT_STORE_NAME);
-	return store ?? initializeFormStore();
+	return store ?? initializeFormStore(undefined, storeName ?? DEFAULT_STORE_NAME);
 };
 
 export const initializeFormStore = (initialValue?: NewForm | ExistingForm, storeName?: string) => {

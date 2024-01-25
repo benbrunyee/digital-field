@@ -1543,15 +1543,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chainsaw@npm:>=0.0.7 <0.1":
-  version: 0.0.9
-  resolution: "chainsaw@npm:0.0.9"
-  dependencies:
-    traverse: "npm:>=0.3.0 <0.4"
-  checksum: adf9cc2c1f28c742c97b264b37bc40df46ce24729d9393dd713590861dcb03cf5988904194a57ec2fb61306b091ba8ce7f4c5c7be41a6df6fae6713cf10293e5
-  languageName: node
-  linkType: hard
-
 "chalk@npm:^2.4.2":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
@@ -1838,7 +1829,6 @@ __metadata:
     prettier-plugin-svelte: "npm:^3.1.2"
     prettier-plugin-tailwindcss: "npm:^0.5.10"
     puppeteer: "npm:^21.7.0"
-    remove: "npm:^0.1.5"
     svelte: "npm:^4.2.7"
     svelte-check: "npm:^3.6.0"
     tailwindcss: "npm:^3.4.1"
@@ -2395,15 +2385,6 @@ __metadata:
   version: 3.0.0
   resolution: "has-flag@npm:3.0.0"
   checksum: 1c6c83b14b8b1b3c25b0727b8ba3e3b647f99e9e6e13eb7322107261de07a4c1be56fc0d45678fc376e09772a3a1642ccdaf8fc69bdf123b6c086598397ce473
-  languageName: node
-  linkType: hard
-
-"hashish@npm:>=0.0.2 <0.1":
-  version: 0.0.4
-  resolution: "hashish@npm:0.0.4"
-  dependencies:
-    traverse: "npm:>=0.2.4"
-  checksum: 7fe00cbdf9b6e08cd25ef0238b6ea85d6d96fc018b2eb96859037d3d0c90905bd123115e92e926037b3366a3b2b5e5d409f57f8a4e2ac2082f6be60d3b452c69
   languageName: node
   linkType: hard
 
@@ -3573,15 +3554,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remove@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "remove@npm:0.1.5"
-  dependencies:
-    seq: "npm:>= 0.3.5"
-  checksum: bb6e24402e02a3980019b78ff970545b5fcb92cdb181334e5bcc7859f6467a5a17014b9d65b271a46686237e8235a1b8b7a66e37d47ddaaff2f04971178637de
-  languageName: node
-  linkType: hard
-
 "require-directory@npm:^2.1.1":
   version: 2.1.1
   resolution: "require-directory@npm:2.1.1"
@@ -3753,16 +3725,6 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 5160b06975a38b11c1ab55950cb5b8a23db78df88275d3d8a42ccf1f29e55112ac995b3a26a522c36e3b5f76b0445f1eef70d696b8c7862a2b4303d7b0e7609e
-  languageName: node
-  linkType: hard
-
-"seq@npm:>= 0.3.5":
-  version: 0.3.5
-  resolution: "seq@npm:0.3.5"
-  dependencies:
-    chainsaw: "npm:>=0.0.7 <0.1"
-    hashish: "npm:>=0.0.2 <0.1"
-  checksum: d660860f33a2a5c4f46c7c3724688788bcc84d0c6ba80026cefe7629ba5495f27960e48ed67d8e0c7ae9e0b2144e9f9f8594f17eab615d191f242dd055ec0582
   languageName: node
   linkType: hard
 
@@ -4185,20 +4147,6 @@ __metadata:
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
   checksum: 047cb209a6b60c742f05c9d3ace8fa510bff609995c129a37ace03476a9b12db4dbf975e74600830ef0796e18882b2381fb5fb1f6b4f96b832c374de3ab91a11
-  languageName: node
-  linkType: hard
-
-"traverse@npm:>=0.2.4":
-  version: 0.6.8
-  resolution: "traverse@npm:0.6.8"
-  checksum: d97a71be2ca895ff6b813840db37f9b5d88e30f7c4c4bd5b22c5c68ebc22d4a10c4599e02c51414523cc7ada3432e118ea62ebd53cf6f3a4f3aa951bd45072a9
-  languageName: node
-  linkType: hard
-
-"traverse@npm:>=0.3.0 <0.4":
-  version: 0.3.9
-  resolution: "traverse@npm:0.3.9"
-  checksum: 05f04ff1002f08f19b033187124764e2713186c7a7c0ad88172368df993edc4fa7580e829e252cef6b38375317b69671932ee3820381398a9e375aad3797f607
   languageName: node
   linkType: hard
 

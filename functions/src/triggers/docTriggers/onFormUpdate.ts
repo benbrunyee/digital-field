@@ -34,7 +34,7 @@ export const onFormUpdateFn = (
 
 			if (!field.id) {
 				debug('Creating id for field', field);
-				return { ...field, id: createId(`${field.type}-`) };
+				return { ...field, id: createId(field.type) };
 			}
 
 			return field;

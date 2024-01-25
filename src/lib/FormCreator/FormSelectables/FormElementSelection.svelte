@@ -12,12 +12,7 @@
 	<h3 class="h3 ml-2">Input Elements</h3>
 	<hr />
 
-	<FixedList
-		items={[
-			...inputFieldTypes.map((type) => createInputFieldStructure(type)),
-			...displayFieldTypes.map((type) => createDisplayFieldStructure(type))
-		]}
-	>
+	<FixedList items={inputFieldTypes.map((type) => createInputFieldStructure(type))}>
 		<svelte:fragment slot="draggedGhost" let:item>
 			<FormSelectableElementBase
 				class="border-dashed !border-primary-500 !text-primary-500"
@@ -34,12 +29,7 @@
 	<h3 class="h3 ml-2">Display Elements</h3>
 	<hr />
 
-	<FixedList
-		items={displayFieldTypes.map((x) => ({
-			type: x,
-			newField: true
-		}))}
-	>
+	<FixedList items={displayFieldTypes.map((type) => createDisplayFieldStructure(type))}>
 		<svelte:fragment slot="draggedGhost" let:item>
 			<FormSelectableElementBase
 				class="border-dashed !border-primary-500 !text-primary-500"

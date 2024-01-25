@@ -4,7 +4,6 @@ import {
 	type ExistingEntry,
 	type NewEntry
 } from '../../EntryCreator/types/entryTypes';
-import { createId } from '../createId';
 
 export const updateEntryDoc = (entry: ExistingEntry) => {};
 
@@ -21,11 +20,3 @@ export const saveEntryDoc = (entry: NewEntry | ExistingEntry) => {
 		return createEntryDoc(newEntryParsed.data);
 	}
 };
-
-export const createEntryStructure = (formId: string, status: string): NewEntry => ({
-	clientId: createId('entry-'),
-	fields: [],
-	formId: formId,
-	ownerId: '',
-	status
-});

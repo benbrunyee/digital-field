@@ -30,7 +30,7 @@ export const onFormCreateFn = (
 			}
 
 			if (!field.id) {
-				return { ...field, id: createId(`${field.type}-`) };
+				return { ...field, id: createId(field.type) };
 			}
 
 			return field;
