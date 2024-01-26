@@ -17,6 +17,11 @@
 			$isLoading = true;
 			loadForm(formId)
 				.then((form) => {
+					if (!form) {
+						toastError(toastStore, 'Form not found');
+						return;
+					}
+
 					formStore.set(form);
 				})
 				.catch((e) => {

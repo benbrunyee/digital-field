@@ -29,6 +29,12 @@
 		new Promise<void>(async (resolve) => {
 			try {
 				const existingForm = await loadForm(formId);
+
+				if (!existingForm) {
+					toastError(toastStore, 'Form not found');
+					return resolve();
+				}
+
 				$form = existingForm;
 			} catch (error) {
 				console.error(error);

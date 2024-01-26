@@ -110,6 +110,10 @@ export const createEntryStoreStructure = async (
 }> => {
 	const form = await loadForm(formId);
 
+	if (!form) {
+		throw new Error('No form');
+	}
+
 	const fields = form.fields.reduce<Record<string, NewEntryField>>((r, field) => {
 		if (!(isExistingInputField(field) || isExistingDisplayField(field))) {
 			return r;
