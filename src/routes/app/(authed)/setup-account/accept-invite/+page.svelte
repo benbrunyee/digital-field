@@ -10,19 +10,20 @@
 	import { functions } from '$lib/firebase';
 	import { toastError } from '$lib/util/toast/toastNotifications';
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { Timestamp } from 'firebase/firestore';
 	import { httpsCallable } from 'firebase/functions';
 
 	const toastStore = getToastStore();
 
 	let orgs: Org[] = [
 		{
-			createdAt: new Date(),
 			id: '1',
 			members: {},
 			name: 'Org 1',
 			ownerId: '1',
 			plan: 'standard',
-			updatedAt: new Date()
+			createdAt: Timestamp.now(),
+			updatedAt: Timestamp.now()
 		}
 	];
 

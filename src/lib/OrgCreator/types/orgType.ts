@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore';
 import { z } from 'zod';
 
 export const orgPlanSchema = z.enum(['standard']);
@@ -17,7 +18,7 @@ export const orgSchema = z.object({
 	ownerId: z.string(),
 	members: z.record(z.string(), orgMemberSchema),
 	plan: orgPlanSchema,
-	createdAt: z.date(),
-	updatedAt: z.date()
+	createdAt: z.instanceof(Timestamp),
+	updatedAt: z.instanceof(Timestamp)
 });
 export type Org = z.infer<typeof orgSchema>;
