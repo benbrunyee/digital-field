@@ -14,7 +14,7 @@ export const onOrgCreateFn = (
 	}
 
 	const updatedDocObj: any = {
-		id: event.id
+		id: event.data.ref.id
 	};
 
 	const timestamps = createTimestamps(event, { includeCreatedAt: true });

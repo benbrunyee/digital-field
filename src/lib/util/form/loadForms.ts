@@ -1,11 +1,12 @@
 import {
+	DocumentReference,
 	doc,
 	getDoc,
 	getDocs,
 	limit as limitDoc,
 	orderBy,
 	query,
-	startAt as startAtDoc,
+	startAfter as startAfterDoc,
 	where
 } from 'firebase/firestore';
 import { get } from 'svelte/store';
@@ -18,13 +19,11 @@ export const loadForm = async (id: string): Promise<ExistingForm | undefined> =>
 	return formDoc.data();
 };
 
-export const loadOrgForms = async (start?: number, limit?: number): Promise<ExistingForm[]> => {
-	const startAt = start ?? 0;
+export const loadOrgForms = async (
+	startAfter?: DocumentReference,
+	limit?: number
+): Promise<ExistingForm[]> => {
 	const limitTo = limit ?? 10;
-
-	if (startAt < 0) {
-		throw new Error('Starting index of doc must be greater than or equal to 0');
-	}
 
 	if (limitTo < 1) {
 		throw new Error('Limit of docs must be greater than or equal to 1');
@@ -36,15 +35,22 @@ export const loadOrgForms = async (start?: number, limit?: number): Promise<Exis
 		throw new Error('No orgId');
 	}
 
-	const forms = await getDocs(
-		query(
-			FORM_COLLECTION,
-			where('orgId', '==', orgId),
-			orderBy('updatedAt', 'desc'),
-			startAtDoc(startAt),
-			limitDoc(limitTo)
-		)
-	);
+	const docQuery = startAfter
+		? query(
+				FORM_COLLECTION,
+				where('orgId', '==', orgId),
+				orderBy('updatedAt', 'desc'),
+				startAfterDoc(startAfter),
+				limitDoc(limitTo)
+			)
+		: query(
+				FORM_COLLECTION,
+				where('orgId', '==', orgId),
+				orderBy('updatedAt', 'desc'),
+				limitDoc(limitTo)
+			);
+
+	const forms = await getDocs(docQuery);
 
 	if (forms.empty) {
 		return [];

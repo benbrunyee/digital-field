@@ -1,17 +1,10 @@
 import { getContext, setContext } from 'svelte';
 import { writable } from 'svelte/store';
 import type { ExistingForm } from '../../FormCreator/types/formTypes';
-import { isExistingDisplayField, isExistingInputField } from '../../FormCreator/util/isFieldType';
 import { createId } from '../../util/createId';
+import { createEntryStoreStructure } from '../../util/entry/createEntry';
 import { loadEntry } from '../../util/entry/loadEntry';
-import { loadForm } from '../../util/form/loadForms';
-import type {
-	AddressValueSchema,
-	EntryValueType,
-	ExistingEntry,
-	NewEntry,
-	NewEntryField
-} from '../types/entryTypes';
+import type { EntryValueType, ExistingEntry, NewEntry } from '../types/entryTypes';
 
 const DEFAULT_STORE_NAME = 'entryStore';
 
@@ -101,59 +94,3 @@ const entryStore = (
 		setFieldValue
 	};
 };
-
-export const createEntryStoreStructure = async (
-	formId: string
-): Promise<{
-	entry: ExistingEntry | NewEntry;
-	form: ExistingForm;
-}> => {
-	const form = await loadForm(formId);
-
-	if (!form) {
-		throw new Error('No form');
-	}
-
-	const fields = form.fields.reduce<Record<string, NewEntryField>>((r, field) => {
-		if (!(isExistingInputField(field) || isExistingDisplayField(field))) {
-			return r;
-		}
-
-		const entryField: NewEntryField = {
-			clientId: createId('entry'),
-			fieldId: field.id,
-			value: ''
-		};
-
-		if (field.type === 'address') {
-			entryField.value = createAddressValue();
-		} else if (field.type === 'checkbox') {
-			entryField.value = false;
-		} else if (field.type === 'multi-entry') {
-			entryField.value = [];
-		}
-
-		r[field.id] = entryField;
-		return r;
-	}, {});
-
-	return {
-		entry: {
-			clientId: createId('entry'),
-			fields,
-			formId: form.id,
-			ownerId: '',
-			status: ''
-		},
-		form
-	};
-};
-
-const createAddressValue = (): AddressValueSchema => ({
-	street1: '',
-	street2: '',
-	city: '',
-	state: '',
-	postalCode: '',
-	country: ''
-});

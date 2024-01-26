@@ -68,7 +68,17 @@ export const createUserRolesFn = async (request: CallableRequest) => {
 	const promises = [];
 
 	for (const [role, permissions] of Object.entries(userRoles)) {
-		promises.push(firestore.collection('userRoles').doc(role).set({ permissions }));
+		promises.push(
+			firestore
+				.collection('userRoles')
+				.doc(role)
+				.set({
+					permissions: permissions.reduce<{ [k: string]: boolean }>((r, perm) => {
+						r[perm] = true;
+						return r;
+					}, {})
+				})
+		);
 	}
 
 	await Promise.all(promises);

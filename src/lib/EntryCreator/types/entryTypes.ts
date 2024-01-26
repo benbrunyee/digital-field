@@ -15,9 +15,7 @@ export const entryFieldSchema = z.object({
 });
 export type EntryField = z.infer<typeof entryFieldSchema>;
 
-export const existingEntryFieldSchema = entryFieldSchema.extend({
-	id: z.string()
-});
+export const existingEntryFieldSchema = entryFieldSchema;
 export type ExistingEntryField = z.infer<typeof existingEntryFieldSchema>;
 
 export const newEntryFieldSchema = entryFieldSchema.extend({
@@ -33,7 +31,6 @@ export type EntryFieldCreateRequest = z.infer<typeof entryFieldCreateRequestSche
 export const entryFieldUpdateRequestSchema = existingEntryFieldSchema;
 
 export const entrySchema = z.object({
-	formId: z.string(),
 	ownerId: z.string(),
 	status: z.string(),
 	fields: z.record(z.string(), z.any())
@@ -41,6 +38,7 @@ export const entrySchema = z.object({
 export type Entry = z.infer<typeof entrySchema>;
 
 export const existingEntrySchema = entrySchema.extend({
+	formId: z.string(),
 	id: z.string(),
 	createdAt: z.instanceof(Timestamp),
 	updatedAt: z.instanceof(Timestamp),
@@ -54,7 +52,7 @@ export const newEntrySchema = entrySchema.extend({
 });
 export type NewEntry = z.infer<typeof newEntrySchema>;
 
-const entryCreateRequestSchema = newEntrySchema
+export const entryCreateRequestSchema = newEntrySchema
 	.omit({
 		clientId: true
 	})

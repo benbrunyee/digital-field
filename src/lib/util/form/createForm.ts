@@ -3,6 +3,7 @@ import { get } from 'svelte/store';
 import {
 	existingFormSchema,
 	formCreateRequestSchema,
+	formUpdateRequestSchema,
 	newFormSchema,
 	type ExistingForm,
 	type FormCreateRequest,
@@ -36,7 +37,7 @@ const createFormDoc = async (form: NewForm) => {
 
 const updateFormDoc = async (form: ExistingForm) => {
 	console.debug('Updating form', form);
-	return await updateDoc(doc(FORM_COLLECTION, form.id), form);
+	return await updateDoc(doc(FORM_COLLECTION, form.id), formUpdateRequestSchema.parse(form));
 };
 
 export const saveFormDoc = async (form: NewForm | ExistingForm) => {
@@ -76,6 +77,7 @@ export const createFormStructure = (): NewForm => {
 		},
 		status: 'draft',
 		type: 'form',
-		orgId
+		orgId,
+		recordCount: 0
 	};
 };

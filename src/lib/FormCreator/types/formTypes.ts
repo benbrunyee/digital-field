@@ -47,7 +47,8 @@ export const formSchema = z.object({
 	type: formTypeSchema,
 	options: formOptionsSchema,
 	status: formStatusSchema,
-	outputs: z.array(z.any()) // TODO
+	outputs: z.array(z.any()), // TODO
+	recordCount: z.number().nonnegative().int().finite() // >=0
 });
 export type Form = z.infer<typeof formSchema>;
 

@@ -25,7 +25,19 @@ service cloud.firestore {
     }
 
     function isUserInResourceOrg() {
-      return resource.data.orgId in getUserOrgs();
+      return resource.data.orgId in getUserOrgs()
+    }
+
+    function isCreatingAsUserOfResourceOrg() {
+      return request.resource.data.orgId in getUserOrgs();
+    }
+
+    function ownerIdIsUser() {
+      return request.auth.uid == resource.data.ownerId
+    }
+
+    function isCreatingAsOwner() {
+      return request.resource.data.ownerId == request.auth.uid;
     }
 
     // Forms
@@ -33,22 +45,26 @@ service cloud.firestore {
     match /forms/{formId} {
       function doesUserRoleHaveViewFormPermissions() {
         let userRole = getUserOrgRole(resource.data.orgId);
-        return "viewForm" in getRolePermissions(userRole);
+        return getRolePermissions(userRole)["viewForm"] == true;
       }
 
       function doesUserRoleHaveUpdateFormPermissions() {
         let userRole = getUserOrgRole(resource.data.orgId);
-        return "updateForm" in getRolePermissions(userRole);
+        return getRolePermissions(userRole)["updateForm"] == true;
       }
 
       function doesUserRoleHaveDeleteFormPermissions() {
         let userRole = getUserOrgRole(resource.data.orgId);
-        return "deleteForm" in getRolePermissions(userRole);
+        return getRolePermissions(userRole)["deleteForm"] == true;
       }
 
       function doesUserRoleHaveCreateFormPermissions() {
         let userRole = getUserOrgRole(request.resource.data.orgId);
-        return "createForm" in getRolePermissions(userRole);
+        return getRolePermissions(userRole)["createForm"] == true;
+      }
+
+      function isUserInFormResourceOrg() {
+        return get(/databases/$(database)/documents/forms/$(formId)).data.orgId in getUserOrgs();
       }
 
       function containsOnlyAllowedFormKeys() {
@@ -61,16 +77,18 @@ service cloud.firestore {
         ]);
       }
 
-      function orgKeysAreNotSet() {
-        return request.resource.data.keys().hasAny(["id", "createdAt", "ownerId", "orgId"]);
+      function containsProtectedFormCreateKeys() {
+        return request.resource.data.keys().hasAny(["id", "createdAt", "updatedAt"]);
       }
 
       allow get, list: if isUserAuthenticated()
         && isUserInResourceOrg()
         && doesUserRoleHaveViewFormPermissions();
       allow create: if isUserAuthenticated()
+        && isCreatingAsUserOfResourceOrg()
         && doesUserRoleHaveCreateFormPermissions()
-        && orgKeysAreNotSet();
+        && !containsProtectedFormCreateKeys()
+        && isCreatingAsOwner();
       allow update: if isUserAuthenticated()
         && isUserInResourceOrg()
         && doesUserRoleHaveUpdateFormPermissions()
@@ -84,22 +102,22 @@ service cloud.firestore {
       match /outputEntities/{outputEntityId} {
         function doesUserRoleHaveViewOutputEntityPermissions() {
           let userRole = getUserOrgRole(resource.data.orgId);
-          return "viewOutputEntity" in getRolePermissions(userRole);
+          return getRolePermissions(userRole)["viewOutputEntity"] == true;
         }
 
         function doesUserRoleHaveUpdateOutputEntityPermissions() {
           let userRole = getUserOrgRole(resource.data.orgId);
-          return "updateOutputEntity" in getRolePermissions(userRole);
+          return getRolePermissions(userRole)["updateOutputEntity"] == true;
         }
 
         function doesUserRoleHaveDeleteOutputEntityPermissions() {
           let userRole = getUserOrgRole(resource.data.orgId);
-          return "deleteOutputEntity" in getRolePermissions(userRole);
+          return getRolePermissions(userRole)["deleteOutputEntity"] == true;
         }
 
         function doesUserRoleHaveCreateOutputEntityPermissions() {
           let userRole = getUserOrgRole(resource.data.orgId);
-          return "createOutputEntity" in getRolePermissions(userRole);
+          return getRolePermissions(userRole)["createOutputEntity"] == true;
         }
 
         function containsProtectedOutputEntityKeys() {
@@ -107,18 +125,18 @@ service cloud.firestore {
         }
 
         allow get, list: if isUserAuthenticated()
-          && isUserInResourceOrg()
+          && isUserInFormResourceOrg()
           && doesUserRoleHaveViewOutputEntityPermissions();
         allow create: if isUserAuthenticated()
-          && isUserInResourceOrg()
           && doesUserRoleHaveCreateOutputEntityPermissions()
-          && !containsProtectedOutputEntityKeys();
+          && !containsProtectedOutputEntityKeys()
+          && isCreatingAsOwner();
         allow update: if isUserAuthenticated()
-          && isUserInResourceOrg()
+          && isUserInFormResourceOrg()
           && doesUserRoleHaveUpdateOutputEntityPermissions()
           && !containsProtectedOutputEntityKeys();
         allow delete: if isUserAuthenticated()
-          && isUserInResourceOrg()
+          && isUserInFormResourceOrg()
           && doesUserRoleHaveDeleteOutputEntityPermissions();
       }
 
@@ -126,42 +144,41 @@ service cloud.firestore {
 
       match /entries/{entryId} {
         function doesUserRoleHaveViewEntryPermissions() {
-          let userRole = getUserOrgRole(resource.data.orgId);
-          return "viewEntry" in getRolePermissions(userRole);
+          let userRole = getUserOrgRole(get(/databases/$(database)/documents/forms/$(formId)).data.orgId);
+          return getRolePermissions(userRole)["viewEntry"] == true;
         }
 
         function doesUserRoleHaveUpdateEntryPermissions() {
-          let userRole = getUserOrgRole(resource.data.orgId);
-          return "updateEntry" in getRolePermissions(userRole);
+          let userRole = getUserOrgRole(get(/databases/$(database)/documents/forms/$(formId)).data.orgId);
+          return getRolePermissions(userRole)["updateEntry"] == true;
         }
 
         function doesUserRoleHaveDeleteEntryPermissions() {
-          let userRole = getUserOrgRole(resource.data.orgId);
-          return "deleteEntry" in getRolePermissions(userRole);
+          let userRole = getUserOrgRole(get(/databases/$(database)/documents/forms/$(formId)).data.orgId);
+          return getRolePermissions(userRole)["deleteEntry"] == true;
         }
 
         function doesUserRoleHaveCreateEntryPermissions() {
-          let userRole = getUserOrgRole(resource.data.orgId);
-          return "createEntry" in getRolePermissions(userRole);
+          let userRole = getUserOrgRole(get(/databases/$(database)/documents/forms/$(formId)).data.orgId);
+          return getRolePermissions(userRole)["createEntry"] == true;
         }
 
-        function containsProtectedEntryKeys() {
-          return request.resource.data.keys().hasAny(["id", "createdAt", "updatedAt"]);
+        function containsProtectedEntryCreateKeys() {
+          return request.resource.data.keys().hasAny(["id", "formId", "createdAt", "updatedAt"]);
         }
 
         allow get, list: if isUserAuthenticated()
-          && isUserInResourceOrg()
+          && isUserInFormResourceOrg()
           && doesUserRoleHaveViewEntryPermissions();
         allow create: if isUserAuthenticated()
-          && isUserInResourceOrg()
           && doesUserRoleHaveCreateEntryPermissions()
-          && !containsProtectedEntryKeys();
+          && !containsProtectedEntryCreateKeys()
+          && isCreatingAsOwner();
         allow update: if isUserAuthenticated()
-          && isUserInResourceOrg()
-          && doesUserRoleHaveUpdateEntryPermissions()
-          && !containsProtectedEntryKeys();
+          && isUserInFormResourceOrg()
+          && doesUserRoleHaveUpdateEntryPermissions();
         allow delete: if isUserAuthenticated()
-          && isUserInResourceOrg()
+          && isUserInFormResourceOrg()
           && doesUserRoleHaveDeleteEntryPermissions();
       }
     }
@@ -175,22 +192,22 @@ service cloud.firestore {
 
       function doesUserRoleHaveViewOrgPermissions() {
         let userRole = getUserOrgRole(orgId);
-        return "viewOrg" in getRolePermissions(userRole);
+        return getRolePermissions(userRole)["viewOrg"] == true;
       }
 
       function doesUserRoleHaveUpdateOrgPermissions() {
         let userRole = getUserOrgRole(orgId);
-        return "updateOrg" in getRolePermissions(userRole);
+        return getRolePermissions(userRole)["updateOrg"] == true;
       }
 
       function doesUserRoleHaveDeleteOrgPermissions() {
         let userRole = getUserOrgRole(orgId);
-        return "deleteOrg" in getRolePermissions(userRole);
+        return getRolePermissions(userRole)["deleteOrg"] == true;
       }
 
     // function doesUserRoleHaveCreateOrgPermissions() {
       //   let userRole = getUserOrgRole(orgId);
-      //   return "createOrg" in getRolePermissions(userRole);
+      //   return getRolePermissions(userRole)["createOrg"] == true;
       // }
 
       function containsOnlyAllowedOrgKeys() {
@@ -207,7 +224,8 @@ service cloud.firestore {
       allow update: if isUserAuthenticated()
         && isUserInCurrentOrg()
         && doesUserRoleHaveUpdateOrgPermissions()
-        && containsOnlyAllowedOrgKeys();
+        && containsOnlyAllowedOrgKeys()
+        && ownerIdIsUser();
       allow delete: if isUserAuthenticated()
         && isUserInCurrentOrg()
         && doesUserRoleHaveDeleteOrgPermissions();

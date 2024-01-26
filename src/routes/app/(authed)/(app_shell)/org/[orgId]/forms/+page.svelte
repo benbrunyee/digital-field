@@ -22,13 +22,13 @@
 	$: {
 		if ($orgIdStore) {
 			isLoading = true;
-			reloadForms().finally(() => {
-				isLoading = false;
-			});
+			reloadForms();
 		}
 	}
 
 	const reloadForms = async () => {
+		isLoading = true;
+
 		try {
 			forms = await loadOrgForms();
 			console.log(forms);
@@ -36,6 +36,8 @@
 			console.error(e);
 			toastError(toastStore, 'Failed to load forms');
 		}
+
+		isLoading = false;
 	};
 
 	const deleteForm = async (formId: string) => {
@@ -45,9 +47,7 @@
 			try {
 				isLoading = true;
 				await deleteFormDoc(formId);
-				reloadForms().finally(() => {
-					isLoading = false;
-				});
+				reloadForms();
 			} catch (e) {
 				console.error(e);
 				toastError(toastStore, 'Failed to delete form');
@@ -101,15 +101,28 @@
 					<h3 class="h3 font-bold">
 						{form.name}
 					</h3>
-					<span class="text-sm italic">{form.updatedAt.toDate().toDateString()}</span>
+					<p class="text-sm italic">
+						{form.recordCount} records
+					</p>
+					<p class="text-sm italic">
+						Updated on {form.updatedAt.toDate().toLocaleDateString('en-US', {
+							weekday: 'long',
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric'
+						})}
+					</p>
 				</div>
 
 				<div class="space-x-1">
 					<button on:click={() => deleteForm(form.id)} class="variant-outline-error btn btn-sm"
 						>Delete</button
 					>
-					<a href={`forms/editor/${form.id}`} class="variant-filled-secondary btn btn-sm">Edit</a>
-					<a href={`forms/${form.id}/entries/create`} class="variant-filled-secondary btn btn-sm"
+					<a href={`forms/editor/${form.id}`} class="variant-outline-secondary btn btn-sm">Edit</a>
+					<a href={`forms/${form.id}/entries`} class="variant-filled-primary btn btn-sm"
+						>View Entries</a
+					>
+					<a href={`forms/${form.id}/entries/create`} class="variant-filled-primary btn btn-sm"
 						>Add Entry</a
 					>
 				</div>

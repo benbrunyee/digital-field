@@ -1,39 +1,37 @@
 import {
+	DocumentReference,
 	doc,
 	getDoc,
 	getDocs,
 	limit as limitDoc,
 	orderBy,
 	query,
-	startAt as startAtDoc
+	startAfter as startAfterDoc
 } from 'firebase/firestore';
 import { type ExistingEntry } from '../../EntryCreator/types/entryTypes';
 import { ENTRY_COLLECTION } from '../types/collections';
 
 export const loadEntries = async (
 	formId: string,
-	start?: number,
+	startAfter?: DocumentReference,
 	limit?: number
 ): Promise<ExistingEntry[]> => {
-	const startAt = start ?? 0;
 	const limitTo = limit ?? 10;
-
-	if (startAt < 0) {
-		throw new Error('Starting index of doc must be greater than or equal to 0');
-	}
 
 	if (limitTo < 1) {
 		throw new Error('Limit of docs must be greater than or equal to 1');
 	}
 
-	const entryDocs = await getDocs(
-		query(
-			ENTRY_COLLECTION(formId),
-			orderBy('updatedAt', 'desc'),
-			startAtDoc(startAt),
-			limitDoc(limitTo)
-		)
-	);
+	const docQuery = startAfter
+		? query(
+				ENTRY_COLLECTION(formId),
+				orderBy('updatedAt', 'desc'),
+				startAfterDoc(startAfter),
+				limitDoc(limitTo)
+			)
+		: query(ENTRY_COLLECTION(formId), orderBy('updatedAt', 'desc'), limitDoc(limitTo));
+
+	const entryDocs = await getDocs(docQuery);
 
 	const entries = entryDocs.docs.map((doc) => doc.data());
 

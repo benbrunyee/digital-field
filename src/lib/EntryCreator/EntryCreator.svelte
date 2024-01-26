@@ -3,7 +3,8 @@
 	import { getToastStore } from '@skeletonlabs/skeleton';
 	import LoadingSpinner from '../LoadingSpinner/LoadingSpinner.svelte';
 	import { formatFieldType } from '../SelectableElements/util/formatFieldType';
-	import { toastError } from '../util/toast/toastNotifications';
+	import { saveEntryDoc } from '../util/entry/createEntry';
+	import { toastError, toastSuccess } from '../util/toast/toastNotifications';
 	import EntryDisplayField from './EntryInputFields/EntryDisplayField.svelte';
 	import EntryInputField from './EntryInputFields/EntryInputField.svelte';
 	import { initializeEntryStore } from './stores/entry';
@@ -42,7 +43,20 @@
 		isLoading = false;
 	};
 
-	const saveEntry = async () => {};
+	const saveEntry = async () => {
+		if (!$entry?.entry || !$entry.form) {
+			toastError(toastStore, 'Failed to save entry');
+			return;
+		}
+
+		try {
+			await saveEntryDoc($entry.form.id, $entry.entry);
+			toastSuccess(toastStore, 'Entry saved');
+		} catch (e) {
+			console.error(e);
+			toastError(toastStore, 'Failed to save entry');
+		}
+	};
 </script>
 
 <div class="mx-auto my-2 max-w-screen-lg p-2">
