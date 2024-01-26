@@ -71,11 +71,20 @@ export const newFormSchema = formSchema.extend({
 });
 export type NewForm = z.infer<typeof newFormSchema>;
 
-export const formCreateRequestSchema = newFormSchema.extend({
-	clientId: z.void(),
-	fields: z.array(z.union([displayFieldCreateRequestSchema, inputFieldCreateRequestSchema]))
-});
+export const formCreateRequestSchema = newFormSchema
+	.omit({
+		clientId: true
+	})
+	.extend({
+		fields: z.array(z.union([displayFieldCreateRequestSchema, inputFieldCreateRequestSchema]))
+	});
 export type FormCreateRequest = z.infer<typeof formCreateRequestSchema>;
 
-export const formUpdateRequestSchema = existingFormSchema;
+export const formUpdateRequestSchema = existingFormSchema.omit({
+	id: true,
+	createdAt: true,
+	updatedAt: true,
+	ownerId: true,
+	orgId: true
+});
 export type FormUpdateRequest = z.infer<typeof formUpdateRequestSchema>;

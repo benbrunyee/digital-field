@@ -1,21 +1,23 @@
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import {
+	doc,
+	getDoc,
+	getDocs,
+	limit as limitDoc,
+	query,
+	startAfter as startAfterDoc,
+	where
+} from 'firebase/firestore';
 import { get } from 'svelte/store';
-import { existingFormSchema, type ExistingForm } from '../../FormCreator/types/formTypes';
-import { firestore } from '../../firebase';
+import type { ExistingForm } from '../../FormCreator/types/formTypes';
 import { orgIdStore } from '../../stores/org';
-import { isFirestoreTimestamp } from '../types/isFirestoreTimestamp';
+import { FORM_COLLECTION } from '../types/collections';
 
-export const loadForm = async (id: string) => {
-	const formDoc = await getDoc(doc(firestore, 'forms', id));
-
-	if (!formDoc.exists()) {
-		throw new Error('Form does not exist');
-	}
-
-	return parseExistingForm(formDoc.data());
+export const loadForm = async (id: string): Promise<ExistingForm | undefined> => {
+	const formDoc = await getDoc(doc(FORM_COLLECTION, id));
+	return formDoc.data();
 };
 
-export const loadOrgForms = async (start?: number, limit?: number) => {
+export const loadOrgForms = async (start?: number, limit?: number): Promise<ExistingForm[]> => {
 	const startAfter = start ? start : 0;
 	const limitTo = limit ? limit : 10;
 
@@ -25,33 +27,20 @@ export const loadOrgForms = async (start?: number, limit?: number) => {
 		throw new Error('No orgId');
 	}
 
-	const forms = await getDocs(query(collection(firestore, 'forms'), where('orgId', '==', orgId)));
+	const forms = await getDocs(
+		query(
+			FORM_COLLECTION,
+			where('orgId', '==', orgId),
+			startAfterDoc(startAfter),
+			limitDoc(limitTo)
+		)
+	);
 
 	if (forms.empty) {
 		return [];
 	}
 
-	const formsData = forms.docs.map((doc) => parseExistingForm(doc.data()));
+	const formDocs = forms.docs.map((doc) => doc.data());
 
-	return formsData;
-};
-
-export const parseExistingForm = (form: any): ExistingForm => {
-	const timestampFields = ['createdAt', 'updatedAt'];
-
-	const parsedForm: any = Object.assign({}, form);
-
-	for (const key of timestampFields) {
-		if (key in parsedForm) {
-			const field = parsedForm[key];
-
-			if (isFirestoreTimestamp(field)) {
-				parsedForm[key] = field.toDate();
-			}
-		}
-	}
-
-	const existingFormParsed = existingFormSchema.parse(parsedForm);
-
-	return existingFormParsed;
+	return formDocs;
 };

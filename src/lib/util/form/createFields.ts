@@ -30,12 +30,15 @@ function createDisplayFieldOptions<T extends DisplayFieldType>(type: T): any {
 	}
 }
 
-export function createInputFieldStructure<T extends InputFieldType>(type: T): NewInputField {
+export function createInputFieldStructure<T extends InputFieldType>(
+	type: T,
+	name?: string
+): NewInputField {
 	return {
 		clientId: createId(type),
 		ref: type,
 		description: '',
-		name: formatFieldType(type),
+		name: name ?? formatFieldType(type),
 		options: createInputFieldOptions(type),
 		required: false,
 		type

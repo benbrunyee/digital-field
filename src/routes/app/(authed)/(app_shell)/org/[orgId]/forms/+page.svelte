@@ -4,8 +4,18 @@
 	import { orgIdStore } from '$lib/stores/org';
 	import { deleteFormDoc } from '$lib/util/form/deleteForm';
 	import { loadOrgForms } from '$lib/util/form/loadForms';
-	import { toastError } from '$lib/util/toast/toastNotifications';
+	import { toastError, toastSuccess } from '$lib/util/toast/toastNotifications';
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import {
+		displayFieldTypes,
+		inputFieldTypes
+	} from '../../../../../../../lib/FormCreator/types/fieldTypes';
+	import { isInputFieldType } from '../../../../../../../lib/FormCreator/util/isFieldType';
+	import {
+		createDisplayFieldStructure,
+		createInputFieldStructure
+	} from '../../../../../../../lib/util/form/createFields';
+	import { createFormStructure, saveFormDoc } from '../../../../../../../lib/util/form/createForm';
 
 	const toastStore = getToastStore();
 
@@ -50,6 +60,34 @@
 </script>
 
 <a class="variant-filled-primary btn" href="/app/org/{$orgIdStore}/forms/editor">Create New Form</a>
+
+{#if import.meta.env.DEV}
+	<button
+		class="variant-outline-primary btn"
+		on:click={async () => {
+			const form = createFormStructure();
+
+			const fields = [...inputFieldTypes, ...displayFieldTypes].map((type) => {
+				if (isInputFieldType(type)) {
+					return createInputFieldStructure(type);
+				} else {
+					return createDisplayFieldStructure(type);
+				}
+			});
+
+			form.fields = fields;
+
+			try {
+				await saveFormDoc(form);
+				toastSuccess(toastStore, 'Created form');
+				await reloadForms();
+			} catch (e) {
+				console.error(e);
+				toastError(toastStore, 'Failed to create form');
+			}
+		}}>Create filled form</button
+	>
+{/if}
 
 <hr />
 

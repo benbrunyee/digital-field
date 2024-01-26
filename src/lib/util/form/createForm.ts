@@ -1,15 +1,14 @@
-import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
+import { addDoc, doc, updateDoc } from 'firebase/firestore';
 import { get } from 'svelte/store';
 import {
 	existingFormSchema,
 	formCreateRequestSchema,
-	formUpdateRequestSchema,
 	newFormSchema,
 	type ExistingForm,
 	type FormCreateRequest,
 	type NewForm
 } from '../../FormCreator/types/formTypes';
-import { auth, firestore } from '../../firebase';
+import { auth } from '../../firebase';
 import { orgIdStore } from '../../stores/org';
 import { createId } from '../createId';
 import { FORM_COLLECTION } from '../types/collections';
@@ -32,16 +31,12 @@ const createFormDoc = async (form: NewForm) => {
 	const formRequestObj = formCreateRequestSchema.parse(formRequest);
 	console.debug('Form request', formRequestObj);
 
-	return await addDoc(collection(firestore, FORM_COLLECTION), formRequest);
+	return await addDoc(FORM_COLLECTION, formRequest);
 };
 
 const updateFormDoc = async (form: ExistingForm) => {
 	console.debug('Updating form', form);
-
-	const formRequestObj = formUpdateRequestSchema.parse(form);
-	console.debug('Form request', formRequestObj);
-
-	return await updateDoc(doc(firestore, FORM_COLLECTION, form.id), formRequestObj);
+	return await updateDoc(doc(FORM_COLLECTION, form.id), form);
 };
 
 export const saveFormDoc = async (form: NewForm | ExistingForm) => {

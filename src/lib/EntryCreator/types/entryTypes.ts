@@ -53,10 +53,13 @@ export const newEntrySchema = entrySchema.extend({
 });
 export type NewEntry = z.infer<typeof newEntrySchema>;
 
-const entryCreateRequestSchema = newEntrySchema.extend({
-	clientId: z.void(),
-	fields: z.record(z.string(), entryFieldCreateRequestSchema)
-});
+const entryCreateRequestSchema = newEntrySchema
+	.omit({
+		clientId: true
+	})
+	.extend({
+		fields: z.record(z.string(), entryFieldCreateRequestSchema)
+	});
 export type EntryCreateRequest = z.infer<typeof entryCreateRequestSchema>;
 
 export const entryUpdateRequestSchema = existingEntrySchema;
