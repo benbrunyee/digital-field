@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore';
 import { z } from 'zod';
 
 export const entryValueTypeSchema = z.union([
@@ -41,8 +42,8 @@ export type Entry = z.infer<typeof entrySchema>;
 
 export const existingEntrySchema = entrySchema.extend({
 	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
+	createdAt: z.instanceof(Timestamp),
+	updatedAt: z.instanceof(Timestamp),
 	fields: z.record(z.string(), z.union([existingEntryFieldSchema, newEntryFieldSchema]))
 });
 export type ExistingEntry = z.infer<typeof existingEntrySchema>;

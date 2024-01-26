@@ -2,7 +2,7 @@ import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { debug, log } from 'firebase-functions/logger';
 import { Change, FirestoreEvent } from 'firebase-functions/v2/firestore';
 import { createId } from '../../util/createId';
-import { updateTimestamp } from '../../util/updateTimestamps';
+import { createTimestamps } from '../../util/createTimestamps';
 
 export const onFormUpdateFn = (
 	event: FirestoreEvent<
@@ -11,12 +11,25 @@ export const onFormUpdateFn = (
 			formId: string;
 		}
 	>
-): void => {
+) => {
+	let changesMade = false;
+
 	if (!event.data) {
 		return;
 	}
 
-	updateTimestamp(event);
+	const updatedDocObj: any = {};
+
+	const timestamps = createTimestamps(event);
+
+	if (timestamps) {
+		changesMade = true;
+		updatedDocObj.updatedAt = timestamps.updatedAt;
+
+		if (timestamps.createdAt) {
+			updatedDocObj.createdAt = timestamps.createdAt;
+		}
+	}
 
 	// Update all the fields without an id to have an id
 	const fields = event.data.after.data().fields;
@@ -41,6 +54,13 @@ export const onFormUpdateFn = (
 		});
 
 		log('Updating fields', updatedFields);
-		event.data.after.ref.set({ fields: updatedFields }, { merge: true });
+		changesMade = true;
+		updatedDocObj.fields = updatedFields;
 	}
+
+	if (!changesMade) {
+		return event.data.after.ref.update(updatedDocObj);
+	}
+
+	return;
 };

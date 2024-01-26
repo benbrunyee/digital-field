@@ -1,21 +1,18 @@
 <script lang="ts">
+	import { displayFieldTypes, inputFieldTypes } from '$lib/FormCreator/types/fieldTypes';
 	import type { ExistingForm } from '$lib/FormCreator/types/formTypes';
+	import { isInputFieldType } from '$lib/FormCreator/util/isFieldType';
 	import LoadingSpinner from '$lib/LoadingSpinner/LoadingSpinner.svelte';
 	import { orgIdStore } from '$lib/stores/org';
+	import {
+		createDisplayFieldStructure,
+		createInputFieldStructure
+	} from '$lib/util/form/createFields';
+	import { createFormStructure, saveFormDoc } from '$lib/util/form/createForm';
 	import { deleteFormDoc } from '$lib/util/form/deleteForm';
 	import { loadOrgForms } from '$lib/util/form/loadForms';
 	import { toastError, toastSuccess } from '$lib/util/toast/toastNotifications';
 	import { getToastStore } from '@skeletonlabs/skeleton';
-	import {
-		displayFieldTypes,
-		inputFieldTypes
-	} from '../../../../../../../lib/FormCreator/types/fieldTypes';
-	import { isInputFieldType } from '../../../../../../../lib/FormCreator/util/isFieldType';
-	import {
-		createDisplayFieldStructure,
-		createInputFieldStructure
-	} from '../../../../../../../lib/util/form/createFields';
-	import { createFormStructure, saveFormDoc } from '../../../../../../../lib/util/form/createForm';
 
 	const toastStore = getToastStore();
 
@@ -34,6 +31,7 @@
 	const reloadForms = async () => {
 		try {
 			forms = await loadOrgForms();
+			console.log(forms);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to load forms');
@@ -103,7 +101,7 @@
 					<h3 class="h3 font-bold">
 						{form.name}
 					</h3>
-					<span class="text-sm italic">{form.updatedAt.toDateString()}</span>
+					<span class="text-sm italic">{form.updatedAt.toDate().toDateString()}</span>
 				</div>
 
 				<div class="space-x-1">

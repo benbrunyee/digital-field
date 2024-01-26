@@ -1,8 +1,6 @@
-import { orgSchema, type Org } from '../../../OrgCreator/types/orgType';
-import { convertFirestoreTimestamps } from '../convertFirestoreTimestamp';
+import { orgSchema } from '../../../OrgCreator/types/orgType';
 
 export const parseOrg = (org: any) => {
-	const dateFields: (keyof Partial<Org>)[] = ['createdAt', 'updatedAt'];
-	const orgParsed = orgSchema.parse(convertFirestoreTimestamps(org, dateFields));
+	const orgParsed = orgSchema.parse(org);
 	return orgParsed;
 };

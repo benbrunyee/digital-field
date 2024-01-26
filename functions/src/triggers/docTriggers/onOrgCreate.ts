@@ -1,5 +1,5 @@
 import { FirestoreEvent, QueryDocumentSnapshot } from 'firebase-functions/v2/firestore';
-import { addId } from '../../util/addId';
+import { createTimestamps } from '../../util/createTimestamps';
 
 export const onOrgCreateFn = (
 	event: FirestoreEvent<
@@ -9,10 +9,23 @@ export const onOrgCreateFn = (
 		}
 	>
 ) => {
-	if (event.data) {
-		const creationDate = new Date();
-		event.data?.ref.set({ createdAt: creationDate, updatedAt: creationDate }, { merge: true });
+	if (!event.data) {
+		return;
 	}
 
-	addId(event);
+	const updatedDocObj: any = {
+		id: event.id
+	};
+
+	const timestamps = createTimestamps(event, { includeCreatedAt: true });
+
+	if (timestamps) {
+		updatedDocObj.updatedAt = timestamps.updatedAt;
+
+		if (timestamps.createdAt) {
+			updatedDocObj.createdAt = timestamps.createdAt;
+		}
+	}
+
+	return event.data.ref.update(updatedDocObj);
 };

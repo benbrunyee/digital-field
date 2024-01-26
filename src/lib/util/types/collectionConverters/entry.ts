@@ -1,7 +1,5 @@
-import { existingEntrySchema, type ExistingEntry } from '../../../EntryCreator/types/entryTypes';
-import { convertFirestoreTimestamps } from '../convertFirestoreTimestamp';
+import { existingEntrySchema } from '../../../EntryCreator/types/entryTypes';
 
 export const parseExistingEntry = (entry: any) => {
-	const dateFields: (keyof Partial<ExistingEntry>)[] = ['createdAt', 'updatedAt'];
-	return existingEntrySchema.parse(convertFirestoreTimestamps(entry, dateFields));
+	return existingEntrySchema.parse(entry);
 };

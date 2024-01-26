@@ -5,25 +5,32 @@ import {
 	limit as limitDoc,
 	orderBy,
 	query,
-	startAfter as startAfterDoc
+	startAt as startAtDoc
 } from 'firebase/firestore';
-import { existingEntrySchema, type ExistingEntry } from '../../EntryCreator/types/entryTypes';
+import { type ExistingEntry } from '../../EntryCreator/types/entryTypes';
 import { ENTRY_COLLECTION } from '../types/collections';
-import { isFirestoreTimestamp } from '../types/isFirestoreTimestamp';
 
 export const loadEntries = async (
 	formId: string,
 	start?: number,
 	limit?: number
 ): Promise<ExistingEntry[]> => {
-	const startAfter = start ? start : 0;
-	const limitTo = limit ? limit : 10;
+	const startAt = start ?? 0;
+	const limitTo = limit ?? 10;
+
+	if (startAt < 0) {
+		throw new Error('Starting index of doc must be greater than or equal to 0');
+	}
+
+	if (limitTo < 1) {
+		throw new Error('Limit of docs must be greater than or equal to 1');
+	}
 
 	const entryDocs = await getDocs(
 		query(
 			ENTRY_COLLECTION(formId),
 			orderBy('updatedAt', 'desc'),
-			startAfterDoc(startAfter),
+			startAtDoc(startAt),
 			limitDoc(limitTo)
 		)
 	);
@@ -39,18 +46,4 @@ export const loadEntry = async (
 ): Promise<ExistingEntry | undefined> => {
 	const entryDoc = await getDoc(doc(ENTRY_COLLECTION(formId), entryId));
 	return entryDoc.data();
-};
-
-export const parseEntry = (entry: any) => {
-	const dateFields = ['createdAt', 'updatedAt'];
-
-	for (const field of dateFields) {
-		if (field in entry && isFirestoreTimestamp(entry[field])) {
-			entry[field] = entry[field].toDate();
-		}
-	}
-
-	const existingEntryParsed = existingEntrySchema.parse(entry);
-
-	return existingEntryParsed;
 };

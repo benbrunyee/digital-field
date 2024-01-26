@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore';
 import { z } from 'zod';
 
 export const invitableUserOrgRoleSchema = z.enum(['viewer', 'collaborator', 'editor', 'orgAdmin']);
@@ -18,8 +19,8 @@ export const userSchema = z.object({
 	id: z.string(),
 	email: z.string(),
 	name: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
+	createdAt: z.instanceof(Timestamp),
+	updatedAt: z.instanceof(Timestamp),
 	orgInvites: z.record(z.string(), orgInviteSchema),
 	orgs: z.record(z.string(), userOrgConfigSchema),
 	primaryOrgId: z.string()

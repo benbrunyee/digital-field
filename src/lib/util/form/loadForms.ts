@@ -3,8 +3,9 @@ import {
 	getDoc,
 	getDocs,
 	limit as limitDoc,
+	orderBy,
 	query,
-	startAfter as startAfterDoc,
+	startAt as startAtDoc,
 	where
 } from 'firebase/firestore';
 import { get } from 'svelte/store';
@@ -18,8 +19,16 @@ export const loadForm = async (id: string): Promise<ExistingForm | undefined> =>
 };
 
 export const loadOrgForms = async (start?: number, limit?: number): Promise<ExistingForm[]> => {
-	const startAfter = start ? start : 0;
-	const limitTo = limit ? limit : 10;
+	const startAt = start ?? 0;
+	const limitTo = limit ?? 10;
+
+	if (startAt < 0) {
+		throw new Error('Starting index of doc must be greater than or equal to 0');
+	}
+
+	if (limitTo < 1) {
+		throw new Error('Limit of docs must be greater than or equal to 1');
+	}
 
 	const orgId = get(orgIdStore);
 
@@ -31,7 +40,8 @@ export const loadOrgForms = async (start?: number, limit?: number): Promise<Exis
 		query(
 			FORM_COLLECTION,
 			where('orgId', '==', orgId),
-			startAfterDoc(startAfter),
+			orderBy('updatedAt', 'desc'),
+			startAtDoc(startAt),
 			limitDoc(limitTo)
 		)
 	);

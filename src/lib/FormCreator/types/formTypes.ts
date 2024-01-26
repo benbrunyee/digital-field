@@ -1,3 +1,4 @@
+import { Timestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import {
 	displayFieldCreateRequestSchema,
@@ -52,8 +53,8 @@ export type Form = z.infer<typeof formSchema>;
 
 export const existingFormSchema = formSchema.extend({
 	id: z.string(),
-	createdAt: z.date(),
-	updatedAt: z.date(),
+	createdAt: z.instanceof(Timestamp),
+	updatedAt: z.instanceof(Timestamp),
 	fields: z.array(
 		z.union([
 			existingDisplayFieldSchema,
