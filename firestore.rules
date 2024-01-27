@@ -109,6 +109,26 @@ service cloud.firestore {
       allow update: if canUpdateForm();
       allow delete: if canDeleteForm();
 
+      // Activity logs
+
+      match /activityLogs/{activityLogId} {
+        function canGetActivityLog() {
+          let form = get(/databases/$(database)/documents/forms/$(formId));
+
+          return isUserAuthenticated()
+            && isUserInFormResourceOrg(form);
+        }
+
+        function doesUserRoleHaveViewActivityLogPermissions(form) {
+          let userRole = getUserOrgRole(form.data.orgId);
+          return getRolePermissions(userRole)["viewActivityLog"] == true;
+        }
+
+        allow get, list: if canGetActivityLog();
+        allow create, update, delete: if false;
+
+      }
+
       // Output entities
 
       match /outputEntities/{outputEntityId} {
