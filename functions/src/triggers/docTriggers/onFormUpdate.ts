@@ -1,5 +1,5 @@
 import { QueryDocumentSnapshot } from 'firebase-admin/firestore';
-import { debug, error, log } from 'firebase-functions/logger';
+import { debug, log } from 'firebase-functions/logger';
 import { Change, FirestoreEvent } from 'firebase-functions/v2/firestore';
 import { createId } from '../../util/createId';
 import { createTimestamps } from '../../util/createTimestamps';
@@ -22,15 +22,10 @@ export const onFormUpdateFn = (
 
 	const timestamps = createTimestamps(event);
 
+	// Undefined if the timestamps are the same
 	if (timestamps) {
 		changesMade = true;
 		updatedDocObj.updatedAt = timestamps.updatedAt;
-	} else {
-		error(
-			`Form updated with no timestamps. Form ID: ${
-				event.data.after.ref.id
-			}. Form data: ${JSON.stringify(event.data.after.data())}`
-		);
 	}
 
 	// Update all the fields without an id to have an id

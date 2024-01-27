@@ -31,15 +31,10 @@ export const onEntryUpdateFn = async (
 
 	const timestamps = createTimestamps(event);
 
+	// Undefined if the timestamps are the same
 	if (timestamps) {
 		changesMade = true;
 		updatedDocObj.updatedAt = timestamps.updatedAt;
-	} else {
-		error(
-			`Entry updated with no timestamps. Entry ID: ${
-				event.data.after.ref.id
-			}. Entry data: ${JSON.stringify(event.data.after.data())}`
-		);
 	}
 
 	// Get the entry data
@@ -61,5 +56,9 @@ export const onEntryUpdateFn = async (
 		error(`Entry update without an activity log entry. Entry ID: ${event.data.after.ref.id}`);
 	}
 
-	return event.data.after.ref.update(updatedDocObj);
+	if (changesMade) {
+		return event.data.after.ref.update(updatedDocObj);
+	}
+
+	return;
 };

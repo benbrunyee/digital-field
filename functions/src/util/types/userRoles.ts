@@ -69,7 +69,7 @@ export const userRoles = {
 		'deleteOwnEntry'
 	],
 	viewer: ['viewOrg', 'viewOutputEntity', 'viewEntry', 'viewForm']
-} as const;
+};
 
 export const userRoleToName: { [k in keyof typeof userRoles]: string } = {
 	owner: 'Owner',
