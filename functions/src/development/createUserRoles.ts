@@ -1,68 +1,8 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { CallableRequest } from 'firebase-functions/v2/https';
+import { userRoles } from '../util/types/userRoles';
 
 const firestore = getFirestore();
-
-const userRoles = {
-	owner: [
-		'deleteOrg',
-		'updateOrg',
-		'viewOrg',
-		'viewOutputEntity',
-		'viewEntry',
-		'viewForm',
-		'createEntry',
-		'deleteEntry',
-		'updateEntry',
-		'createOutputEntity',
-		'updateOutputEntity',
-		'deleteOutputEntity',
-		'createForm',
-		'updateForm',
-		'deleteForm'
-	],
-	orgAdmin: [
-		'updateOrg',
-		'viewOrg',
-		'viewOutputEntity',
-		'viewEntry',
-		'viewForm',
-		'createEntry',
-		'deleteEntry',
-		'updateEntry',
-		'createOutputEntity',
-		'updateOutputEntity',
-		'deleteOutputEntity',
-		'createForm',
-		'updateForm',
-		'deleteForm'
-	],
-	editor: [
-		'viewOrg',
-		'viewOutputEntity',
-		'viewEntry',
-		'viewForm',
-		'createEntry',
-		'deleteEntry',
-		'updateEntry',
-		'createOutputEntity',
-		'updateOutputEntity',
-		'deleteOutputEntity',
-		'createForm',
-		'updateForm',
-		'deleteForm'
-	],
-	collaborator: [
-		'viewOrg',
-		'viewOutputEntity',
-		'viewEntry',
-		'viewForm',
-		'createEntry',
-		'deleteEntry',
-		'updateEntry'
-	],
-	viewer: ['viewOrg', 'viewOutputEntity', 'viewEntry', 'viewForm']
-};
 
 export const createUserRolesFn = async (request: CallableRequest) => {
 	const promises = [];
