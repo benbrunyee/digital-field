@@ -1,11 +1,11 @@
-import { auth, firestore } from '$lib/firebase';
-import { userSchema } from '$lib/util/user/types/user';
+import { auth } from '$lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import { USER_COLLECTION } from '../types/collections';
 
 export const getUserDoc = async () => {
 	if (!auth.currentUser) throw new Error('Not logged in');
 
-	const userDoc = await getDoc(doc(firestore, `users/${auth.currentUser.uid}`));
+	const userDoc = await getDoc(doc(USER_COLLECTION, auth.currentUser.uid));
 
-	return userSchema.parse(userDoc.data());
+	return userDoc.data();
 };

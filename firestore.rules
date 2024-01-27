@@ -32,10 +32,6 @@ service cloud.firestore {
       return request.resource.data.orgId in getUserOrgs();
     }
 
-    function ownerIdIsUser() {
-      return request.auth.uid == resource.data.ownerId
-    }
-
     function isCreatingAsOwner() {
       return request.resource.data.ownerId == request.auth.uid;
     }
@@ -210,11 +206,10 @@ service cloud.firestore {
       //   return getRolePermissions(userRole)["createOrg"] == true;
       // }
 
-      function containsOnlyAllowedOrgKeys() {
-        // TODO: Define the keys
-        return request.resource.data.keys().hasOnly([
-        ""
-        ]);
+      function protectedOrgKeysAreNotUpdated() {
+        return request.resource.data.id == resource.data.id
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.updatedAt == resource.data.updatedAt;
       }
 
       allow get, list: if isUserAuthenticated()
@@ -224,8 +219,7 @@ service cloud.firestore {
       allow update: if isUserAuthenticated()
         && isUserInCurrentOrg()
         && doesUserRoleHaveUpdateOrgPermissions()
-        && containsOnlyAllowedOrgKeys()
-        && ownerIdIsUser();
+        && protectedOrgKeysAreNotUpdated();
       allow delete: if isUserAuthenticated()
         && isUserInCurrentOrg()
         && doesUserRoleHaveDeleteOrgPermissions();

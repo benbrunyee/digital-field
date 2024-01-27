@@ -44,7 +44,9 @@ export const createOrgDoc = async (ownerId: string) => {
 	const date = new Date();
 
 	const org: Org = {
-		name: 'My Organization',
+		// We don't have the org name yet so we'll set it to an empty string
+		// this will allow the user to set the org name on the second step of the sign-in page
+		name: '',
 		members: {
 			[ownerId]: {
 				id: ownerId,

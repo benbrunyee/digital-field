@@ -57,7 +57,11 @@
 	};
 </script>
 
-<a class="variant-filled-primary btn" href="/app/org/{$orgIdStore}/forms/editor">Create New Form</a>
+<a
+	class="variant-filled-primary btn"
+	href="/app/org/{$orgIdStore}/forms/editor"
+	data-sveltekit-preload-data="hover">Create New Form</a
+>
 
 {#if import.meta.env.DEV}
 	<button
