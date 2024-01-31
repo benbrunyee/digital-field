@@ -23,8 +23,8 @@ import { createAndJoinOrgFn } from './userCallables/org/createAndJoinOrg';
 import { acceptOrgInviteFn } from './userCallables/org/invites/acceptOrgInvite';
 import { sendOrgInviteFn } from './userCallables/org/invites/sendOrgInvite';
 import { updateUserDetailsFn } from './userCallables/user/updateUserDetails';
+import { withMiddleware } from './util/middleware/withMiddleware';
 import { ENTRY_COLLECTION, FORM_COLLECTION, ORG_COLLECTION } from './util/types/collections';
-import { withAuth } from './util/withAuth';
 
 export const secureOptions: CallableOptions = {
 	enforceAppCheck: true
@@ -36,10 +36,10 @@ export const createUserRoles = onCall(createUserRolesFn);
 
 // Callable functions
 
-export const acceptOrgInvite = onCall(secureOptions, withAuth(acceptOrgInviteFn));
-export const sendOrgInvite = onCall(secureOptions, withAuth(sendOrgInviteFn));
-export const createAndJoinOrg = onCall(secureOptions, withAuth(createAndJoinOrgFn));
-export const updateUserDetails = onCall(secureOptions, withAuth(updateUserDetailsFn));
+export const acceptOrgInvite = onCall(secureOptions, withMiddleware(acceptOrgInviteFn));
+export const sendOrgInvite = onCall(secureOptions, withMiddleware(sendOrgInviteFn));
+export const createAndJoinOrg = onCall(secureOptions, withMiddleware(createAndJoinOrgFn));
+export const updateUserDetails = onCall(secureOptions, withMiddleware(updateUserDetailsFn));
 
 // Document triggers
 

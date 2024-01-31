@@ -3,8 +3,8 @@ import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { getOrgDoc } from '../../../util/getOrgDoc';
 import { getUserDoc } from '../../../util/getUserDoc';
+import { AuthenticatedCallableRequest } from '../../../util/middleware/withAuth';
 import { ORG_COLLECTION, USER_COLLECTION } from '../../../util/types/collections';
-import { AuthenticatedCallableRequest } from '../../../util/withAuth';
 
 const firestore = getFirestore();
 
@@ -51,15 +51,30 @@ export const acceptOrgInviteFn = async (
 	await addUserToOrg(uid, orgId);
 };
 
-const addUserToOrg = (uid: string, orgId: string) => {
-	// TODO: Batch this
-	const orgRef = firestore.collection(ORG_COLLECTION).doc(orgId);
-	const userRef = firestore.collection(USER_COLLECTION).doc(uid);
+const addUserToOrg = async (uid: string, orgId: string) => {
+	return await firestore.runTransaction(async (transaction) => {
+		const orgRef = await transaction.get(firestore.collection(ORG_COLLECTION).doc(orgId));
+		const userRef = await transaction.get(firestore.collection(USER_COLLECTION).doc(uid));
 
-	const orgPromise = orgRef.update(`members.${uid}`, true);
+		if (!orgRef.exists) {
+			return Promise.reject('Org does not exist');
+		}
 
-	// TODO: Get the role from the invite
-	const userPromise = userRef.update(`orgs.${orgId}`, { orgId, role: 'viewer' });
+		if (!userRef.exists) {
+			return Promise.reject('User does not exist');
+		}
 
-	return Promise.all([orgPromise, userPromise]);
+		if (orgRef.data()?.members?.[uid]) {
+			return Promise.reject('User is already a member of this org');
+		}
+
+		if (!userRef.data()?.orgInvites?.[orgId]) {
+			return Promise.reject('User has not been invited to this org');
+		}
+
+		transaction.update(orgRef.ref, `members.${uid}`, true);
+		transaction.update(userRef.ref, `orgs.${orgId}`, { orgId, role: 'viewer' });
+
+		return true;
+	});
 };

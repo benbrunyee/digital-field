@@ -1,8 +1,8 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { getUserDocByEmail } from '../../../util/getUserDoc';
+import { AuthenticatedCallableRequest } from '../../../util/middleware/withAuth';
 import { USER_COLLECTION } from '../../../util/types/collections';
-import { AuthenticatedCallableRequest } from '../../../util/withAuth';
 
 const firestore = getFirestore();
 

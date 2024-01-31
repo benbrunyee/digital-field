@@ -1,7 +1,7 @@
 import { HttpsError } from 'firebase-functions/v1/auth';
 import { z } from 'zod';
+import { AuthenticatedCallableRequest } from '../../util/middleware/withAuth';
 import { updateDocValue } from '../../util/updateDocValue';
-import { AuthenticatedCallableRequest } from '../../util/withAuth';
 
 export const updateUserDetailsDataSchema = z.object({
 	displayName: z.string().optional(),

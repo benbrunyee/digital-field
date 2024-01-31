@@ -7,7 +7,7 @@ export interface AuthenticatedCallableRequest<T = any> extends CallableRequest<T
 
 export const withAuth =
 	<T = any>(fn: (request: AuthenticatedCallableRequest<T>) => any) =>
-	(request: CallableRequest) => {
+	(request: CallableRequest<T>) => {
 		if (!isAuthenticatedCallableRequest(request)) {
 			throw new HttpsError('permission-denied', 'User needs to be logged in');
 		}
