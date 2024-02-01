@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import logo from '$lib/assets/logo-black.png';
+	import logo from '$lib/assets/images/logo-black.png';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
 	import { getToastStore } from '@skeletonlabs/skeleton';

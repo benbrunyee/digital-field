@@ -8,6 +8,8 @@
 </script>
 
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import FormBuilder from '$lib/FormCreator/FormBuilder.svelte';
 	import FormElementSelection from '$lib/FormCreator/FormSelectables/FormElementSelection.svelte';
 	import FormSettings from '$lib/FormCreator/FormSettings.svelte';
@@ -15,6 +17,7 @@
 	import LoadingSpinner from '$lib/LoadingSpinner/LoadingSpinner.svelte';
 	import OutputEntityEditor from '$lib/OutputCreator/OutputEntityEditor.svelte';
 	import OutputElementSelection from '$lib/OutputCreator/OutputSelectables/OutputElementSelection.svelte';
+	import Icon from '@iconify/svelte';
 	import {
 		AppBar,
 		AppShell,
@@ -23,6 +26,7 @@
 		RadioGroup,
 		RadioItem
 	} from '@skeletonlabs/skeleton';
+	import { previousPageStore } from '../../../../../../../+layout.svelte';
 
 	// export let data: PageData;
 
@@ -30,12 +34,18 @@
 </script>
 
 <AppShell
-	slotSidebarLeft="w-0 lg:w-64 p-4 lg:border-r lg:border-surface-300-600-token"
-	slotSidebarRight="w-0 lg:w-96 p-4 lg:border-l lg:border-surface-300-600-token"
+	slotSidebarLeft="w-0 lg:w-64 p-4 lg:border-r lg:border-surface-300-600-token bg-surface-50-900-token"
+	slotSidebarRight="w-0 lg:w-96 p-4 lg:border-l lg:border-surface-300-600-token bg-surface-50-900-token"
+	regionPage="bg-surface-50-900-token"
 >
 	<svelte:fragment slot="header">
 		<AppBar slotTrail="place-content-end" shadow="shadow-xl">
 			<svelte:fragment slot="lead">
+				{#if $page.url.pathname.split('').filter((char) => char === '/').length > 1}
+					<button on:click={() => goto($previousPageStore)}>
+						<Icon icon="material-symbols:arrow-back-rounded" class="text-3xl" />
+					</button>
+				{/if}
 				<h2 class="h2 ml-4">Form Creator</h2>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">

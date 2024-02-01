@@ -96,7 +96,7 @@
 	on:draggedLeftZone={onDraggedLeftZone}
 	on:droppedOutsideZone={onDropOutsideZone}
 >
-	<div bind:this={placeholderDummy} class="invisible absolute">
+	<div bind:this={placeholderDummy} class="invisible absolute w-full">
 		<slot name="placeholderGhost" />
 	</div>
 
@@ -119,7 +119,7 @@
 				out:fade
 			>
 				{#if ghostElement.show && ghostElement.showAfterIndex === i - 1}
-					<div class="absolute -translate-y-full">
+					<div class="absolute w-full -translate-y-full">
 						<slot name="placeholderGhost" />
 					</div>
 				{/if}
@@ -157,7 +157,7 @@
 		{/each}
 
 		{#if ghostElement.show && ghostElement.showAfterIndex === items.length - 1}
-			<div class="absolute">
+			<div class="absolute w-full">
 				<slot name="placeholderGhost" />
 			</div>
 		{/if}

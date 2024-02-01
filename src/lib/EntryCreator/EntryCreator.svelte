@@ -81,7 +81,8 @@
 						hint={formatFieldType(field.type)}
 						type={field.type}
 						bind:value={$entry.entry.fields[field.id].value}
-						options={{}}
+						options={field.options}
+						description={field.description}
 					/>
 				{/if}
 			{/each}

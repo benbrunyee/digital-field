@@ -103,6 +103,6 @@
 	}
 </script>
 
-<div {...$$restProps} use:dropzone>
+<div {...$$restProps} class="relative {$$props.class ?? ''}" use:dropzone>
 	<slot />
 </div>

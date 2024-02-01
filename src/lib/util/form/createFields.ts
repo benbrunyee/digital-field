@@ -70,8 +70,32 @@ function createInputFieldOptions<T extends InputFieldType>(type: T): any {
 				placeholder: ''
 			};
 		case 'multi-entry':
+			return {};
+		case 'choice':
 			return {
-				placeholder: ''
+				choiceOptions: {
+					choice1: {
+						label: 'Choice 1',
+						value: 'choice1'
+					},
+					choice2: {
+						label: 'Choice 2',
+						value: 'choice2'
+					}
+				}
+			};
+		case 'multiple_choice':
+			return {
+				choiceOptions: {
+					choice1: {
+						label: 'Choice 1',
+						value: 'choice1'
+					},
+					choice2: {
+						label: 'Choice 2',
+						value: 'choice2'
+					}
+				}
 			};
 		default:
 			return {};

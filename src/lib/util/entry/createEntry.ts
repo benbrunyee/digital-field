@@ -82,7 +82,8 @@ export const createEntryStoreStructure = async (
 			entryField.value = createAddressValue();
 		} else if (field.type === 'checkbox') {
 			entryField.value = false;
-		} else if (field.type === 'multi-entry') {
+		} else if (field.type === 'multi-entry' || field.type === 'multiple_choice') {
+			// TODO: Define how multi-entry fields should be handled
 			entryField.value = [];
 		}
 

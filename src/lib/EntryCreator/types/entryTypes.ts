@@ -65,7 +65,7 @@ export const entryUpdateRequestSchema = existingEntrySchema;
 export type EntryUpdateRequest = z.infer<typeof entryUpdateRequestSchema>;
 
 export const choiceOptionSchema = z.object({
-	options: z.record(
+	choiceOptions: z.record(
 		z.string(),
 		z.object({
 			label: z.string(),

@@ -28,7 +28,7 @@
 	}
 </script>
 
-<div class="bg-surface-50-900-token rounded-token">
+<div class="bg-surface-200-700-token rounded-token">
 	{#if isExistingInputField(field) || isNewInputField(field)}
 		<InputField bind:field on:fieldChanged={fieldHasChanged} />
 	{:else if isExistingDisplayField(field) || isNewDisplayField(field)}

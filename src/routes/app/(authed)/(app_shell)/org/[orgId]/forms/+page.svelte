@@ -31,7 +31,6 @@
 
 		try {
 			forms = await loadOrgForms();
-			console.log(forms);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to load forms');
@@ -42,6 +41,8 @@
 
 	const deleteForm = async (formId: string) => {
 		const confirmed = confirm('Are you sure you want to delete this form?');
+
+		isLoading = true;
 
 		if (confirmed) {
 			try {
@@ -66,27 +67,32 @@
 {#if import.meta.env.DEV}
 	<button
 		class="variant-outline-primary btn"
-		on:click={async () => {
-			const form = createFormStructure();
+		on:click={() => {
+			new Promise(async (resolve) => {
+				const form = createFormStructure();
 
-			const fields = [...inputFieldTypes, ...displayFieldTypes].map((type) => {
-				if (isInputFieldType(type)) {
-					return createInputFieldStructure(type);
-				} else {
-					return createDisplayFieldStructure(type);
+				const fields = [...inputFieldTypes, ...displayFieldTypes].map((type) => {
+					if (isInputFieldType(type)) {
+						return createInputFieldStructure(type);
+					} else {
+						return createDisplayFieldStructure(type);
+					}
+				});
+
+				form.fields = fields;
+
+				try {
+					isLoading = true;
+					await saveFormDoc(form);
+					toastSuccess(toastStore, 'Created form');
+					await reloadForms();
+				} catch (e) {
+					console.error(e);
+					toastError(toastStore, 'Failed to create form');
 				}
+
+				return resolve(true);
 			});
-
-			form.fields = fields;
-
-			try {
-				await saveFormDoc(form);
-				toastSuccess(toastStore, 'Created form');
-				await reloadForms();
-			} catch (e) {
-				console.error(e);
-				toastError(toastStore, 'Failed to create form');
-			}
 		}}>Create filled form</button
 	>
 {/if}
@@ -98,13 +104,29 @@
 		<LoadingSpinner />
 	</div>
 {:else}
-	<div class="card space-y-2">
+	<div class="space-y-2">
 		{#each forms as form}
-			<div class="bg-surface-50-900-token flex items-center justify-between rounded-md p-4">
-				<div>
+			<div class="bg-surface-100-800-token overflow-hidden rounded-token">
+				<div class="bg-surface-200-700-token flex items-center justify-between p-4">
 					<h3 class="h3 font-bold">
 						{form.name}
 					</h3>
+
+					<div class="space-x-1">
+						<button on:click={() => deleteForm(form.id)} class="variant-glass-error btn btn-sm"
+							>Delete</button
+						>
+						<a href={`forms/editor/${form.id}`} class="variant-glass-secondary btn btn-sm">Edit</a>
+						<a href={`forms/${form.id}/entries`} class="variant-filled-secondary btn btn-sm"
+							>View Entries</a
+						>
+						<a href={`forms/${form.id}/entries/create`} class="variant-filled-primary btn btn-sm"
+							>Add Entry</a
+						>
+					</div>
+				</div>
+
+				<div class="p-4">
 					<p class="text-sm italic">
 						{form.recordCount} records
 					</p>
@@ -114,21 +136,12 @@
 							year: 'numeric',
 							month: 'long',
 							day: 'numeric'
+						})} at {form.updatedAt.toDate().toLocaleTimeString('en-US', {
+							hour12: true,
+							hour: 'numeric',
+							minute: 'numeric'
 						})}
 					</p>
-				</div>
-
-				<div class="space-x-1">
-					<button on:click={() => deleteForm(form.id)} class="variant-outline-error btn btn-sm"
-						>Delete</button
-					>
-					<a href={`forms/editor/${form.id}`} class="variant-outline-secondary btn btn-sm">Edit</a>
-					<a href={`forms/${form.id}/entries`} class="variant-filled-primary btn btn-sm"
-						>View Entries</a
-					>
-					<a href={`forms/${form.id}/entries/create`} class="variant-filled-primary btn btn-sm"
-						>Add Entry</a
-					>
 				</div>
 			</div>
 		{/each}

@@ -34,7 +34,7 @@
 	<svelte:fragment slot="summary">
 		<span>{name}</span>
 		{#if isNewField}
-			<span class="text-success-600-300-token ml-1 text-xs">New</span>
+			<span class="variant-filled-success badge ml-1">New</span>
 		{:else if $hasChanged}
 			<span class="text-warning-600-300-token ml-1 text-xs">Modified</span>
 		{/if}

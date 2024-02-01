@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { afterNavigate, goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Navigation, { navigation } from '$lib/Navigation/Navigation.svelte';
+	import AvatarPopup from '$lib/AvatarPopup/AvatarPopup.svelte';
+	import Navigation from '$lib/Navigation/Navigation.svelte';
 	import { pageTitle } from '$lib/Navigation/stores/pageTitle';
 	import { orgIdStore } from '$lib/stores/org';
 	import { onSignOut } from '$lib/util/user/onSignOut';
@@ -13,9 +14,18 @@
 		Avatar,
 		Drawer,
 		LightSwitch,
-		getDrawerStore
+		getDrawerStore,
+		popup,
+		type PopupSettings
 	} from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+	import { previousPageStore } from '../../../+layout.svelte';
+
+	const avatarPopup: PopupSettings = {
+		event: 'click',
+		target: 'avatarPopup',
+		placement: 'bottom-end'
+	};
 
 	$: avatarInitials = $userStore?.name.charAt(0) || $userStore?.email.charAt(0) || '..';
 
@@ -35,28 +45,14 @@
 		}
 	});
 
-	afterNavigate(({ from }) => {
-		previousPage = from?.url.pathname || previousPage;
-
-		navigation($orgIdStore).forEach((navItem) => {
-			if (
-				navItem.path === $page.url.pathname ||
-				$page.url.pathname.startsWith(navItem.path + '/')
-			) {
-				$pageTitle = navItem.name;
-			}
-		});
-	});
-
 	const drawerStore = getDrawerStore();
-	let previousPage = '/';
 
 	function drawerOpen() {
 		drawerStore.open({});
 	}
 
 	function goBack() {
-		goto(previousPage);
+		goto($previousPageStore);
 	}
 </script>
 
@@ -66,7 +62,10 @@
 	<Navigation />
 </Drawer>
 
-<AppShell slotSidebarLeft="w-0 lg:w-64 lg:border-r lg:border-surface-300-600-token">
+<AppShell
+	slotSidebarLeft="w-0 lg:w-64 lg:border-r lg:border-surface-300-600-token bg-surface-50-900-token"
+	regionPage="bg-surface-50-900-token"
+>
 	<svelte:fragment slot="header">
 		<AppBar slotTrail="place-content-end" shadow="shadow-xl">
 			<svelte:fragment slot="lead">
@@ -82,13 +81,16 @@
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<LightSwitch />
-				<Avatar
-					initials={avatarInitials}
-					border="border-1 border-surface-300-600-token hover:!border-primary-500"
-					cursor="cursor-pointer"
-					class="w-10 lg:w-14"
-					background="bg-primary-400-500-token"
-				/>
+				<div use:popup={avatarPopup}>
+					<Avatar
+						initials={avatarInitials}
+						border="border-2 border-surface-300-600-token hover:!border-primary-500"
+						cursor="cursor-pointer"
+						class="w-10 lg:w-14"
+						background="bg-primary-400-500-token"
+					/>
+				</div>
+				<AvatarPopup />
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>

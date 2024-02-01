@@ -12,5 +12,5 @@
 {:else if type === 'heading'}
 	<h2 class="h2">{text}</h2>
 {:else if type === 'separator'}
-	<hr class="my-2" />
+	<hr class="!border-surface-900-50-token my-2" />
 {/if}

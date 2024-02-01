@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SignInForm from '$lib/SignInForm/SignInForm.svelte';
-	import sideImage from '$lib/assets/login-image.png';
+	import sideImage from '$lib/assets/images/login-image.png';
 	import { orgIdStore } from '$lib/stores/org';
 	import { XPro, filter } from '@skeletonlabs/skeleton';
 
