@@ -1,6 +1,10 @@
 import { Timestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import {
+	existingOutputEntitySchema,
+	newOutputEntitySchema
+} from '../../OutputCreator/types/outputEntityTypes';
+import {
 	displayFieldCreateRequestSchema,
 	existingDisplayFieldSchema,
 	existingInputFieldSchema,
@@ -47,7 +51,7 @@ export const formSchema = z.object({
 	type: formTypeSchema,
 	options: formOptionsSchema,
 	status: formStatusSchema,
-	outputs: z.array(z.any()), // TODO
+	outputs: z.array(z.any()),
 	recordCount: z.number().nonnegative().int().finite() // >=0
 });
 export type Form = z.infer<typeof formSchema>;
@@ -63,13 +67,15 @@ export const existingFormSchema = formSchema.extend({
 			existingInputFieldSchema,
 			newInputFieldSchema
 		])
-	)
+	),
+	outputs: z.array(z.union([existingOutputEntitySchema, newOutputEntitySchema]))
 });
 export type ExistingForm = z.infer<typeof existingFormSchema>;
 
 export const newFormSchema = formSchema.extend({
 	clientId: z.string(),
-	fields: z.array(z.union([newDisplayFieldSchema, newInputFieldSchema]))
+	fields: z.array(z.union([newDisplayFieldSchema, newInputFieldSchema])),
+	outputs: z.array(newOutputEntitySchema)
 });
 export type NewForm = z.infer<typeof newFormSchema>;
 

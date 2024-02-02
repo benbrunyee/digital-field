@@ -44,7 +44,7 @@
 	};
 </script>
 
-<div class="card bg-surface-50-900-token flex items-center justify-between space-y-1 p-4">
+<div class="card bg-surface-100-800-token flex items-center justify-between space-y-1 p-4">
 	<div class="basis-1/2">
 		<div class="leading-4">
 			<p class="font-bold">{name}</p>

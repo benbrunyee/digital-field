@@ -2,7 +2,9 @@
 	import SignInForm from '$lib/SignInForm/SignInForm.svelte';
 	import logo from '$lib/assets/images/logo-black.png';
 	import { orgIdStore } from '$lib/stores/org';
-	import { XPro } from '@skeletonlabs/skeleton';
+	import { XPro, getToastStore } from '@skeletonlabs/skeleton';
+
+	const toastStore = getToastStore();
 
 	orgIdStore.set('');
 </script>

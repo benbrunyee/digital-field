@@ -68,7 +68,6 @@ const entryStore = (
 	};
 
 	const setFieldValue = (fieldId: string, value: EntryValueType | EntryValueType[]) => {
-		// TODO: Make this more efficient by using a map then convert it into an array
 		store.update((current) => {
 			if (!current?.entry) {
 				return current;

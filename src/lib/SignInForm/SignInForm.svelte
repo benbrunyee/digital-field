@@ -37,7 +37,7 @@
 		type: 'sign-in' | 'sign-up';
 	}>({
 		currentStep: $page.url.searchParams.get('step') === '2' ? 1 : 0,
-		type: $hasSignedIn ? 'sign-in' : 'sign-up'
+		type: $hasSignedIn && !$page.url.searchParams.get('step') ? 'sign-in' : 'sign-up'
 	});
 	let leftSpring = spring(0, {
 		stiffness: 0.1,
@@ -186,7 +186,7 @@
 		{#if $state.type === 'sign-up'}
 			<div class="absolute left-0 top-0 flex h-full w-full flex-col space-y-16" transition:fade>
 				<div class="flex items-center justify-between">
-					<img src={logo} alt="Logo" class="w-28" />
+					<img src={logo} alt="Logo" class="w-40" />
 
 					<p class="text-right text-sm">
 						Already have an account?
@@ -383,7 +383,7 @@
 		{:else if $state.type === 'sign-in'}
 			<div class="absolute left-0 top-0 flex h-full flex-col justify-between" transition:fly>
 				<div class="flex items-center justify-between">
-					<img src={logo} alt="Logo" class="w-28" />
+					<img src={logo} alt="Logo" class="w-40" />
 
 					<p class="text-right text-sm">
 						Don't have an account?
