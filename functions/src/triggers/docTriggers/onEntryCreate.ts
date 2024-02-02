@@ -2,7 +2,7 @@ import { QueryDocumentSnapshot, getFirestore } from 'firebase-admin/firestore';
 import { error } from 'firebase-functions/logger';
 import { FirestoreEvent } from 'firebase-functions/v2/firestore';
 import { addActivityLog } from '../../util/addActivityLogs';
-import { alterFormRecordCount } from '../../util/alterFormRecordCount';
+import { alterFormEntryCount } from '../../util/alterFormEntryCount';
 import { createTimestamps } from '../../util/createTimestamps';
 import { FORM_COLLECTION } from '../../util/types/collections';
 
@@ -48,8 +48,8 @@ export const onEntryCreateFn = async (
 		);
 	}
 
-	// Update the record count of the form
-	await alterFormRecordCount(formId, 'increment');
+	// Update the entry count of the form
+	await alterFormEntryCount(formId, 'increment');
 
 	// Get the entry data
 	const docData = event.data.data();

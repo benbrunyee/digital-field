@@ -13,6 +13,7 @@ import { createUserRolesFn } from './development/createUserRoles';
 import { beforeSignInFn } from './triggers/beforeUserSignIn';
 import { onEntryCreateFn } from './triggers/docTriggers/onEntryCreate';
 import { onEntryDeleteFn } from './triggers/docTriggers/onEntryDelete';
+import { onEntryUpdateFn } from './triggers/docTriggers/onEntryUpdate';
 import { onFormCreateFn } from './triggers/docTriggers/onFormCreate';
 import { onFormDeleteFn } from './triggers/docTriggers/onFormDelete';
 import { onFormUpdateFn } from './triggers/docTriggers/onFormUpdate';
@@ -56,7 +57,7 @@ export const onFormCreate = onDocumentCreated(`${FORM_COLLECTION}/{formId}`, onF
 export const onFormUpdate = onDocumentUpdated(`${FORM_COLLECTION}/{formId}`, onFormUpdateFn);
 export const onFormDelete = onDocumentDeleted(`${FORM_COLLECTION}/{formId}`, onFormDeleteFn);
 
-// Record triggers
+// Entry triggers
 export const onEntryCreate = onDocumentCreated(
 	`${FORM_COLLECTION}/{formId}/${ENTRY_COLLECTION}/{entryId}`,
 	onEntryCreateFn
@@ -64,6 +65,10 @@ export const onEntryCreate = onDocumentCreated(
 export const onEntryDelete = onDocumentDeleted(
 	`${FORM_COLLECTION}/{formId}/${ENTRY_COLLECTION}/{entryId}`,
 	onEntryDeleteFn
+);
+export const onEntryUpdate = onDocumentUpdated(
+	`${FORM_COLLECTION}/{formId}/${ENTRY_COLLECTION}/{entryId}`,
+	onEntryUpdateFn
 );
 
 // Other triggers

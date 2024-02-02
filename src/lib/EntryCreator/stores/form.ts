@@ -3,7 +3,7 @@ import { writable } from 'svelte/store';
 import type { ExistingForm } from '../../FormCreator/types/formTypes';
 import { loadForm } from '../../util/form/loadForms';
 
-let DEFAULT_STORE_NAME = 'recordFormStore';
+let DEFAULT_STORE_NAME = 'entryFormStore';
 
 export const getFormStore = (storeName?: string) => {
 	const store = getContext<ReturnType<typeof formStore>>(storeName ?? DEFAULT_STORE_NAME);

@@ -78,6 +78,6 @@ export const createFormStructure = (): NewForm => {
 		status: 'draft',
 		type: 'form',
 		orgId,
-		recordCount: 0
+		entryCount: 0
 	};
 };

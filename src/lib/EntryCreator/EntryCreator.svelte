@@ -66,7 +66,7 @@
 		</div>
 	{:else if !$entry?.form}
 		<div class="card bg-surface-50-900-token p-4">
-			<span class="bg-surface-50-900-token text-error-500-400-token">Could not find form</span>
+			<span class="text-error-500-400-token">Could not find form</span>
 		</div>
 	{:else}
 		<div class="space-y-2">

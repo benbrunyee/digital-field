@@ -1,7 +1,7 @@
 import { DocumentSnapshot } from 'firebase-admin/firestore';
 import { warn } from 'firebase-functions/logger';
 import { FirestoreEvent } from 'firebase-functions/v2/firestore';
-import { alterFormRecordCount } from '../../util/alterFormRecordCount';
+import { alterFormEntryCount } from '../../util/alterFormEntryCount';
 
 export const onEntryDeleteFn = async (event: FirestoreEvent<DocumentSnapshot | undefined>) => {
 	if (!event.data) {
@@ -12,11 +12,11 @@ export const onEntryDeleteFn = async (event: FirestoreEvent<DocumentSnapshot | u
 
 	if (!formId) {
 		warn(
-			`Entry with id ${event.data.ref.id} does not have a parent form id, could not decrement record count. This could happen if the parent form was deleted.`
+			`Entry with id ${event.data.ref.id} does not have a parent form id, could not decrement entry count. This could happen if the parent form was deleted.`
 		);
 		return;
 	}
 
-	// Decrement the record count of the form
-	await alterFormRecordCount(formId, 'decrement');
+	// Decrement the entry count of the form
+	await alterFormEntryCount(formId, 'decrement');
 };

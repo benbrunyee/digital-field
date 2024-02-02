@@ -17,7 +17,7 @@ export const onFormCreateFn = (
 
 	const updateDocObj: any = {
 		id: event.data.ref.id,
-		recordCount: 0
+		entryCount: 0
 	};
 
 	const timestamps = createTimestamps(event, {

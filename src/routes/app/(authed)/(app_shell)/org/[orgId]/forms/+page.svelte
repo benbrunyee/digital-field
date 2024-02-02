@@ -106,11 +106,11 @@
 {:else}
 	<div class="space-y-2">
 		{#each forms as form}
-			<div class="bg-surface-100-800-token overflow-hidden rounded-token">
+			<div class="bg-surface-100-800-token overflow-hidden shadow rounded-token">
 				<div class="bg-surface-200-700-token flex items-center justify-between p-4">
-					<h3 class="h3 font-bold">
+					<a class="h3 font-bold" href={`forms/editor/${form.id}`}>
 						{form.name}
-					</h3>
+					</a>
 
 					<div class="space-x-1">
 						<button on:click={() => deleteForm(form.id)} class="variant-glass-error btn btn-sm"
@@ -127,9 +127,9 @@
 				</div>
 
 				<div class="p-4">
-					<p class="text-sm italic">
-						{form.recordCount} records
-					</p>
+					<a class="text-sm italic" href="">
+						{form.entryCount} entries
+					</a>
 					<p class="text-sm italic">
 						Updated on {form.updatedAt.toDate().toLocaleDateString('en-US', {
 							weekday: 'long',

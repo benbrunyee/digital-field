@@ -52,7 +52,7 @@ export const formSchema = z.object({
 	options: formOptionsSchema,
 	status: formStatusSchema,
 	outputs: z.array(z.any()),
-	recordCount: z.number().nonnegative().int().finite() // >=0
+	entryCount: z.number().nonnegative().int().finite() // >=0
 });
 export type Form = z.infer<typeof formSchema>;
 
