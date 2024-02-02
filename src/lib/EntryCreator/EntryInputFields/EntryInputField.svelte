@@ -5,6 +5,7 @@
 	import { ListBox, ListBoxItem, popup, type PopupSettings } from '@skeletonlabs/skeleton';
 
 	import Icon from '@iconify/svelte';
+	import type { HTMLInputAttributes } from 'svelte/elements';
 	import type { InputFieldOptions, InputFieldType } from '../../FormCreator/types/fieldTypes';
 	import {
 		addressValueSchema,
@@ -20,6 +21,12 @@
 	export let type: InputFieldType;
 	export let options: InputFieldOptions = {};
 	export let description = '';
+	export let required = false;
+
+	const inputProps: HTMLInputAttributes = {
+		required,
+		class: 'variant-ringed-surface'
+	};
 
 	let addressSearchValue = '';
 	let error = '';
@@ -44,11 +51,16 @@
 	};
 </script>
 
-<div class="card bg-surface-100-800-token flex items-center justify-between space-y-1 p-4">
+<div class="card flex items-center justify-between space-y-1 bg-neutral-100 p-4">
 	<div class="basis-1/2">
 		<div class="leading-4">
-			<p class="font-bold">{name}</p>
-			<span class="text-surface-400-500-token text-xs italic">{hint}</span>
+			<p class="font-bold">
+				{name}
+				{#if required}
+					<span class="text-red-500">*</span>
+				{/if}
+			</p>
+			<span class="text-surface-500-400-token text-xs italic">{hint}</span>
 		</div>
 
 		<p class="mr-4 text-sm">{description}</p>
@@ -56,66 +68,78 @@
 
 	<div class="basis-1/2">
 		{#if type === 'text' && isString(value)}
-			<input type="text" bind:value class="input variant-ringed-surface w-full" />
+			<input {...inputProps} class="input w-full {inputProps.class}" type="text" bind:value />
 		{:else if type === 'number'}
-			<input class="input variant-ringed-surface w-full" type="number" bind:value />
+			<input {...inputProps} class="input w-full {inputProps.class}" type="number" bind:value />
 		{:else if type === 'address' && isAddress(value)}
 			<div class="space-y-1">
 				<input
-					class="input variant-ringed-surface"
+					{...inputProps}
+					class="input {inputProps.class}"
 					type="text"
 					bind:value={addressSearchValue}
 					placeholder="Search for an address"
 				/>
 				<input
-					class="input variant-ringed-surface"
+					{...inputProps}
+					class="input {inputProps.class}"
 					type="text"
 					bind:value={value.street1}
 					placeholder="Street 1"
 				/>
 				<input
-					class="input variant-ringed-surface"
+					{...inputProps}
+					class="input {inputProps.class}"
 					type="text"
 					bind:value={value.street2}
 					placeholder="Street 2"
 				/>
 				<input
-					class="input variant-ringed-surface"
+					{...inputProps}
+					class="input {inputProps.class}"
 					type="text"
 					bind:value={value.city}
 					placeholder="City"
 				/>
 				<div class="flex space-x-1">
 					<input
-						class="input variant-ringed-surface"
+						{...inputProps}
+						class="input {inputProps.class}"
 						type="text"
 						bind:value={value.state}
 						placeholder="State/Region"
 					/>
 					<input
-						class="input variant-ringed-surface"
+						{...inputProps}
+						class="input {inputProps.class}"
 						type="text"
 						bind:value={value.postalCode}
 						placeholder="Postal Code"
 					/>
 				</div>
 				<input
-					class="input variant-ringed-surface"
+					{...inputProps}
+					class="input {inputProps.class}"
 					type="text"
 					bind:value={value.country}
 					placeholder="Country"
 				/>
 			</div>
 		{:else if type === 'audio'}
-			<input class="input variant-ringed-surface" type="file" accept="audio/*" />
+			<input {...inputProps} class="input {inputProps.class}" type="file" accept="audio/*" />
 		{:else if type === 'file'}
-			<input class="input variant-ringed-surface" type="file" />
+			<input {...inputProps} class="input {inputProps.class}" type="file" />
 		{:else if type === 'image'}
-			<input class="input variant-ringed-surface" type="file" accept="image/*" />
+			<input {...inputProps} class="input {inputProps.class}" type="file" accept="image/*" />
 		{:else if type === 'video'}
-			<input class="input variant-ringed-surface" type="file" accept="video/*" />
+			<input {...inputProps} class="input {inputProps.class}" type="file" accept="video/*" />
 		{:else if type === 'checkbox' && isBoolean(value)}
-			<input class="checkbox variant-ringed-surface" type="checkbox" bind:checked={value} />
+			<input
+				{...inputProps}
+				class="checkbox {inputProps.class}"
+				type="checkbox"
+				bind:checked={value}
+			/>
 		{:else if type === 'choice' && hasChoiceOptions(options)}
 			<div class="relative">
 				<button class="variant-ringed-surface btn w-full justify-between" use:popup={popupCombobox}>
@@ -140,13 +164,13 @@
 				</div>
 			</div>
 		{:else if type === 'date'}
-			<input class="input variant-ringed-surface" type="date" />
+			<input {...inputProps} class="input {inputProps.class}" type="date" />
 		{:else if type === 'link'}
-			<input class="input variant-ringed-surface" type="url" />
+			<input {...inputProps} class="input {inputProps.class}" type="url" />
 		{:else if type === 'multi-entry' && hasChoiceOptions(options)}
 			<p class="text-error-500-400-token">Not implemented</p>
 		{:else if type === 'multiple_choice' && hasChoiceOptions(options) && isArray(value)}
-			<select class="select variant-ringed-surface" multiple bind:value>
+			<select required={inputProps.required} class="select {inputProps.class}" multiple bind:value>
 				{#each Object.values(options.choiceOptions) as choiceOption}
 					<option class="!bg-transparent" value={choiceOption.value}>{choiceOption.label}</option>
 				{/each}
@@ -158,9 +182,9 @@
 				}}>Clear selection</button
 			>
 		{:else if type === 'signature'}
-			<input class="input variant-ringed-surface" type="file" accept="image/*" />
+			<input {...inputProps} class="input {inputProps.class}" type="file" accept="image/*" />
 		{:else if type === 'time'}
-			<input class="input variant-ringed-surface" type="time" />
+			<input {...inputProps} class="input {inputProps.class}" type="time" />
 		{:else}
 			<p class="text-error-500-400-token">Field type not implemented: {type}</p>
 		{/if}
