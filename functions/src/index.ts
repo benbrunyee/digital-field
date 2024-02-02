@@ -32,7 +32,11 @@ export const secureOptions: CallableOptions = {
 
 // Dev callables
 
-export const createUserRoles = onCall(createUserRolesFn);
+export const createUserRoles = onCall(
+	withMiddleware(createUserRolesFn, {
+		onlyDev: true
+	})
+);
 
 // Callable functions
 
