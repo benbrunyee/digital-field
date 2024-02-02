@@ -78,23 +78,26 @@
 	<div class="space-y-2">
 		{#each forms as form (form.id)}
 			<div class="card overflow-hidden bg-white shadow rounded-token" transition:slide>
-				<div class="card flex items-center justify-between bg-neutral-100 p-4 dark:bg-surface-700">
-					<a class="h3 font-bold" href={`forms/editor/${form.id}`}>
-						{form.name}
-					</a>
+				<div class="card bg-neutral-100 dark:bg-surface-700">
+					<a href={`forms/editor/${form.id}`} class="flex items-center justify-between p-4">
+						<h3 class="h3 font-bold">
+							{form.name}
+						</h3>
 
-					<div class="space-x-1">
-						<button on:click={() => deleteForm(form.id)} class="variant-glass-error btn btn-sm"
-							>Delete</button
-						>
-						<a href={`forms/editor/${form.id}`} class="variant-glass-secondary btn btn-sm">Edit</a>
-						<a href={`forms/${form.id}/entries`} class="variant-filled-secondary btn btn-sm"
-							>View Entries</a
-						>
-						<a href={`forms/${form.id}/entries/create`} class="variant-filled-primary btn btn-sm"
-							>Add Entry</a
-						>
-					</div>
+						<div class="space-x-1">
+							<button on:click={() => deleteForm(form.id)} class="variant-glass-error btn btn-sm"
+								>Delete</button
+							>
+							<a href={`forms/editor/${form.id}`} class="variant-glass-secondary btn btn-sm">Edit</a
+							>
+							<a href={`forms/${form.id}/entries`} class="variant-filled-secondary btn btn-sm"
+								>View Entries</a
+							>
+							<a href={`forms/${form.id}/entries/create`} class="variant-filled-primary btn btn-sm"
+								>Add Entry</a
+							>
+						</div>
+					</a>
 				</div>
 
 				<div class="p-4">
