@@ -4,8 +4,6 @@
 	import AvatarPopup from '$lib/AvatarPopup/AvatarPopup.svelte';
 	import Navigation from '$lib/Navigation/Navigation.svelte';
 	import { pageTitle } from '$lib/Navigation/stores/pageTitle';
-	import { orgIdStore } from '$lib/stores/org';
-	import { onSignOut } from '$lib/util/user/onSignOut';
 	import { userStore } from '$lib/util/user/stores/userStore';
 	import Icon from '@iconify/svelte';
 	import {
@@ -18,7 +16,6 @@
 		popup,
 		type PopupSettings
 	} from '@skeletonlabs/skeleton';
-	import { onMount } from 'svelte';
 	import { previousPageStore } from '../../../+layout.svelte';
 
 	const avatarPopup: PopupSettings = {
@@ -28,22 +25,6 @@
 	};
 
 	$: avatarInitials = $userStore?.name.charAt(0) || $userStore?.email.charAt(0) || '..';
-
-	onMount(async () => {
-		if ($orgIdStore) {
-			// Navigate to the last loaded org
-			await goto(`/app/org/${$orgIdStore}`);
-		} else {
-			// Navigate to the first org the user owns
-			const primaryOrg = $userStore.primaryOrgId;
-
-			if (primaryOrg) {
-				await goto(`/app/org/${$userStore.primaryOrgId}`);
-			} else {
-				await onSignOut();
-			}
-		}
-	});
 
 	const drawerStore = getDrawerStore();
 

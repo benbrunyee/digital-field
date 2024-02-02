@@ -49,7 +49,7 @@
 	};
 
 	const continueSetup = async () => {
-		await goto('/app/setup-account/create-organisation');
+		await goto('/app/sign-in?step=2');
 	};
 </script>
 

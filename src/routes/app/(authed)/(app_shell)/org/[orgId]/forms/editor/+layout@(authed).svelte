@@ -26,11 +26,15 @@
 		RadioGroup,
 		RadioItem
 	} from '@skeletonlabs/skeleton';
+	import { setContext } from 'svelte';
 	import { previousPageStore } from '../../../../../../../+layout.svelte';
 
-	// export let data: PageData;
-
 	initializeFormStore();
+
+	const outputPdf = writable<string>('');
+
+	outputPdf.set($page.data.pdf);
+	setContext('outputPdf', outputPdf);
 </script>
 
 <AppShell

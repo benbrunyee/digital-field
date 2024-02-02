@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import PDFObject from 'pdfobject';
+	import { getContext } from 'svelte';
+	import { type Writable } from 'svelte/store';
+	import { createId } from '../../util/createId';
 
-	let html = '';
+	const pdfStore = getContext<Writable<string>>('outputPdf');
 
 	function pdfDisplay(node: HTMLDivElement) {
+		if (!$pdfStore) {
+			return;
+		}
+
 		const binaryString = atob($page.data.pdf);
 		const len = binaryString.length;
 		const bytes = new Uint8Array(len);
@@ -16,7 +23,7 @@
 		const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
 
 		// Random unique ID that starts with a letter
-		node.id = 'pdf-' + Math.random().toString(36).substring(2, 9);
+		node.id = createId('pdf');
 
 		PDFObject.embed(url, `#${node.id}`, {
 			supportRedirect: true

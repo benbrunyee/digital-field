@@ -23,6 +23,4 @@ export const onSignIn = async () => {
 		await goto('/app/sign-in?step=2');
 		return;
 	}
-
-	await goto(`/app/org/${userData.primaryOrgId}`);
 };
