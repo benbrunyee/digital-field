@@ -80,7 +80,7 @@
 							}}>Create User Roles</button
 						>
 						<button
-							class="variant-outline-primary btn"
+							class="variant-filled-primary btn"
 							on:click={() => {
 								new Promise(async (resolve) => {
 									const form = createFormStructure();
