@@ -12,7 +12,7 @@
 	const createOrganisation = async () => {
 		if (!auth.currentUser) {
 			toastError(toastStore, 'You must be signed in to create an organisation');
-			goto('/app/sign-in');
+			await goto('/app/sign-in');
 			return;
 		}
 

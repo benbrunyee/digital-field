@@ -8,7 +8,7 @@ export const onSignIn = async () => {
 
 	if (!userData) {
 		console.error('User data is undefined');
-		goto('/app/sign-in');
+		await goto('/app/sign-in');
 		return;
 	}
 
@@ -20,9 +20,9 @@ export const onSignIn = async () => {
 	const orgData = await getOrg(userData.primaryOrgId);
 
 	if (!orgData?.name) {
-		goto('/app/sign-in?step=2');
+		await goto('/app/sign-in?step=2');
 		return;
 	}
 
-	goto(`/app/org/${userData.primaryOrgId}`);
+	await goto(`/app/org/${userData.primaryOrgId}`);
 };

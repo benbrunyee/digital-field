@@ -21,7 +21,7 @@
 			}
 
 			toastSuccess(toastStore, 'Form saved');
-			goto(`editor/${savedForm.id}`);
+			await goto(`editor/${savedForm.id}`);
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to save form');

@@ -4,7 +4,7 @@
 	import logo from '$lib/assets/images/logo-black.png';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
-	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { getToastStore, localStorageStore } from '@skeletonlabs/skeleton';
 	import {
 		createUserWithEmailAndPassword,
 		signInWithEmailAndPassword,
@@ -20,6 +20,7 @@
 	import { userStore } from '../util/user/stores/userStore';
 
 	const toastStore = getToastStore();
+	const hasSignedIn = localStorageStore('hasSignedIn', false);
 
 	let email = '';
 	let password = '';
@@ -36,7 +37,7 @@
 		type: 'sign-in' | 'sign-up';
 	}>({
 		currentStep: $page.url.searchParams.get('step') === '2' ? 1 : 0,
-		type: 'sign-up'
+		type: $hasSignedIn ? 'sign-in' : 'sign-up'
 	});
 	let leftSpring = spring(0, {
 		stiffness: 0.1,
@@ -64,7 +65,7 @@
 
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
-			goto('/app/');
+			await redirectToApp();
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to sign in');
@@ -165,13 +166,18 @@
 					merge: true
 				}
 			);
-			goto('/app/');
+			await redirectToApp();
 		} catch (e) {
 			console.error(e);
 			toastError(toastStore, 'Failed to update organisation name');
 		}
 
 		isSubmitting = false;
+	};
+
+	const redirectToApp = async () => {
+		hasSignedIn.set(true);
+		await goto('/app/');
 	};
 </script>
 

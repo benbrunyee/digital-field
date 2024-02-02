@@ -3,9 +3,9 @@ import { orgIdStore } from '../../stores/org';
 import { userStore } from './stores/userStore';
 import { createEmptyUserObject } from './types/createUser';
 
-export const onSignOut = () => {
+export const onSignOut = async () => {
 	orgIdStore.set('');
 	userStore.set(createEmptyUserObject());
 	console.log('Redirecting');
-	goto('/app/sign-in');
+	await goto('/app/sign-in');
 };

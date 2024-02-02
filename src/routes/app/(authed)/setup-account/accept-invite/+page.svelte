@@ -48,8 +48,8 @@
 		orgs = orgs.filter((org) => org.id !== orgId);
 	};
 
-	const continueSetup = () => {
-		goto('/app/setup-account/create-organisation');
+	const continueSetup = async () => {
+		await goto('/app/setup-account/create-organisation');
 	};
 </script>
 
@@ -90,7 +90,7 @@
 		<button
 			disabled={Boolean(orgs.length)}
 			class="variant-outline-primary btn"
-			on:click={continueSetup}>Continue</button
+			on:click={() => continueSetup()}>Continue</button
 		>
 		{#if orgs.length}
 			<p class="text-surface-400-500-token text-xs">You must accept all invites to continue</p>

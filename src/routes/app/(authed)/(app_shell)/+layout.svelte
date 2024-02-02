@@ -29,18 +29,18 @@
 
 	$: avatarInitials = $userStore?.name.charAt(0) || $userStore?.email.charAt(0) || '..';
 
-	onMount(() => {
+	onMount(async () => {
 		if ($orgIdStore) {
 			// Navigate to the last loaded org
-			goto(`/app/org/${$orgIdStore}`);
+			await goto(`/app/org/${$orgIdStore}`);
 		} else {
 			// Navigate to the first org the user owns
 			const primaryOrg = $userStore.primaryOrgId;
 
 			if (primaryOrg) {
-				goto(`/app/org/${$userStore.primaryOrgId}`);
+				await goto(`/app/org/${$userStore.primaryOrgId}`);
 			} else {
-				onSignOut();
+				await onSignOut();
 			}
 		}
 	});
@@ -51,8 +51,8 @@
 		drawerStore.open({});
 	}
 
-	function goBack() {
-		goto($previousPageStore);
+	async function goBack() {
+		await goto($previousPageStore);
 	}
 </script>
 
