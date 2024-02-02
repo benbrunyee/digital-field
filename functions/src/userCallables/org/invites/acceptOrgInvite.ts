@@ -53,27 +53,30 @@ export const acceptOrgInviteFn = async (
 
 const addUserToOrg = async (uid: string, orgId: string) => {
 	return await firestore.runTransaction(async (transaction) => {
-		const orgRef = await transaction.get(firestore.collection(ORG_COLLECTION).doc(orgId));
-		const userRef = await transaction.get(firestore.collection(USER_COLLECTION).doc(uid));
+		const orgSnap = await transaction.get(firestore.collection(ORG_COLLECTION).doc(orgId));
+		const userSnap = await transaction.get(firestore.collection(USER_COLLECTION).doc(uid));
 
-		if (!orgRef.exists) {
+		const orgData = orgSnap.data();
+		const userData = userSnap.data();
+
+		if (!(orgSnap.exists && orgData)) {
 			return Promise.reject('Org does not exist');
 		}
 
-		if (!userRef.exists) {
+		if (!(userSnap.exists && userData)) {
 			return Promise.reject('User does not exist');
 		}
 
-		if (orgRef.data()?.members?.[uid]) {
+		if (orgSnap.data()?.members?.[uid]) {
 			return Promise.reject('User is already a member of this org');
 		}
 
-		if (!userRef.data()?.orgInvites?.[orgId]) {
+		if (!userSnap.data()?.orgInvites?.[orgId]) {
 			return Promise.reject('User has not been invited to this org');
 		}
 
-		transaction.update(orgRef.ref, `members.${uid}`, true);
-		transaction.update(userRef.ref, `orgs.${orgId}`, { orgId, role: 'viewer' });
+		transaction.update(orgSnap.ref, `members.${uid}`, true);
+		transaction.update(userSnap.ref, `orgs.${orgId}`, { orgId, role: 'viewer' });
 
 		return true;
 	});

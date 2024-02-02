@@ -13,25 +13,28 @@ export const createAndJoinOrgFn = async (request: AuthenticatedCallableRequest) 
 		throw new HttpsError('invalid-argument', 'orgName is required');
 	}
 
-	// Check if user is already in an org
-	// If so, throw an error
-	const userDoc = await firestore.collection(USER_COLLECTION).doc(uid).get();
-	const userData = userDoc.data();
+	return await firestore.runTransaction(async (transaction) => {
+		const userSnap = await transaction.get(firestore.collection(USER_COLLECTION).doc(uid));
+		const userData = userSnap.data();
 
-	if (userData?.orgId) {
-		throw new HttpsError('already-exists', 'User is already in an org');
-	}
-
-	// TODO: Batch this
-
-	// Create org
-	const orgDoc = await firestore.collection(ORG_COLLECTION).add({
-		name: orgName,
-		members: {
-			[uid]: true
+		if (!(userSnap.exists && userData)) {
+			return Promise.reject('User does not exist');
 		}
-	});
 
-	// Update user
-	await userDoc.ref.update({ orgId: orgDoc.id });
+		if (userData.orgId) {
+			return Promise.reject('User is already in an org');
+		}
+
+		const orgRef = firestore.collection(ORG_COLLECTION).doc();
+
+		transaction.create(orgRef, {
+			name: orgName,
+			members: {
+				[uid]: true
+			}
+		});
+		transaction.update(userSnap.ref, { orgId: orgRef.id });
+
+		return true;
+	});
 };

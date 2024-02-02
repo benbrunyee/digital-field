@@ -40,6 +40,6 @@ const createUserWithInvite = async (email: string, orgId: string) => {
 };
 
 const addInviteToUser = async (uid: string, orgId: string) => {
-	const userRef = await firestore.collection(USER_COLLECTION).doc(uid);
-	return userRef.update({ orgInvites: { [orgId]: true } });
+	const userRef = firestore.collection(USER_COLLECTION).doc(uid);
+	return await userRef.update({ orgInvites: { [orgId]: true } });
 };

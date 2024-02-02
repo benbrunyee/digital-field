@@ -1,6 +1,6 @@
 import * as firebase from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { info } from 'firebase-functions/logger';
+import { info, warn } from 'firebase-functions/logger';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { getOrgDoc } from '../../../util/getOrgDoc';
@@ -52,23 +52,51 @@ export const rejectOrgInviteFn = async (
 	}
 
 	// Add user to org
-	await removeOrgInvite(uid, orgId, {
-		// Only update org if it exists (if it doesn't exist, it's probably been deleted and we don't need to update it)s
-		updateOrg: Boolean(orgDoc)
-	});
+	await removeOrgInvite(uid, orgId);
 };
 
-const removeOrgInvite = (uid: string, orgId: string, { updateOrg = true }) => {
-	// TODO: Batch this
-	const userRef = firestore.collection(USER_COLLECTION).doc(uid);
-	const userPromise = userRef.update(`orgInvites.${orgId}`, firebase.firestore.FieldValue.delete());
+const removeOrgInvite = async (uid: string, orgId: string) => {
+	return await firestore.runTransaction(async (transaction) => {
+		const userSnap = await transaction.get(firestore.collection(USER_COLLECTION).doc(uid));
+		const orgSnap = await transaction.get(firestore.collection(ORG_COLLECTION).doc(orgId));
 
-	if (!updateOrg) {
-		return userPromise;
-	}
+		const userData = userSnap.data();
+		const orgData = orgSnap.data();
 
-	const orgRef = firestore.collection(ORG_COLLECTION).doc(orgId);
-	const orgPromise = orgRef.update(`memberInvites.${uid}`, firebase.firestore.FieldValue.delete());
+		if (!(userSnap.exists && userData)) {
+			// This can happen if the user had deleted their account before the invite was responded to
+			warn('User does not exist');
+		}
 
-	return Promise.all([orgPromise, userPromise]);
+		if (!(orgSnap.exists && orgData)) {
+			// This can happen if the org has been deleted before the invite was responded to
+			warn('Org does not exist');
+		}
+
+		if (orgData?.members?.[uid]) {
+			warn('User is already a member of this org');
+		}
+
+		if (userSnap.exists) {
+			transaction.update(
+				userSnap.ref,
+				`orgInvites.${orgId}`,
+				firebase.firestore.FieldValue.delete()
+			);
+		}
+
+		if (orgSnap.exists) {
+			transaction.update(
+				orgSnap.ref,
+				`memberInvites.${uid}`,
+				firebase.firestore.FieldValue.delete()
+			);
+		}
+
+		if (!(userData?.orgInvites?.[orgId] && orgData?.memberInvites?.[uid])) {
+			return Promise.reject('User has not been invited to this org');
+		}
+
+		return true;
+	});
 };

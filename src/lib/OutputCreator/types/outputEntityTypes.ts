@@ -28,7 +28,7 @@ export const outputEntitySchema = z.object({
 	formId: z.string(),
 	ownerId: z.string(),
 	overrides: z.array(overrideSchema),
-	template: templateSchema, // TODO
+	template: templateSchema,
 	state: outputEntityStatesSchema,
 	isCustom: z.boolean()
 });
