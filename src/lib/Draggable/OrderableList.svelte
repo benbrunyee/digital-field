@@ -7,7 +7,6 @@
 		type DroppedInsideZoneEventDetail,
 		type DroppedOutsideZoneEventDetail
 	} from './Dropzone.svelte';
-	import MeasuredElement from './MeasuredElement.svelte';
 
 	/**
 	 * Slots:
@@ -25,6 +24,11 @@
 	let placeholderDummy: HTMLDivElement | undefined;
 	let listContainer: HTMLDivElement | undefined;
 
+	$: allChildElements = listContainer?.children ? Array.from(listContainer.children) : [];
+	$: childElementsWithoutDragged = Array.from(allChildElements).filter(
+		(element, i) => i !== hideElementIndex
+	);
+
 	let ghostElement: {
 		show: boolean;
 		showAfterIndex: number | undefined;
@@ -33,37 +37,38 @@
 		showAfterIndex: undefined
 	};
 
-	// Index: [top, bottom]
-	let measuredElements = items.reduce((acc, item, index) => {
-		acc.set(index, [0, 0]);
-		return acc;
-	}, new Map());
+	function findNextElement(y: number) {
+		const nextElement = childElementsWithoutDragged.reduce<{
+			offset: number;
+			nextElement: Element | undefined;
+		}>(
+			(acc, element, i, arr) => {
+				// Since we don't unmount the element when dragging, we need to consider the shift in the index
+				const indexShift = hideElementIndex !== undefined && hideElementIndex <= i ? 1 : 0;
 
-	function findNextElementIndex(y: number) {
-		if (measuredElements.size === 0) return -1;
+				const rect = element.getBoundingClientRect();
+				const offset = y - rect.top - element.getBoundingClientRect().height / 2;
 
-		let nextElementIndex = -1;
+				if (offset < 0 && acc.offset > 0) {
+					return { offset, nextElement: arr[i + indexShift] };
+				}
 
-		measuredElements.forEach(([top, bottom], index) => {
-			if (y > (bottom - top) / 3 + top) {
-				nextElementIndex = index;
-			}
-		});
+				return acc;
+			},
+			{ offset: Number.POSITIVE_INFINITY, nextElement: undefined }
+		);
 
-		// Normalise the index
-		if (nextElementIndex < -1) {
-			nextElementIndex = -1;
-		} else if (nextElementIndex >= items.length) {
-			nextElementIndex = items.length - 1;
-		}
-
-		return nextElementIndex;
+		return nextElement.nextElement;
 	}
 
 	function onDraggedOverZone(event: CustomEvent<DraggedOverZoneEventDetail<T>>) {
+		const nextElement = findNextElement(event.detail.position.y);
+
 		ghostElement = {
 			show: true,
-			showAfterIndex: findNextElementIndex(event.detail.position.y)
+			showAfterIndex: nextElement
+				? childElementsWithoutDragged.indexOf(nextElement) - 1
+				: items.length - 1
 		};
 	}
 
@@ -81,7 +86,18 @@
 	}
 
 	function onDropInsideZone(event: CustomEvent<DroppedInsideZoneEventDetail<T>>) {
-		addItem(event.detail.payload, ghostElement.showAfterIndex ?? -1);
+		// Since we don't unmount the element when dragging, we need to consider the shift in the index
+		const indexShift =
+			hideElementIndex !== undefined &&
+			ghostElement.showAfterIndex &&
+			hideElementIndex > ghostElement.showAfterIndex
+				? 1
+				: 0;
+
+		addItem(
+			event.detail.payload,
+			ghostElement.showAfterIndex ? ghostElement.showAfterIndex + indexShift : -1
+		);
 
 		ghostElement = {
 			show: false,
@@ -102,11 +118,12 @@
 
 	<div
 		bind:this={listContainer}
-		class="space-y-1 {$$props.class ?? ''}"
+		class="space-y-1"
 		on:scroll={(e) => {
 			console.log(e);
 		}}
 	>
+		<!-- TODO: Add item ID -->
 		{#each items as item, i}
 			{@const hideElement = hideElementIndex === i}
 
@@ -138,14 +155,7 @@
 				>
 					{#if !hideElement}
 						<div class={ghostElement.show && i === 1 ? '!mt-0' : ''}>
-							<MeasuredElement
-								on:measure={(event) => {
-									const detail = event.detail;
-									measuredElements.set(i, [detail.top, detail.bottom]);
-								}}
-							>
-								<slot name="content" item={{ item, i }} />
-							</MeasuredElement>
+							<slot name="content" item={{ item, i }} />
 						</div>
 					{/if}
 

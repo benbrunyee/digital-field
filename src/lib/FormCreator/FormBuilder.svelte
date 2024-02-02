@@ -79,7 +79,7 @@
 							return true;
 						})
 					];
-					newFields.splice(insertAfter + 1, 0, item);
+					newFields.splice(insertAfter, 0, item);
 					$form.fields = newFields;
 					return;
 				}
