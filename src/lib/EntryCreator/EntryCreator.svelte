@@ -83,6 +83,7 @@
 						bind:value={$entry.entry.fields[field.id].value}
 						options={field.options}
 						description={field.description}
+						required={field.required}
 					/>
 				{/if}
 			{/each}
