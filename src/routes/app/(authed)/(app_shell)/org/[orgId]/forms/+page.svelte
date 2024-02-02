@@ -1,18 +1,12 @@
 <script lang="ts">
-	import { displayFieldTypes, inputFieldTypes } from '$lib/FormCreator/types/fieldTypes';
 	import type { ExistingForm } from '$lib/FormCreator/types/formTypes';
-	import { isInputFieldType } from '$lib/FormCreator/util/isFieldType';
 	import LoadingSpinner from '$lib/LoadingSpinner/LoadingSpinner.svelte';
 	import { orgIdStore } from '$lib/stores/org';
-	import {
-		createDisplayFieldStructure,
-		createInputFieldStructure
-	} from '$lib/util/form/createFields';
-	import { createFormStructure, saveFormDoc } from '$lib/util/form/createForm';
 	import { deleteFormDoc } from '$lib/util/form/deleteForm';
 	import { loadOrgForms } from '$lib/util/form/loadForms';
-	import { toastError, toastSuccess } from '$lib/util/toast/toastNotifications';
+	import { toastError } from '$lib/util/toast/toastNotifications';
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { slide } from 'svelte/transition';
 
 	const toastStore = getToastStore();
 
@@ -26,8 +20,8 @@
 		}
 	}
 
-	const reloadForms = async () => {
-		isLoading = true;
+	const reloadForms = async ({ noLoading } = { noLoading: false }) => {
+		if (!noLoading) isLoading = true;
 
 		try {
 			forms = await loadOrgForms();
@@ -36,22 +30,32 @@
 			toastError(toastStore, 'Failed to load forms');
 		}
 
-		isLoading = false;
+		if (!noLoading) isLoading = false;
 	};
 
 	const deleteForm = async (formId: string) => {
 		const confirmed = confirm('Are you sure you want to delete this form?');
 
-		isLoading = true;
-
 		if (confirmed) {
+			// Remove the form from the list
+			// Create a backup of the forms array
+			const oldForms = [...forms];
+
+			// Remove the form from the array
+			forms = forms.filter((form) => form.id !== formId);
+
 			try {
-				isLoading = true;
+				// Delete the form from the database
 				await deleteFormDoc(formId);
-				reloadForms();
+
+				// Reload the forms without showing the loading spinner
+				reloadForms({ noLoading: true });
 			} catch (e) {
 				console.error(e);
 				toastError(toastStore, 'Failed to delete form');
+
+				// Restore the forms array
+				forms = oldForms;
 				return;
 			}
 		}
@@ -64,39 +68,6 @@
 	data-sveltekit-preload-data="hover">Create New Form</a
 >
 
-{#if import.meta.env.DEV}
-	<button
-		class="variant-outline-primary btn"
-		on:click={() => {
-			new Promise(async (resolve) => {
-				const form = createFormStructure();
-
-				const fields = [...inputFieldTypes, ...displayFieldTypes].map((type) => {
-					if (isInputFieldType(type)) {
-						return createInputFieldStructure(type);
-					} else {
-						return createDisplayFieldStructure(type);
-					}
-				});
-
-				form.fields = fields;
-
-				try {
-					isLoading = true;
-					await saveFormDoc(form);
-					toastSuccess(toastStore, 'Created form');
-					await reloadForms();
-				} catch (e) {
-					console.error(e);
-					toastError(toastStore, 'Failed to create form');
-				}
-
-				return resolve(true);
-			});
-		}}>Create filled form</button
-	>
-{/if}
-
 <hr />
 
 {#if isLoading}
@@ -105,9 +76,9 @@
 	</div>
 {:else}
 	<div class="space-y-2">
-		{#each forms as form}
-			<div class="bg-surface-100-800-token overflow-hidden shadow rounded-token">
-				<div class="bg-surface-200-700-token flex items-center justify-between p-4">
+		{#each forms as form (form.id)}
+			<div class="card overflow-hidden bg-white shadow rounded-token" transition:slide>
+				<div class="card flex items-center justify-between bg-neutral-100 p-4 dark:bg-surface-700">
 					<a class="h3 font-bold" href={`forms/editor/${form.id}`}>
 						{form.name}
 					</a>
@@ -127,7 +98,7 @@
 				</div>
 
 				<div class="p-4">
-					<a class="text-sm italic" href="">
+					<a class="text-sm italic" href={`forms/${form.id}/entries`}>
 						{form.entryCount} entries
 					</a>
 					<p class="text-sm italic">

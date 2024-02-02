@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation';
 	import LoadingSpinner from '$lib/LoadingSpinner/LoadingSpinner.svelte';
 	import { auth, functions } from '$lib/firebase';
 	import { toastError, toastSuccess } from '$lib/util/toast/toastNotifications';
@@ -16,6 +17,14 @@
 	import { onAuthStateChanged } from 'firebase/auth';
 	import { httpsCallable } from 'firebase/functions';
 	import { onMount } from 'svelte';
+	import { displayFieldTypes, inputFieldTypes } from '../../lib/FormCreator/types/fieldTypes';
+	import { isInputFieldType } from '../../lib/FormCreator/util/isFieldType';
+	import { orgIdStore } from '../../lib/stores/org';
+	import {
+		createDisplayFieldStructure,
+		createInputFieldStructure
+	} from '../../lib/util/form/createFields';
+	import { createFormStructure, saveFormDoc } from '../../lib/util/form/createForm';
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 	initializeStores();
@@ -56,19 +65,50 @@
 					<span class="font-bold">Dev controls</span>
 				</svelte:fragment>
 				<svelte:fragment slot="content">
-					<button
-						class="variant-filled-primary btn"
-						on:click={() => {
-							httpsCallable(functions, 'createUserRoles')()
-								.then(() => {
-									toastSuccess(toastStore, 'User roles created');
-								})
-								.catch((error) => {
-									console.error(error);
-									toastError(toastStore, 'Failed to create user roles');
+					<div class="flex flex-col space-y-1">
+						<button
+							class="variant-filled-primary btn"
+							on:click={() => {
+								httpsCallable(functions, 'createUserRoles')()
+									.then(() => {
+										toastSuccess(toastStore, 'User roles created');
+									})
+									.catch((error) => {
+										console.error(error);
+										toastError(toastStore, 'Failed to create user roles');
+									});
+							}}>Create User Roles</button
+						>
+						<button
+							class="variant-outline-primary btn"
+							on:click={() => {
+								new Promise(async (resolve) => {
+									const form = createFormStructure();
+
+									const fields = [...inputFieldTypes, ...displayFieldTypes].map((type) => {
+										if (isInputFieldType(type)) {
+											return createInputFieldStructure(type);
+										} else {
+											return createDisplayFieldStructure(type);
+										}
+									});
+
+									form.fields = fields;
+
+									try {
+										await saveFormDoc(form);
+										toastSuccess(toastStore, 'Created form');
+										await goto(`/app/org/${$orgIdStore}/forms`);
+									} catch (e) {
+										console.error(e);
+										toastError(toastStore, 'Failed to create form');
+									}
+
+									return resolve(true);
 								});
-						}}>Create User Roles</button
-					>
+							}}>Create filled form</button
+						>
+					</div>
 				</svelte:fragment>
 			</AccordionItem>
 		</Accordion>
