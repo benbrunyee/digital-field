@@ -54,7 +54,7 @@ export const saveFormDoc = async (form: NewForm | ExistingForm) => {
 	throw new Error('Form not valid');
 };
 
-export const createFormStructure = (): NewForm => {
+export const createFormStructure = (name?: string, description?: string): NewForm => {
 	const uid = auth.currentUser?.uid;
 	const orgId = get(orgIdStore);
 
@@ -69,7 +69,8 @@ export const createFormStructure = (): NewForm => {
 	return {
 		clientId: createId('form'),
 		ownerId: uid,
-		name: 'My Form',
+		name: name || 'My Form',
+		description: description ?? '',
 		fields: [],
 		outputs: [],
 		options: {

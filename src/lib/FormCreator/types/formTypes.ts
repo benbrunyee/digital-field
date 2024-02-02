@@ -45,6 +45,7 @@ export type FormType = z.infer<typeof formTypeSchema>;
 
 export const formSchema = z.object({
 	name: z.string(),
+	description: z.string(),
 	fields: z.array(z.any()),
 	ownerId: z.string(),
 	orgId: z.string(),
@@ -88,11 +89,22 @@ export const formCreateRequestSchema = newFormSchema
 	});
 export type FormCreateRequest = z.infer<typeof formCreateRequestSchema>;
 
-export const formUpdateRequestSchema = existingFormSchema.omit({
-	id: true,
-	createdAt: true,
-	updatedAt: true,
-	ownerId: true,
-	orgId: true
-});
+export const formUpdateRequestSchema = existingFormSchema
+	.omit({
+		id: true,
+		createdAt: true,
+		updatedAt: true,
+		ownerId: true,
+		orgId: true
+	})
+	.extend({
+		fields: z.array(
+			z.union([
+				displayFieldCreateRequestSchema,
+				inputFieldCreateRequestSchema,
+				existingInputFieldSchema,
+				existingDisplayFieldSchema
+			])
+		)
+	});
 export type FormUpdateRequest = z.infer<typeof formUpdateRequestSchema>;

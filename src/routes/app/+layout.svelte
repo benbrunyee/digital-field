@@ -83,7 +83,7 @@
 							class="variant-filled-primary btn"
 							on:click={() => {
 								new Promise(async (resolve) => {
-									const form = createFormStructure();
+									const form = createFormStructure('Field Survey');
 
 									const fields = [...inputFieldTypes, ...displayFieldTypes].map((type) => {
 										if (isInputFieldType(type)) {
@@ -106,7 +106,7 @@
 
 									return resolve(true);
 								});
-							}}>Create filled form</button
+							}}>Create Filled Form</button
 						>
 					</div>
 				</svelte:fragment>
