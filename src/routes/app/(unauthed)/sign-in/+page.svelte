@@ -12,7 +12,7 @@
 <XPro />
 
 <div class="flex min-h-screen flex-col items-center justify-center">
-	<div class="card flex w-3/5 overflow-hidden bg-[#FFFFF1] shadow-2xl">
+	<div class="flex w-3/5 overflow-hidden bg-[#FFFFFF] shadow-2xl rounded-token">
 		<div class="flex basis-1/2 flex-col items-center justify-center px-16 py-12">
 			<SignInForm />
 		</div>

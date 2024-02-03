@@ -18,6 +18,7 @@
 	export let items: T[];
 	export let addItem: (item: unknown, insertAfter: number) => void;
 	export let removeItem: (item?: unknown) => void;
+	export let keyGenerator: (item: T) => string | number;
 
 	let hideElementIndex: number | undefined = undefined;
 	let draggingExistingElement = false;
@@ -123,8 +124,7 @@
 			console.log(e);
 		}}
 	>
-		<!-- TODO: Add item ID -->
-		{#each items as item, i}
+		{#each items as item, i (keyGenerator(item))}
 			{@const hideElement = hideElementIndex === i}
 
 			<div

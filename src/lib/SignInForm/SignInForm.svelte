@@ -4,7 +4,7 @@
 	import logo from '$lib/assets/images/logo-black.png';
 	import { auth, googleAuthProvider } from '$lib/firebase';
 	import Icon from '@iconify/svelte';
-	import { getToastStore, localStorageStore } from '@skeletonlabs/skeleton';
+	import { getToastStore, localStorageStore, setModeCurrent } from '@skeletonlabs/skeleton';
 	import {
 		createUserWithEmailAndPassword,
 		signInWithEmailAndPassword,
@@ -21,6 +21,9 @@
 
 	const toastStore = getToastStore();
 	const hasSignedIn = localStorageStore('hasSignedIn', false);
+
+	// Set it to light mode
+	setModeCurrent(true);
 
 	let email = '';
 	let password = '';
@@ -177,6 +180,7 @@
 
 	const redirectToApp = async () => {
 		hasSignedIn.set(true);
+		setModeCurrent(false);
 		await goto('/app/');
 	};
 </script>

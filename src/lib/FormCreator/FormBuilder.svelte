@@ -4,6 +4,7 @@
 	import { draggedComponentPayload } from '../Draggable/stores/draggedSelectable';
 	import FieldGhost from '../SelectableElements/FieldGhost.svelte';
 	import { formatFieldType } from '../SelectableElements/util/formatFieldType';
+	import { createId } from '../util/createId';
 	import { loadForm } from '../util/form/loadForms';
 	import { toastError } from '../util/toast/toastNotifications';
 	import FormField from './FormFields/FormField.svelte';
@@ -56,9 +57,20 @@
 
 <div class="border-surface-400-500-token h-min min-h-14 w-full border p-2 rounded-token">
 	<Accordion>
-		<!-- TODO: Orderable list should have an internal ID as well as a dynamic id field -->
 		<OrderableList
 			items={$form.fields}
+			keyGenerator={(item) => {
+				if (isExistingDisplayField(item) || isExistingInputField(item)) {
+					return item.id;
+				} else if (isNewDisplayField(item) || isNewInputField(item)) {
+					return item.clientId;
+				}
+
+				// We should never get here
+				console.error('Failed to generate key for field', item);
+				toastError(toastStore, 'Something went wrong!');
+				return createId();
+			}}
 			addItem={(item, insertAfter) => {
 				// Add a new field
 				if (isNewDisplayField(item) || isNewInputField(item)) {

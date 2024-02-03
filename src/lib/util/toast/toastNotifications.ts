@@ -11,7 +11,7 @@ export const toastError = (toastStore: ReturnType<typeof getToastStore>, error: 
 export const toastSuccess = (toastStore: ReturnType<typeof getToastStore>, message: string) => {
 	toastStore.trigger({
 		message,
-		background: 'bg-success-400-500-token',
-		classes: 'text-on-success-900-50-token'
+		background: 'bg-success-300-600-token',
+		classes: 'text-token'
 	});
 };
