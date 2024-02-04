@@ -74,14 +74,15 @@
 			addItem={(item, insertAfter) => {
 				// Add a new field
 				if (isNewDisplayField(item) || isNewInputField(item)) {
-					console.debug('Adding new field', item.type, insertAfter);
+					console.debug('Adding new field', item.type, 'to', insertAfter);
 					form.addField(item.type, insertAfter);
 					return;
 				}
 
 				// Moving an existing field
 				if (isExistingDisplayField(item) || isExistingInputField(item)) {
-					console.debug('Moving existing field', item.id, insertAfter);
+					console.debug('Moving existing field', item.id, 'to', insertAfter);
+
 					const newFields = $form.fields.filter((field) => {
 						if (isExistingDisplayField(field)) {
 							return field.id !== item.id;

@@ -99,18 +99,10 @@
 		if (typeof nextElement !== 'undefined') {
 			const indexOfNextElement = allChildElements.indexOf(nextElement);
 
-			console.log(
-				'Next element index:',
-				indexOfNextElement,
-				'Hide element index:',
-				hideElementIndex
-			);
-
 			if (typeof hideElementIndex === 'undefined' || indexOfNextElement - 1 >= hideElementIndex) {
 				// If we are dragging the element past its original position
 				// Or if we are dragging an existing element past its original position
 				// If we are dragging in a new element
-				console.log('Shifting index by -1');
 				insertAfterIndex = indexOfNextElement - 1;
 			} else {
 				// Or if we are dragging an existing element to a position before its original position
