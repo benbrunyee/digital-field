@@ -26,9 +26,6 @@
 	let listContainer: HTMLDivElement | undefined;
 
 	$: allChildElements = listContainer?.children ? Array.from(listContainer.children) : [];
-	$: childElementsWithoutDragged = Array.from(allChildElements).filter(
-		(element, i) => i !== hideElementIndex
-	);
 
 	let ghostElement: {
 		show: boolean;
@@ -38,20 +35,29 @@
 		showAfterIndex: undefined
 	};
 
+	/**
+	 * Finds the next element to insert the dragged element after
+	 * Returns the next element if there is one.
+	 */
 	function findNextElement(y: number) {
-		const nextElement = childElementsWithoutDragged.reduce<{
+		const nextElement = allChildElements.reduce<{
 			offset: number;
 			nextElement: Element | undefined;
 		}>(
 			(acc, element, i, arr) => {
-				// Since we don't unmount the element when dragging, we need to consider the shift in the index
-				const indexShift = hideElementIndex !== undefined && hideElementIndex <= i ? 1 : 0;
+				// Since we don't unmount the component when dragging, we need to discount the index of the dragged element
+				// Instead we just use the next element if there is one
+				if (draggingExistingElement && i === hideElementIndex) {
+					return acc;
+				}
 
 				const rect = element.getBoundingClientRect();
 				const offset = y - rect.top - element.getBoundingClientRect().height / 2;
 
 				if (offset < 0 && acc.offset > 0) {
-					return { offset, nextElement: arr[i + indexShift] };
+					// TODO: Since we might be shifting the index by 1, we are actually getting the next element
+					// This means that the last 2 elements are grouped together since we cannot get the second to last element
+					return { offset, nextElement: arr[i] };
 				}
 
 				return acc;
@@ -67,9 +73,7 @@
 
 		ghostElement = {
 			show: true,
-			showAfterIndex: nextElement
-				? childElementsWithoutDragged.indexOf(nextElement) - 1
-				: items.length - 1
+			showAfterIndex: nextElement ? allChildElements.indexOf(nextElement) - 1 : items.length - 1
 		};
 	}
 
@@ -88,17 +92,33 @@
 
 	function onDropInsideZone(event: CustomEvent<DroppedInsideZoneEventDetail<T>>) {
 		// Since we don't unmount the element when dragging, we need to consider the shift in the index
-		const indexShift =
-			hideElementIndex !== undefined &&
-			ghostElement.showAfterIndex &&
-			hideElementIndex > ghostElement.showAfterIndex
-				? 1
-				: 0;
+		const nextElement = findNextElement(event.detail.position.y);
 
-		addItem(
-			event.detail.payload,
-			ghostElement.showAfterIndex ? ghostElement.showAfterIndex + indexShift : -1
-		);
+		let insertAfterIndex = items.length - 1;
+
+		if (typeof nextElement !== 'undefined') {
+			const indexOfNextElement = allChildElements.indexOf(nextElement);
+
+			console.log(
+				'Next element index:',
+				indexOfNextElement,
+				'Hide element index:',
+				hideElementIndex
+			);
+
+			if (typeof hideElementIndex === 'undefined' || indexOfNextElement - 1 >= hideElementIndex) {
+				// If we are dragging the element past its original position
+				// Or if we are dragging an existing element past its original position
+				// If we are dragging in a new element
+				console.log('Shifting index by -1');
+				insertAfterIndex = indexOfNextElement - 1;
+			} else {
+				// Or if we are dragging an existing element to a position before its original position
+				insertAfterIndex = indexOfNextElement;
+			}
+		}
+
+		addItem(event.detail.payload, insertAfterIndex);
 
 		ghostElement = {
 			show: false,
@@ -117,14 +137,8 @@
 		<slot name="placeholderGhost" />
 	</div>
 
-	<div
-		bind:this={listContainer}
-		class="space-y-1"
-		on:scroll={(e) => {
-			console.log(e);
-		}}
-	>
-		{#each items as item, i (keyGenerator(item))}
+	<div bind:this={listContainer} class="space-y-1">
+		{#each items as item, i}
 			{@const hideElement = hideElementIndex === i}
 
 			<div

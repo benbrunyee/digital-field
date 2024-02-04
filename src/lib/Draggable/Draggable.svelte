@@ -1,3 +1,10 @@
+<script lang="ts" context="module">
+	type Position = {
+		x: number;
+		y: number;
+	};
+</script>
+
 <script lang="ts" generics="T extends object | number | boolean | string">
 	import { createEventDispatcher } from 'svelte';
 
@@ -22,15 +29,9 @@
 	 */
 	const dispatch = createEventDispatcher();
 
-	type Position = {
-		x: number;
-		y: number;
-	};
-
-	let mouseDown = false;
-	let showGhost = false;
-	let lastClickedWithinElementPosition: Position = { x: 0, y: 0 };
-	let lastClickedOnScreenPosition: Position = { x: 0, y: 0 };
+	// The y offset for the ghost element when it is being dragged
+	// This is to give the effect that the element is being picked up
+	const pickupYOffset = 5;
 	const ghostCoordinates = spring(
 		{
 			x: 0,
@@ -41,7 +42,16 @@
 			damping: 0.5
 		}
 	);
-	let selectableElement: HTMLDivElement;
+
+	let mouseDown = false;
+	let showGhost = false;
+	let lastClickedWithinElementPosition: Position = { x: 0, y: 0 };
+	let lastClickedOnScreenPosition: Position = { x: 0, y: 0 };
+	let selectableElement: HTMLDivElement | undefined;
+	let startScrollOffset = {
+		left: 0,
+		top: 0
+	};
 
 	function updateGhostCoordinates(x: number, y: number, hard?: boolean) {
 		const newCoords = calculateGhostCoordinates(x, y);
@@ -57,6 +67,8 @@
 	}
 
 	function calculateGhostCoordinates(x: number, y: number) {
+		if (!selectableElement) return { x: 0, y: 0 };
+
 		const { totalScrollLeft, totalScrollTop } = getScrollOffsets();
 
 		return {
@@ -64,13 +76,20 @@
 				x -
 				lastClickedWithinElementPosition.x +
 				selectableElement.offsetWidth / 2 -
-				totalScrollLeft,
+				totalScrollLeft -
+				startScrollOffset.left,
 			y:
-				y - lastClickedWithinElementPosition.y + selectableElement.offsetHeight / 2 - totalScrollTop
+				y -
+				lastClickedWithinElementPosition.y +
+				selectableElement.offsetHeight / 2 +
+				totalScrollTop -
+				startScrollOffset.top
 		};
 	}
 
 	function getScrollOffsets() {
+		if (!selectableElement) return { totalScrollTop: 0, totalScrollLeft: 0 };
+
 		let totalScrollTop = 0;
 		let totalScrollLeft = 0;
 		let currentElement = selectableElement.parentElement;
@@ -90,6 +109,13 @@
 
 	function pickupElement(x: number, y: number) {
 		showGhost = true;
+
+		// Set the start scroll offset
+		const { totalScrollLeft, totalScrollTop } = getScrollOffsets();
+		startScrollOffset = {
+			left: totalScrollLeft,
+			top: totalScrollTop
+		};
 
 		// Update the store
 		draggedComponent.setPayload(payload);
@@ -124,6 +150,8 @@
 
 	function onInnerMouseDown(e: MouseEvent) {
 		mouseDown = true;
+
+		if (!selectableElement) return;
 
 		// Set the position on the screen that was clicked
 		lastClickedOnScreenPosition = {
@@ -189,10 +217,11 @@
 
 	{#if showGhost}
 		<!-- -5px on height for the "pickup" effect -->
+		<!-- TODO: Ghost element is being shifted incorrectly -->
 		<div
-			class="absolute z-50 -translate-x-1/2 -translate-y-1/2 opacity-75"
+			class="absolute z-50 -translate-x-1/2 opacity-75"
 			style:left="{$ghostCoordinates.x}px"
-			style:top="{$ghostCoordinates.y - 5}px"
+			style:top="{$ghostCoordinates.y - pickupYOffset}px"
 			style:width="{selectableElement.clientWidth}px"
 			style:height="{selectableElement.clientHeight}px"
 			role="none"

@@ -74,23 +74,33 @@
 			addItem={(item, insertAfter) => {
 				// Add a new field
 				if (isNewDisplayField(item) || isNewInputField(item)) {
+					console.debug('Adding new field', item.type, insertAfter);
 					form.addField(item.type, insertAfter);
 					return;
 				}
 
 				// Moving an existing field
 				if (isExistingDisplayField(item) || isExistingInputField(item)) {
-					const newFields = [
-						...$form.fields.filter((f) => {
-							if (isExistingDisplayField(f) || isExistingInputField(f)) {
-								return f.id !== item.id;
-							} else if (isNewDisplayField(f) || isNewInputField(f)) {
-								return f.clientId !== item.id;
-							}
+					console.debug('Moving existing field', item.id, insertAfter);
+					const newFields = $form.fields.filter((field) => {
+						if (isExistingDisplayField(field)) {
+							return field.id !== item.id;
+						}
 
-							return true;
-						})
-					];
+						if (isExistingInputField(field)) {
+							return field.id !== item.id;
+						}
+
+						return true;
+					});
+
+					// If index is -1, then we want to insert at the beginning
+					if (insertAfter === -1) {
+						newFields.unshift(item);
+						$form.fields = newFields;
+						return;
+					}
+
 					newFields.splice(insertAfter, 0, item);
 					$form.fields = newFields;
 					return;
@@ -103,27 +113,27 @@
 				});
 			}}
 			removeItem={(item) => {
-				if (isField(item)) {
-					if (isExistingInputField(item) || isExistingDisplayField(item)) {
-						form.removeField(item.id);
-					} else if (isNewDisplayField(item) || isNewInputField(item)) {
-						form.removeField(item.clientId);
-					}
-				} else {
-					console.error('Item is not an existing field', item);
-					toastStore.trigger({
-						message: 'Something went wrong!',
-						background: 'bg-error-500'
-					});
+				if (isExistingInputField(item) || isExistingDisplayField(item)) {
+					console.debug('Removing existing field', item.id);
+					form.removeField(item.id);
+					return;
 				}
+
+				if (isNewDisplayField(item) || isNewInputField(item)) {
+					console.debug('Removing new field', item.clientId);
+					form.removeField(item.clientId);
+					return;
+				}
+
+				console.error('Item is not an existing field', item);
+				toastStore.trigger({
+					message: 'Something went wrong!',
+					background: 'bg-error-500'
+				});
 			}}
 		>
 			<svelte:fragment slot="placeholderGhost">
-				{#if isNewInputField($draggedComponentPayload) || isNewDisplayField($draggedComponentPayload)}
-					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
-						{displayText}
-					</FieldGhost>
-				{:else if isField($draggedComponentPayload)}
+				{#if isField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>
@@ -131,7 +141,7 @@
 			</svelte:fragment>
 
 			<svelte:fragment slot="draggedGhost">
-				{#if isNewInputField($draggedComponentPayload) || isNewDisplayField($draggedComponentPayload)}
+				{#if isField($draggedComponentPayload)}
 					<FieldGhost icon={fieldTypeIcons[$draggedComponentPayload.type]}>
 						{displayText}
 					</FieldGhost>

@@ -21,7 +21,7 @@
 	// Update the context using a store
 	let hasChanged = writable(false);
 	setContext('hasChanged', hasChanged);
-	setContext('isNewField', !('createdAt' in field));
+	setContext('isNewField', isNewDisplayField(field) || isNewInputField(field));
 
 	function fieldHasChanged() {
 		$hasChanged = true;
