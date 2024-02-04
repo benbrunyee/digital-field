@@ -130,7 +130,8 @@
 	</div>
 
 	<div bind:this={listContainer} class="space-y-1">
-		{#each items as item, i}
+		<!-- TODO: List doesn't work well with new items -->
+		{#each items as item, i (keyGenerator(item))}
 			{@const hideElement = hideElementIndex === i}
 
 			<div

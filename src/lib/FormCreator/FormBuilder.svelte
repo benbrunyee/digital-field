@@ -53,85 +53,117 @@
 			: isDisplayField($draggedComponentPayload)
 				? formatFieldType($draggedComponentPayload.type)
 				: '';
+
+	const addField = (item: unknown, insertAfter: number) => {
+		if (
+			isNewDisplayField(item) ||
+			isNewInputField(item) ||
+			isExistingDisplayField(item) ||
+			isExistingInputField(item)
+		) {
+			const formHasItem = $form.fields.some((field) => {
+				if (
+					(isExistingDisplayField(field) || isExistingInputField(field)) &&
+					(isExistingInputField(item) || isExistingDisplayField(item))
+				) {
+					return field.id === item.id;
+				}
+
+				if (
+					(isNewDisplayField(field) || isNewInputField(field)) &&
+					(isNewInputField(item) || isNewDisplayField(item))
+				) {
+					return field.clientId === item.clientId;
+				}
+
+				return false;
+			});
+
+			if (formHasItem) {
+				console.debug(
+					'Moving existing field',
+					'id' in item ? item.id : item.clientId,
+					'to',
+					insertAfter
+				);
+
+				const newFields = $form.fields.filter((field) => {
+					if ((isExistingDisplayField(field) || isExistingInputField(field)) && 'id' in item) {
+						return field.id !== item.id;
+					}
+
+					if ((isNewDisplayField(field) || isNewInputField(field)) && 'clientId' in item) {
+						return field.clientId !== item.clientId;
+					}
+
+					return true;
+				});
+
+				// If index is -1, then we want to insert at the beginning
+				if (insertAfter === -1) {
+					newFields.unshift(item);
+					$form.fields = newFields;
+					return;
+				}
+
+				newFields.splice(insertAfter, 0, item);
+				$form.fields = newFields;
+				return;
+			} else {
+				console.debug('Adding new field', item.type, 'to', insertAfter);
+				form.addField(item.type, insertAfter);
+				return;
+			}
+		}
+
+		console.error('Item is not a new or existing field', item);
+		toastStore.trigger({
+			message: 'Something went wrong!',
+			background: 'bg-error-500'
+		});
+	};
+
+	const removeField = (item: unknown) => {
+		if (isExistingInputField(item) || isExistingDisplayField(item)) {
+			console.debug('Removing existing field', item.id);
+			form.removeField(item.id);
+			return;
+		}
+
+		if (isNewDisplayField(item) || isNewInputField(item)) {
+			console.debug('Removing new field', item.clientId);
+			form.removeField(item.clientId);
+			return;
+		}
+
+		console.error('Item is not an existing field', item);
+		toastStore.trigger({
+			message: 'Something went wrong!',
+			background: 'bg-error-500'
+		});
+	};
+
+	const fieldKeyGenerator = (item: unknown) => {
+		if (isExistingDisplayField(item) || isExistingInputField(item)) {
+			return item.id;
+		} else if (isNewDisplayField(item) || isNewInputField(item)) {
+			return item.clientId;
+		}
+
+		// We should never get here
+		console.error('Failed to generate key for field', item);
+		toastError(toastStore, 'Something went wrong!');
+		return createId();
+	};
 </script>
 
 <div class="border-surface-400-500-token h-min min-h-14 w-full border p-2 rounded-token">
 	<Accordion>
 		<OrderableList
 			items={$form.fields}
-			keyGenerator={(item) => {
-				if (isExistingDisplayField(item) || isExistingInputField(item)) {
-					return item.id;
-				} else if (isNewDisplayField(item) || isNewInputField(item)) {
-					return item.clientId;
-				}
-
-				// We should never get here
-				console.error('Failed to generate key for field', item);
-				toastError(toastStore, 'Something went wrong!');
-				return createId();
-			}}
-			addItem={(item, insertAfter) => {
-				// Add a new field
-				if (isNewDisplayField(item) || isNewInputField(item)) {
-					console.debug('Adding new field', item.type, 'to', insertAfter);
-					form.addField(item.type, insertAfter);
-					return;
-				}
-
-				// Moving an existing field
-				if (isExistingDisplayField(item) || isExistingInputField(item)) {
-					console.debug('Moving existing field', item.id, 'to', insertAfter);
-
-					const newFields = $form.fields.filter((field) => {
-						if (isExistingDisplayField(field)) {
-							return field.id !== item.id;
-						}
-
-						if (isExistingInputField(field)) {
-							return field.id !== item.id;
-						}
-
-						return true;
-					});
-
-					// If index is -1, then we want to insert at the beginning
-					if (insertAfter === -1) {
-						newFields.unshift(item);
-						$form.fields = newFields;
-						return;
-					}
-
-					newFields.splice(insertAfter, 0, item);
-					$form.fields = newFields;
-					return;
-				}
-
-				console.error('Item is not a new or existing field', item);
-				toastStore.trigger({
-					message: 'Something went wrong!',
-					background: 'bg-error-500'
-				});
-			}}
-			removeItem={(item) => {
-				if (isExistingInputField(item) || isExistingDisplayField(item)) {
-					console.debug('Removing existing field', item.id);
-					form.removeField(item.id);
-					return;
-				}
-
-				if (isNewDisplayField(item) || isNewInputField(item)) {
-					console.debug('Removing new field', item.clientId);
-					form.removeField(item.clientId);
-					return;
-				}
-
-				console.error('Item is not an existing field', item);
-				toastStore.trigger({
-					message: 'Something went wrong!',
-					background: 'bg-error-500'
-				});
-			}}
+			keyGenerator={fieldKeyGenerator}
+			addItem={addField}
+			removeItem={removeField}
 		>
 			<svelte:fragment slot="placeholderGhost">
 				{#if isField($draggedComponentPayload)}
